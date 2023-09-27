@@ -1,0 +1,5 @@
+from flask import Blueprint
+
+user_auth_bp = Blueprint('user_auth', __name__)
+
+from . import routes

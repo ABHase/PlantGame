@@ -1,0 +1,1 @@
+{"biomes": ["Beginner's Garden"], "plants": [{"id": "94cd4fa8-75d2-41cc-bcc4-c6013ccd5284", "biome": "Beginner's Garden", "maturity_level": 0, "resources": {"sunlight": 0, "water": 0, "sugar": 0}, "plant_parts": {"roots": 1, "leaves": 1}, "is_sugar_production_on": false, "is_genetic_marker_production_on": false}], "upgrades": ["Desert"], "genetic_markers": 0}

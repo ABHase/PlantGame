@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <script src="{{ url_for('static', filename='register.js') }}"></script>
+</head>
+<body>
+    <form id="register-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <input type="submit" value="Register">
+    </form>
+</body>
+</html>
