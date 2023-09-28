@@ -24,8 +24,8 @@ from game_resource import GameResource
 from constants import SUGAR_THRESHOLD
 
 class Plant:
-    def __init__(self, resources, plant_parts, biome, maturity_level, sugar_production_rate, genetic_marker_production_rate):
-        self.id = str(uuid.uuid4())
+    def __init__(self, resources, plant_parts, biome, maturity_level, sugar_production_rate, genetic_marker_production_rate, plant_id=None):
+        self.id = plant_id if plant_id else str(uuid.uuid4())
         self.resources = resources
         self.plant_parts = plant_parts
         self.biome = biome
@@ -40,12 +40,20 @@ class Plant:
         self.biome.remove_plant(self)
 
     def toggle_sugar_production(self):
+        #Print attempted toggle
+        print(f"Plant ID: {self.id}")
+        print(f"Toggle: Sugar Production")
         self.is_sugar_production_on = not self.is_sugar_production_on
 
     def toggle_genetic_marker_production(self):
         self.is_genetic_marker_production_on = not self.is_genetic_marker_production_on
 
     def purchase_plant_part(self, type, cost):
+        #Print attempted purchase
+        print(f"Plant ID: {self.id}")
+        print(f"Purchase: {type}")
+        print(f"Cost: {cost}")
+        #If the plant has enough sugar, subtract the cost and add the plant part
         if self.resources['sugar'].amount >= cost:
             self.resources['sugar'].subtract_amount(cost)
             self.plant_parts[type].add_amount(1)
@@ -99,9 +107,6 @@ class Plant:
         # For each leaf absorb 1 sunlight per second
         for leaf in range(self.plant_parts['leaves'].amount):
             self.resources['sunlight'].add_amount(1/60.0)
-            #print self id
-            print(f"Plant ID: {self.id}")
-            print(f"Sunlight: {self.resources['sunlight'].amount}")
 
         if self.plant_parts['roots'].amount > 10 and self.plant_parts['leaves'].amount > 10:
             self.maturity_level = 1

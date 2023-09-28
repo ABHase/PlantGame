@@ -11,11 +11,11 @@ Upgrade Class (upgrade.py)
         unlock(): Unlock this upgrade.
 """
 class Upgrade:
-    def __init__(self, name, cost, type):
+    def __init__(self, name, cost, type, unlocked=False):
         self.name = name
         self.cost = cost
         self.type = type
-        self.unlocked = False
+        self.unlocked = unlocked
 
     def unlock(self):
         self.unlocked = True

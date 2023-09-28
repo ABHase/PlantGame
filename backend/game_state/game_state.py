@@ -21,13 +21,14 @@ from upgrades.upgrade import Upgrade
 
 
 class GameState:
-    def __init__(self, plants, biomes, upgrades, genetic_markers):
+    def __init__(self, plants, biomes, upgrades, genetic_markers, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
         self.plants = plants
         self.biomes = biomes
         self.upgrades = upgrades
         self.genetic_markers = genetic_markers
-        self.genetic_marker_progress = 0
-        self.genetic_marker_threshold = INITIAL_GENETIC_MARKER_THRESHOLD
+        self.genetic_marker_progress = genetic_marker_progress
+        self.genetic_marker_threshold = genetic_marker_threshold
+
 
     def update(self):
         for biome in self.biomes:
@@ -116,8 +117,11 @@ class GameState:
                     None,  # Biome will be set later
                     plant_data['maturity_level'],
                     plant_data['is_sugar_production_on'],
-                    plant_data['is_genetic_marker_production_on']
+                    plant_data['is_genetic_marker_production_on'],
+                    plant_data['id']  # Include the id attribute
                 )
+                plant.is_sugar_production_on = plant_data['is_sugar_production_on']
+                plant.is_genetic_marker_production_on = plant_data['is_genetic_marker_production_on']
                 plants.append(plant)
             
             biome = Biome(
@@ -130,14 +134,17 @@ class GameState:
                 biome.add_plant(plant)
             biomes.append(biome)
 
-        upgrades = [Upgrade(upgrade_data['name'], upgrade_data['cost'], upgrade_data['type']) for upgrade_data in data['upgrades']]
+        upgrades = [Upgrade(upgrade_data['name'], upgrade_data['cost'], upgrade_data['type'], upgrade_data['unlocked']) for upgrade_data in data['upgrades']]
         
         return cls(
             [],  # Plants will be populated through biomes
             biomes,
             upgrades,
-            data['genetic_markers']
+            data['genetic_markers'],
+            data.get('genetic_marker_progress', 0),  # Include the missing field
+            data.get('genetic_marker_threshold', 0)  # Include the missing field
         )
+
 
     def __getstate__(self):
         return self.to_dict()

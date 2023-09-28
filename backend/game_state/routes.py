@@ -8,11 +8,13 @@ from game_resource import GameResource
 from upgrades.upgrade import Upgrade
 from game_state import GameState  # Import GameState
 from socket_config import socketio
-from flask_login import current_user
+from flask_login import current_user, login_required
 from user_auth.user_auth import fetch_game_state_from_db, save_game_state_to_db
 
 game_state_bp = Blueprint('game_state', __name__)
 running_tasks = {}
+user_actions_queue = []
+
 
 def background_task(app, user_id):
     with app.app_context():
@@ -24,6 +26,24 @@ def background_task(app, user_id):
                 print("game_state_dict is None, initializing a new game state.")
                 game_state = initialize_new_game_state()
 
+            # Process queued actions
+            while user_actions_queue:
+                action = user_actions_queue.pop(0)
+                if action["type"] == "toggle_sugar":
+                    #print toggling sugar for plant with id
+                    print(f"Plant ID: {game_state.biomes[action['biomeIndex']].plants[action['plantIndex']].id}")
+                    #print the is_sugar_production_on for the plant before toggling
+                    print(f"Is sugar production on before toggling: {game_state.biomes[action['biomeIndex']].plants[action['plantIndex']].is_sugar_production_on}")
+                    #print the game state before toggling
+                    print(f"Game state before toggling: {game_state}")
+                    plant = game_state.biomes[action["biomeIndex"]].plants[action["plantIndex"]]
+                    plant.toggle_sugar_production()
+                    #print the game state after toggling
+                    print(f"Game state after toggling: {game_state}")
+                    #print the is_sugar_production_on for the plant after toggling
+                    print(f"Is sugar production on after toggling: {game_state.biomes[action['biomeIndex']].plants[action['plantIndex']].is_sugar_production_on}")
+                    save_game_state_to_db(user_id, game_state.to_dict())
+
             # Update and save game state
             game_state.update()
             save_game_state_to_db(user_id, game_state.to_dict())
@@ -31,6 +51,7 @@ def background_task(app, user_id):
             # Emit updated game state to client
             socketio.emit('game_state', game_state.to_dict())
             sleep(1)
+
 
 
 
@@ -99,3 +120,38 @@ def initialize_new_game_state():
     initial_genetic_markers = 0
 
     return GameState(initial_plants, initial_biomes, initial_upgrades, initial_genetic_markers)
+
+@game_state_bp.route('/buy_root', methods=['POST'])
+@login_required
+def buy_root():
+    user_id = current_user.id
+    biomeIndex = request.json.get('biomeIndex')
+    plantIndex = request.json.get('plantIndex')
+
+    game_state_dict = fetch_game_state_from_db(user_id)
+    game_state = GameState.from_dict(game_state_dict)
+
+    plant = game_state.biomes[biomeIndex].plants[plantIndex]
+    plant.purchase_plant_part('roots', 10)  # Assuming 10 is the cost
+
+    save_game_state_to_db(user_id, game_state.to_dict())
+    return jsonify({"status": "Root bought successfully"})
+
+@game_state_bp.route('/toggle_sugar', methods=['POST'])
+@login_required
+def toggle_sugar():
+    user_id = current_user.id
+    biomeIndex = request.json.get('biomeIndex')
+    plantIndex = request.json.get('plantIndex')
+    isChecked = request.json.get('isChecked')
+
+    action = {
+        "type": "toggle_sugar",
+        "biomeIndex": biomeIndex,
+        "plantIndex": plantIndex,
+        "isChecked": isChecked
+    }
+
+    user_actions_queue.append(action)
+
+    return jsonify({"status": "Sugar toggle action queued"})
