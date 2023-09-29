@@ -18,7 +18,7 @@ Methods:
     update(): Update the plant's state (called in the main game loop).
 
 """
-import copy
+import math
 import uuid
 from game_resource import GameResource
 from constants import SUGAR_THRESHOLD
@@ -45,7 +45,7 @@ class Plant:
         print(f"Toggle: Sugar Production")
         self.is_sugar_production_on = not self.is_sugar_production_on
 
-    def toggle_genetic_marker_production(self):
+    def toggle_genetic_marker(self):
         self.is_genetic_marker_production_on = not self.is_genetic_marker_production_on
 
     def purchase_plant_part(self, type, cost):
@@ -62,51 +62,55 @@ class Plant:
         self.resources[type].add_amount(amount)
 
     def produce_sugar(self):
-        #If water and sunlight are both over 30, subtract 10 from each and produce sugar
-        if self.resources['water'].amount > 30 and self.resources['sunlight'].amount > 30:
-            self.resources['water'].subtract_amount(10)
-            self.resources['sunlight'].subtract_amount(10)
-            self.resources['sugar'].add_amount(self.sugar_production_rate)
+        # Base rate of sugar production
+        base_rate = self.sugar_production_rate
+
+        # Modify the rate based on maturity level
+        modified_rate = base_rate * (1 + 0.1 * self.maturity_level)
+
+        # Resource consumption rate also depends on maturity
+        water_consumption = 10 * (1 + 0.4 * self.maturity_level)
+        sunlight_consumption = 10 * (1 + 0.4 * self.maturity_level)
+
+        if self.resources['water'].amount > water_consumption and self.resources['sunlight'].amount > sunlight_consumption:
+            self.resources['water'].subtract_amount(water_consumption)
+            self.resources['sunlight'].subtract_amount(sunlight_consumption)
+            self.resources['sugar'].add_amount(modified_rate)
     
     def produce_genetic_markers(self):
-        if self.resources['sugar'].amount > SUGAR_THRESHOLD:
-            self.resources['sugar'].subtract_amount(SUGAR_THRESHOLD)
-            return True, 1  # Can produce, and the amount to produce
-        return False, 0  # Cannot produce
-
+        if self.resources['sugar'].amount <= SUGAR_THRESHOLD:
+            return False, 0
+        self.resources['sugar'].subtract_amount(SUGAR_THRESHOLD)
+        return True, 1
 
     def grow_plant_part(self, type):
         self.plant_parts[type].add_amount(1)
 
-    def produce_seed(self, target_biome):
-        if len(target_biome.plants) < target_biome.capacity:
-            initial_resources = {
-                'sunlight': GameResource('sunlight', 0),
-                'water': GameResource('water', 0),
-                'sugar': GameResource('sugar', 0),
-            }
-            initial_plant_parts = {'roots': GameResource('roots', 0), 'leaves': GameResource('leaves', 0)}
-            new_plant = Plant(initial_resources, initial_plant_parts, target_biome, 0, self.sugar_production_rate, self.genetic_marker_production_rate)
-            target_biome.add_plant(new_plant)
-            return new_plant
-        else:
-            return None  # Return None if the biome is full
+    def purchase_seed(self, cost):
+        print(f"Plant's sugar before purchase: {self.resources['sugar'].amount}")
+        if self.resources['sugar'].amount >= cost:
+            self.resources['sugar'].subtract_amount(cost)
+            return True
+        print("Not enough sugar to purchase seed.")
+        return False
 
 
     def update(self):
         can_produce = False
         amount = 0
 
+        self.maturity_level = int(math.sqrt(self.plant_parts['roots'].amount + self.plant_parts['leaves'].amount))
+
         if self.is_sugar_production_on:
             self.produce_sugar()
 
         # For each root absorb 1 water per second
         for root in range(self.plant_parts['roots'].amount):
-            self.resources['water'].add_amount(1/60.0)
+            self.resources['water'].add_amount(1)
 
         # For each leaf absorb 1 sunlight per second
         for leaf in range(self.plant_parts['leaves'].amount):
-            self.resources['sunlight'].add_amount(1/60.0)
+            self.resources['sunlight'].add_amount(1)
 
         if self.plant_parts['roots'].amount > 10 and self.plant_parts['leaves'].amount > 10:
             self.maturity_level = 1

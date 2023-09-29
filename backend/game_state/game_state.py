@@ -21,22 +21,25 @@ from upgrades.upgrade import Upgrade
 
 
 class GameState:
-    def __init__(self, plants, biomes, upgrades, genetic_markers, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
+    def __init__(self, plants, biomes, upgrades, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
         self.plants = plants
         self.biomes = biomes
         self.upgrades = upgrades
         self.genetic_markers = genetic_markers
         self.genetic_marker_progress = genetic_marker_progress
         self.genetic_marker_threshold = genetic_marker_threshold
+        self.seeds = seeds
 
 
     def update(self):
+        #Print Seeds and Genetic Markers before update
+        print(f"Game State Seeds before update: {self.seeds}")
+        print(f"Game State Genetic Markers before update: {self.genetic_markers}")
         for biome in self.biomes:
-            for plant in biome.plants:
-                can_produce, amount = plant.update()
+            results = biome.update()
+            for can_produce, amount in results:
                 if can_produce:
                     self.update_genetic_marker_progress(amount)
-            biome.update()
 
         for upgrade in self.upgrades:
             upgrade_conditions = {
@@ -48,6 +51,9 @@ class GameState:
             }
             if upgrade.type in upgrade_conditions and upgrade_conditions[upgrade.type]:
                 upgrade.unlock()
+        #Print Seeds and Genetic Markers after update
+        print(f"Game State Seeds after update: {self.seeds}")
+        print(f"Game State Genetic Markers after update: {self.genetic_markers}")
 
 
     def update_genetic_marker_progress(self, amount):
@@ -57,16 +63,74 @@ class GameState:
             self.genetic_marker_progress -= self.genetic_marker_threshold
             self.genetic_marker_threshold += self.genetic_marker_threshold  # Increase the threshold
 
-    def purchase_seed(self, target_biome, sugar_cost, genetic_marker_cost):
-        if self.genetic_markers >= genetic_marker_cost:
-            for plant in self.plants:
-                if plant.resources['sugar'].amount >= sugar_cost:
-                    new_plant = plant.produce_seed(target_biome)
-                    if new_plant:
-                        plant.resources['sugar'].subtract_amount(sugar_cost)
-                        self.genetic_markers -= genetic_marker_cost
-                        return True  # Seed successfully purchased and planted
+
+    # Method to purchase a seed using a specific plant
+    def purchase_seed_using_plant(self, plant_id, cost):
+        print(f"Plant ID: {plant_id}")
+        print(f"Purchase: Seed")
+        
+        # Search for the plant in all biomes
+        plant = None
+        for biome in self.biomes:
+            plant = next((plant for plant in biome.plants if plant.id == plant_id), None)
+            if plant is not None:
+                break  # Exit the loop if the plant is found
+        
+        if plant is None:
+            print("Plant is None.")
+            return False  # Failed to purchase seed
+        
+        if plant.purchase_seed(cost):
+            self.seeds += 1  # Increment the number of seeds
+            return True  # Seed successfully purchased
+        
         return False  # Failed to purchase seed
+
+    
+    # Method to plant a seed in a specific biome
+    def plant_seed_in_biome(self, biome_name, genetic_marker_cost):
+        print("Plant Seed in Biome backend")
+        
+        # Debug: Print the incoming parameters
+        print(f"Biome Name: {biome_name}, Genetic Marker Cost: {genetic_marker_cost}")
+        
+        # Debug: Print the current state
+        print(f"Current Seeds: {self.seeds}, Current Genetic Markers: {self.genetic_markers}")
+        
+        target_biome = next((biome for biome in self.biomes if biome.name == biome_name), None)
+        
+        # Debug: Check if the target biome was found
+        if target_biome is None:
+            print("Target biome not found.")
+            return False
+        
+        print(f"Target Biome: {target_biome.name}, Capacity: {target_biome.capacity}, Current Plants: {len(target_biome.plants)}")
+        
+        if target_biome and self.seeds > 0 and self.genetic_markers > genetic_marker_cost and len(target_biome.plants) < target_biome.capacity:
+            initial_resources = {
+                'sunlight': GameResource('sunlight', 0),
+                'water': GameResource('water', 0),
+                'sugar': GameResource('sugar', 0),
+            }
+            initial_plant_parts = {'roots': GameResource('roots', 1), 'leaves': GameResource('leaves', 1)}
+            new_plant = Plant(initial_resources, initial_plant_parts, target_biome, 0, 25, 1)
+            
+            # Debug: Print the new plant details
+            print(f"New Plant: {new_plant}")
+            
+            target_biome.add_plant(new_plant)
+            self.seeds -= 1  # Decrement the number of seeds
+            self.genetic_markers -= genetic_marker_cost
+            
+            # Debug: Confirm successful planting
+            print("Seed successfully planted.")
+            
+            return True  # Seed successfully planted
+        
+        # Debug: Print why the seed planting failed
+        print("Failed to plant seed.")
+        return False  # Failed to plant seed
+
     
     def to_dict(self):
         return {
@@ -98,6 +162,7 @@ class GameState:
                 }
                 for upgrade in self.upgrades
             ],
+            'seeds': self.seeds,  
             'genetic_markers': self.genetic_markers,
             'genetic_marker_progress': self.genetic_marker_progress,
             'genetic_marker_threshold': self.genetic_marker_threshold,
@@ -140,7 +205,8 @@ class GameState:
             [],  # Plants will be populated through biomes
             biomes,
             upgrades,
-            data['genetic_markers'],
+            data.get('genetic_markers', 0),  # Corrected this line
+            data.get('seeds', 0),  # Corrected this line
             data.get('genetic_marker_progress', 0),  # Include the missing field
             data.get('genetic_marker_threshold', 0)  # Include the missing field
         )
@@ -150,4 +216,7 @@ class GameState:
         return self.to_dict()
 
     def __setstate__(self, state):
+        #print the state inside set state
+        print("Set State")
+        print(state)
         self.__dict__.update(GameState.from_dict(state).__dict__)

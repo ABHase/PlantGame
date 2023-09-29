@@ -10,6 +10,9 @@ from game_state import GameState  # Import GameState
 from socket_config import socketio
 from flask_login import current_user, login_required
 from user_auth.user_auth import fetch_game_state_from_db, save_game_state_to_db
+from action_dispatcher import dispatch_action
+#import log with timestamp function
+from user_auth.user_auth import log_with_timestamp
 
 game_state_bp = Blueprint('game_state', __name__)
 running_tasks = {}
@@ -19,7 +22,10 @@ user_actions_queue = []
 def background_task(app, user_id):
     with app.app_context():
         while True:
+            log_with_timestamp("Background task iteration start")
             game_state_dict = fetch_game_state_from_db(user_id)
+            print(f"Game state loaded from DB: {game_state_dict}")
+            #print(f"Game state after fetch: {game_state_dict}")
             if game_state_dict is not None:
                 game_state = GameState.from_dict(game_state_dict)
             else:
@@ -29,27 +35,17 @@ def background_task(app, user_id):
             # Process queued actions
             while user_actions_queue:
                 action = user_actions_queue.pop(0)
-                if action["type"] == "toggle_sugar":
-                    #print toggling sugar for plant with id
-                    print(f"Plant ID: {game_state.biomes[action['biomeIndex']].plants[action['plantIndex']].id}")
-                    #print the is_sugar_production_on for the plant before toggling
-                    print(f"Is sugar production on before toggling: {game_state.biomes[action['biomeIndex']].plants[action['plantIndex']].is_sugar_production_on}")
-                    #print the game state before toggling
-                    print(f"Game state before toggling: {game_state}")
-                    plant = game_state.biomes[action["biomeIndex"]].plants[action["plantIndex"]]
-                    plant.toggle_sugar_production()
-                    #print the game state after toggling
-                    print(f"Game state after toggling: {game_state}")
-                    #print the is_sugar_production_on for the plant after toggling
-                    print(f"Is sugar production on after toggling: {game_state.biomes[action['biomeIndex']].plants[action['plantIndex']].is_sugar_production_on}")
-                    save_game_state_to_db(user_id, game_state.to_dict())
+                dispatch_action(action, game_state)
+                save_game_state_to_db(user_id, game_state.to_dict())
 
-            # Update and save game state
             game_state.update()
+
+            print(f"Game state to be saved to DB: {game_state.to_dict()}")
             save_game_state_to_db(user_id, game_state.to_dict())
 
             # Emit updated game state to client
             socketio.emit('game_state', game_state.to_dict())
+            log_with_timestamp("Background task iteration end")
             sleep(1)
 
 
@@ -117,7 +113,10 @@ def initialize_new_game_state():
     initial_plants = [plant1]
     initial_biomes = [biome1]
     initial_upgrades = [upgrade1]
-    initial_genetic_markers = 0
+    initial_genetic_markers = 5
+
+    #print initializing game state
+    print("Initializing Game State")
 
     return GameState(initial_plants, initial_biomes, initial_upgrades, initial_genetic_markers)
 
@@ -155,3 +154,102 @@ def toggle_sugar():
     user_actions_queue.append(action)
 
     return jsonify({"status": "Sugar toggle action queued"})
+
+#Absorb Resource Route and Function
+@game_state_bp.route('/absorb_resource', methods=['POST'])
+@login_required
+def absorb_resource():
+    #print the attempted action
+    print("Absorb Resource")
+    user_id = current_user.id
+    biomeIndex = request.json.get('biomeIndex')
+    plantIndex = request.json.get('plantIndex')
+    resourceType = request.json.get('resourceType')
+    amount = request.json.get('amount')
+
+    action = {
+        "type": "absorb_resource",
+        "biomeIndex": biomeIndex,
+        "plantIndex": plantIndex,
+        "resourceType": resourceType,
+        "amount": amount
+    }
+
+    user_actions_queue.append(action)
+
+    return jsonify({"status": "Absorb resource action queued"})
+
+#Buy Plant Part Route and Function
+@game_state_bp.route('/buy_plant_part', methods=['POST'])
+@login_required
+def buy_plant_part():
+    #print the attempted action
+    print("Buy Plant Part")
+    user_id = current_user.id
+    biomeIndex = request.json.get('biomeIndex')
+    plantIndex = request.json.get('plantIndex')
+    partType = request.json.get('partType')
+    cost = request.json.get('cost')
+
+    action = {
+        "type": "buy_plant_part",
+        "biomeIndex": biomeIndex,
+        "plantIndex": plantIndex,
+        "partType": partType,
+        "cost": cost
+    }
+
+    user_actions_queue.append(action)
+
+    return jsonify({"status": "Buy plant part action queued"})
+
+#Toggle Genetic Marker Route and Function
+@game_state_bp.route('/toggle_genetic_marker', methods=['POST'])
+@login_required
+def toggle_genetic_marker():
+    #print the attempted action
+    print("Toggle Genetic Marker")
+    user_id = current_user.id
+    biomeIndex = request.json.get('biomeIndex')
+    plantIndex = request.json.get('plantIndex')
+    isChecked = request.json.get('isChecked')
+
+    action = {
+        "type": "toggle_genetic_marker",
+        "biomeIndex": biomeIndex,
+        "plantIndex": plantIndex,
+        "isChecked": isChecked
+    }
+
+    user_actions_queue.append(action)
+
+    return jsonify({"status": "Toggle genetic marker action queued"})
+
+@game_state_bp.route('/purchase_seed', methods=['POST'])
+@login_required
+def purchase_seed():
+    print("Purchase Seed Route Called")  # Debug print
+    user_id = current_user.id
+    action = {
+        "type": "purchase_seed",
+        "biomeIndex": request.json.get('biomeIndex'),
+        "plantIndex": request.json.get('plantIndex'),
+        "cost": request.json.get('cost')
+    }
+    print(f"Action to be queued: {action}")  # Debug print
+    user_actions_queue.append(action)
+    return jsonify({"status": "Purchase seed action queued"})
+
+
+
+@game_state_bp.route('/plant_seed_in_biome', methods=['POST'])
+@login_required
+def plant_seed_in_biome():
+    user_id = current_user.id
+    action = {
+        "type": "plant_seed_in_biome",
+        "biome_name": request.json.get('biome_name'),
+        "genetic_marker_cost": request.json.get('genetic_marker_cost')
+    }
+    user_actions_queue.append(action)
+    return jsonify({"status": "Plant seed in biome action queued"})

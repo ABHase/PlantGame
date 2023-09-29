@@ -6,11 +6,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="{{ url_for('static', filename='plant.js') }}"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <style>
+        /* Optional: Add this CSS for the progress bar */
+        #progress-bar-container {
+            width: 100%;
+            background-color: #ccc;
+        }
+
+        #progress-bar {
+            width: 0;
+            height: 30px;
+            background-color: #4CAF50;
+        }
+    </style>
 </head>
 <body>
+    <div id="genetic-marker-info">
+        <h2>Genetic Markers</h2>
+        <p>Genetic Markers: <span id="genetic-markers"></span></p>
+        <p>Progress: <span id="genetic-marker-progress"></span>/<span id="genetic-marker-threshold"></span></p>
+        <!-- Optional: Progress bar -->
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
     <div id="biome-container">
         <!-- Biomes and plants will be dynamically added here -->
     </div>
-      
 </body>
 </html>

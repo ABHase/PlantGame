@@ -27,5 +27,8 @@ class Biome:
         self.plants.remove(plant)
 
     def update(self):
+        results = []
         for plant in self.plants:
-            plant.update()
+            can_produce, amount = plant.update()
+            results.append((can_produce, amount))
+        return results
