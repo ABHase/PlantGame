@@ -16,12 +16,13 @@ GameState Class (game_state.py)
 from constants import INITIAL_GENETIC_MARKER_THRESHOLD
 from plants.plant import Plant
 from biomes.biome import Biome
+from plant_time import PlantTime
 from game_resource import GameResource
 from upgrades.upgrade import Upgrade
 
 
 class GameState:
-    def __init__(self, plants, biomes, upgrades, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
+    def __init__(self, plants, biomes, upgrades, time, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
         self.plants = plants
         self.biomes = biomes
         self.upgrades = upgrades
@@ -29,12 +30,12 @@ class GameState:
         self.genetic_marker_progress = genetic_marker_progress
         self.genetic_marker_threshold = genetic_marker_threshold
         self.seeds = seeds
+        self.plant_time = time
 
 
     def update(self):
-        #Print Seeds and Genetic Markers before update
-        print(f"Game State Seeds before update: {self.seeds}")
-        print(f"Game State Genetic Markers before update: {self.genetic_markers}")
+        self.plant_time.update()
+
         for biome in self.biomes:
             results = biome.update()
             for can_produce, amount in results:
@@ -51,10 +52,6 @@ class GameState:
             }
             if upgrade.type in upgrade_conditions and upgrade_conditions[upgrade.type]:
                 upgrade.unlock()
-        #Print Seeds and Genetic Markers after update
-        print(f"Game State Seeds after update: {self.seeds}")
-        print(f"Game State Genetic Markers after update: {self.genetic_markers}")
-
 
     def update_genetic_marker_progress(self, amount):
         self.genetic_marker_progress += amount
@@ -162,6 +159,13 @@ class GameState:
                 }
                 for upgrade in self.upgrades
             ],
+            'plant_time': {
+            'year': self.plant_time.year,
+            'season': self.plant_time.season,
+            'day': self.plant_time.day,
+            'hour': self.plant_time.hour,
+            'update_counter': self.plant_time.update_counter
+            },
             'seeds': self.seeds,  
             'genetic_markers': self.genetic_markers,
             'genetic_marker_progress': self.genetic_marker_progress,
@@ -200,11 +204,20 @@ class GameState:
             biomes.append(biome)
 
         upgrades = [Upgrade(upgrade_data['name'], upgrade_data['cost'], upgrade_data['type'], upgrade_data['unlocked']) for upgrade_data in data['upgrades']]
-        
+
+        plant_time_data = data.get('plant_time', {})
+        plant_time = PlantTime()
+        plant_time.year = plant_time_data.get('year', 1)
+        plant_time.season = plant_time_data.get('season', 'Spring')
+        plant_time.day = plant_time_data.get('day', 1)
+        plant_time.hour = plant_time_data.get('hour', 0)
+        plant_time.update_counter = plant_time_data.get('update_counter', 0)
+
         return cls(
             [],  # Plants will be populated through biomes
             biomes,
             upgrades,
+            plant_time,
             data.get('genetic_markers', 0),  # Corrected this line
             data.get('seeds', 0),  # Corrected this line
             data.get('genetic_marker_progress', 0),  # Include the missing field

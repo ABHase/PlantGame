@@ -13,6 +13,7 @@ from user_auth.user_auth import fetch_game_state_from_db, save_game_state_to_db
 from action_dispatcher import dispatch_action
 #import log with timestamp function
 from user_auth.user_auth import log_with_timestamp
+from plant_time.plant_time import PlantTime
 
 game_state_bp = Blueprint('game_state', __name__)
 running_tasks = {}
@@ -110,15 +111,19 @@ def initialize_new_game_state():
     # Initialize a sample upgrade
     upgrade1 = Upgrade('Desert', 5, 'biome')
 
+    # Initialize time object
+    initial_time = PlantTime(year=1, season='Spring', day=1, hour=0, update_counter=0)
+
     initial_plants = [plant1]
     initial_biomes = [biome1]
     initial_upgrades = [upgrade1]
     initial_genetic_markers = 5
 
-    #print initializing game state
+    # Print initializing game state
     print("Initializing Game State")
 
-    return GameState(initial_plants, initial_biomes, initial_upgrades, initial_genetic_markers)
+    return GameState(initial_plants, initial_biomes, initial_upgrades, initial_time, initial_genetic_markers)
+
 
 @game_state_bp.route('/buy_root', methods=['POST'])
 @login_required
