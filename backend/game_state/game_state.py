@@ -37,8 +37,8 @@ class GameState:
         self.plant_time.update()
 
         for biome in self.biomes:
-            results = biome.update()
-            for can_produce, amount in results:
+            results = biome.update(self.plant_time.is_day)
+            for can_produce, amount in results:  # Add water_absorbed here
                 if can_produce:
                     self.update_genetic_marker_progress(amount)
 
@@ -136,6 +136,7 @@ class GameState:
                     'name': biome.name,
                     'capacity': biome.capacity,
                     'resource_modifiers': biome.resource_modifiers,
+                    'ground_water_level': biome.ground_water_level,  # Include the missing field
                     'plants': [
                         {
                             'id': plant.id,
@@ -164,7 +165,8 @@ class GameState:
             'season': self.plant_time.season,
             'day': self.plant_time.day,
             'hour': self.plant_time.hour,
-            'update_counter': self.plant_time.update_counter
+            'update_counter': self.plant_time.update_counter,
+            'is_day': self.plant_time.is_day
             },
             'seeds': self.seeds,  
             'genetic_markers': self.genetic_markers,
@@ -196,7 +198,8 @@ class GameState:
             biome = Biome(
                 biome_data['name'],
                 biome_data['capacity'],
-                biome_data['resource_modifiers']
+                biome_data['resource_modifiers'],
+                biome_data['ground_water_level']  # Include the missing field
             )
             for plant in plants:
                 plant.biome = biome
@@ -212,6 +215,7 @@ class GameState:
         plant_time.day = plant_time_data.get('day', 1)
         plant_time.hour = plant_time_data.get('hour', 0)
         plant_time.update_counter = plant_time_data.get('update_counter', 0)
+        plant_time.is_day = plant_time_data.get('is_day', True)
 
         return cls(
             [],  # Plants will be populated through biomes

@@ -43,7 +43,25 @@ function formatNumber(num) {
 // Function to update the UI based on the game state
 function updateUI(gameState) {
     console.log("Updating UI with gameState:", gameState);
+    
+    // Determine if it's day or night
+    const isDay = gameState.plant_time.is_day;
+
+    // Update time information
+    const yearSpan = document.getElementById('year');
+    const seasonSpan = document.getElementById('season');
+    const daySpan = document.getElementById('day');
+    const hourSpan = document.getElementById('hour');
+    const timeOfDaySpan = document.getElementById('time-of-day');
+    
+    yearSpan.textContent = gameState.plant_time.year;
+    seasonSpan.textContent = gameState.plant_time.season;
+    daySpan.textContent = gameState.plant_time.day;
+    hourSpan.textContent = gameState.plant_time.hour;
+    timeOfDaySpan.textContent = gameState.plant_time.is_day ? 'Day' : 'Night';
+    
     // Update genetic marker information
+
     const geneticMarkersSpan = document.getElementById('genetic-markers');
     const geneticMarkerProgressSpan = document.getElementById('genetic-marker-progress');
     const geneticMarkerThresholdSpan = document.getElementById('genetic-marker-threshold');
@@ -90,7 +108,7 @@ function updateUI(gameState) {
     gameState.biomes.forEach((biome, biomeIndex) => {
         const biomeDiv = document.createElement('div');
         biomeDiv.className = 'biome';
-        biomeDiv.innerHTML = `<h2 id="biome-header-${biomeIndex}">${biome.name} (${biome.plants.length}/${biome.capacity})</h2>
+        biomeDiv.innerHTML = `<h2 id="biome-header-${biomeIndex}">${biome.name} (${biome.plants.length}/${biome.capacity}) - Ground Water: ${biome.ground_water_level}</h2>
         <button onclick="plantSeedInBiome('${biome.name.replace(/'/g, "\\'")}', 1)">Plant Seed in Biome</button>`;
 
         
@@ -108,6 +126,16 @@ function updateUI(gameState) {
 
             const checkboxId = `sugar-toggle-${biomeIndex}-${plantIndex}`;
             const geneticMarkerCheckboxId = `genetic-marker-toggle-${biomeIndex}-${plantIndex}`;
+            
+            // Disable the button if it's night for absorb sunlight
+            const absorbSunlightButtonHTML = isDay ? 
+            `<button onclick="absorbResource(${biomeIndex}, ${plantIndex}, 'sunlight', 10)">Absorb</button>` : 
+            `<button disabled>It's night...</button>`;
+
+            // Disable the button if ground_water_level is less than 10
+            const absorbWaterButtonHTML = biome.ground_water_level >= 10 ? 
+            `<button onclick="absorbResource(${biomeIndex}, ${plantIndex}, 'water', 10)">Absorb</button>` : 
+            `<button disabled>No water...</button>`;
 
             // Restore the checkbox state or use the state from the game state
             const isChecked = oldState.hasOwnProperty(checkboxId) ? oldState[checkboxId] : plant.is_sugar_production_on;
@@ -116,12 +144,12 @@ function updateUI(gameState) {
                 plantDiv.innerHTML = `
                 <table style="border-collapse: collapse;">
                     <tr style="border: 1px solid black;">
-                    <td><button onclick="absorbResource(${biomeIndex}, ${plantIndex}, 'sunlight', 10)">Absorb</button></td>
+                    <td>${absorbSunlightButtonHTML}</td>
                     <td>Sunlight:</td>
                     <td><span id="sunlight-${biomeIndex}-${plantIndex}">${formatNumber(plant.resources.sunlight)}</span></td>
                     </tr>
                     <tr style="border: 1px solid black;">
-                    <td><button onclick="absorbResource(${biomeIndex}, ${plantIndex}, 'water', 10)">Absorb</button></td>
+                    <td>${absorbWaterButtonHTML}</td>
                     <td>Water:</td>
                     <td><span id="water-${biomeIndex}-${plantIndex}">${formatNumber(plant.resources.water)}</span></td>
                     </tr>

@@ -112,7 +112,7 @@ def initialize_new_game_state():
     upgrade1 = Upgrade('Desert', 5, 'biome')
 
     # Initialize time object
-    initial_time = PlantTime(year=1, season='Spring', day=1, hour=0, update_counter=0)
+    initial_time = PlantTime(year=1, season='Spring', day=1, hour=6, update_counter=0)
 
     initial_plants = [plant1]
     initial_biomes = [biome1]

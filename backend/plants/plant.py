@@ -95,9 +95,10 @@ class Plant:
         return False
 
 
-    def update(self):
+    def update(self, is_day, ground_water_level):
         can_produce = False
         amount = 0
+        water_absorbed = 0  # Initialize water_absorbed
 
         self.maturity_level = int(math.sqrt(self.plant_parts['roots'].amount + self.plant_parts['leaves'].amount))
 
@@ -106,11 +107,15 @@ class Plant:
 
         # For each root absorb 1 water per second
         for root in range(self.plant_parts['roots'].amount):
-            self.resources['water'].add_amount(1)
+            if ground_water_level > 0:  # Check if there's enough water in the ground
+                self.resources['water'].add_amount(1)
+                water_absorbed += 1  # Increment water_absorbed
+                ground_water_level -= 1  # Decrement ground_water_level
 
         # For each leaf absorb 1 sunlight per second
-        for leaf in range(self.plant_parts['leaves'].amount):
-            self.resources['sunlight'].add_amount(1)
+        if is_day:
+            for leaf in range(self.plant_parts['leaves'].amount):
+                self.resources['sunlight'].add_amount(1)
 
         if self.plant_parts['roots'].amount > 10 and self.plant_parts['leaves'].amount > 10:
             self.maturity_level = 1
@@ -118,5 +123,4 @@ class Plant:
         if self.is_genetic_marker_production_on:
             can_produce, amount = self.produce_genetic_markers()
 
-        return can_produce, amount  # Always return a tuple
-
+        return can_produce, amount, water_absorbed  # Return three values
