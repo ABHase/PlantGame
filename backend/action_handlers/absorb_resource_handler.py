@@ -6,9 +6,14 @@ def handle_absorb_resource(action, game_state):
     resourceType = action.get('resourceType')  # 'water' or 'sunlight'
     amount = action.get('amount')  # Amount to absorb
 
-    plant = game_state.biomes[biomeIndex].plants[plantIndex]
-    plant.absorb_resource(resourceType, amount)
+    biome = game_state.biomes[biomeIndex]
+    plant = biome.plants[plantIndex]
 
-    # If the resource being absorbed is water, update the biome's ground_water_level
     if resourceType == 'water':
-        game_state.biomes[biomeIndex].decrease_ground_water_level(amount)
+        if biome.has_enough_ground_water(amount):
+            plant.absorb_resource(resourceType, amount)
+            biome.decrease_ground_water_level(amount)
+        else:
+            print("Not enough water in the biome to absorb.")
+    else:
+        plant.absorb_resource(resourceType, amount)

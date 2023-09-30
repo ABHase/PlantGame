@@ -117,9 +117,6 @@ class Plant:
             for leaf in range(self.plant_parts['leaves'].amount):
                 self.resources['sunlight'].add_amount(1)
 
-        if self.plant_parts['roots'].amount > 10 and self.plant_parts['leaves'].amount > 10:
-            self.maturity_level = 1
-
         if self.is_genetic_marker_production_on:
             can_produce, amount = self.produce_genetic_markers()
 

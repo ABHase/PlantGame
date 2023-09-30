@@ -108,7 +108,7 @@ function updateUI(gameState) {
     gameState.biomes.forEach((biome, biomeIndex) => {
         const biomeDiv = document.createElement('div');
         biomeDiv.className = 'biome';
-        biomeDiv.innerHTML = `<h2 id="biome-header-${biomeIndex}">${biome.name} (${biome.plants.length}/${biome.capacity}) - Ground Water: ${biome.ground_water_level}</h2>
+        biomeDiv.innerHTML = `<h2 id="biome-header-${biomeIndex}">${biome.name} (${biome.plants.length}/${biome.capacity}) - Ground Water: ${biome.ground_water_level} - Snow Pack: ${biome.snowpack}</h2>
         <button onclick="plantSeedInBiome('${biome.name.replace(/'/g, "\\'")}', 1)">Plant Seed in Biome</button>`;
 
         

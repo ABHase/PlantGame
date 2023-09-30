@@ -50,8 +50,6 @@ def background_task(app, user_id):
             sleep(1)
 
 
-
-
 @game_state_bp.route('/init_game', methods=['POST'])
 def init_game():
     user_id = current_user.id if current_user.is_authenticated else None
@@ -102,11 +100,12 @@ def initialize_new_game_state():
         'sugar': GameResource('sugar', 0),
     }
     initial_plant_parts = {'roots': GameResource('roots', 1), 'leaves': GameResource('leaves', 1)}
-    plant1 = Plant(initial_resources, initial_plant_parts, 'Beginner\'s Garden', 0, 25, 1)
+    plant1 = Plant(initial_resources, initial_plant_parts, None, 0, 25, 1)  # Biome will be set later
 
     # Initialize a sample biome
-    biome1 = Biome('Beginner\'s Garden', 3, {'sunlight': 1, 'water': 1})
+    biome1 = Biome('Beginner\'s Garden',ground_water_level=100,current_weather="Sunny")  # Attributes will be fetched from BIOMES dictionary
     biome1.add_plant(plant1)
+    plant1.biome = biome1  # Set the biome for the plant
 
     # Initialize a sample upgrade
     upgrade1 = Upgrade('Desert', 5, 'biome')
@@ -123,6 +122,7 @@ def initialize_new_game_state():
     print("Initializing Game State")
 
     return GameState(initial_plants, initial_biomes, initial_upgrades, initial_time, initial_genetic_markers)
+
 
 
 @game_state_bp.route('/buy_root', methods=['POST'])

@@ -34,11 +34,11 @@ class GameState:
 
 
     def update(self):
-        self.plant_time.update()
+        new_day = self.plant_time.update()  # Assuming update() returns True if a new day has started
 
         for biome in self.biomes:
-            results = biome.update(self.plant_time.is_day)
-            for can_produce, amount in results:  # Add water_absorbed here
+            results = biome.update(self.plant_time.is_day, new_day,self.plant_time.season)
+            for can_produce, amount in results:
                 if can_produce:
                     self.update_genetic_marker_progress(amount)
 
@@ -137,6 +137,8 @@ class GameState:
                     'capacity': biome.capacity,
                     'resource_modifiers': biome.resource_modifiers,
                     'ground_water_level': biome.ground_water_level,  # Include the missing field
+                    'current_weather': biome.current_weather,  # Include the missing field
+                    'snowpack': biome.snowpack,  # Include the missing field
                     'plants': [
                         {
                             'id': plant.id,
@@ -195,12 +197,8 @@ class GameState:
                 plant.is_genetic_marker_production_on = plant_data['is_genetic_marker_production_on']
                 plants.append(plant)
             
-            biome = Biome(
-                biome_data['name'],
-                biome_data['capacity'],
-                biome_data['resource_modifiers'],
-                biome_data['ground_water_level']  # Include the missing field
-            )
+                biome = Biome(biome_data['name'], biome_data['ground_water_level'], biome_data['current_weather'], biome_data['snowpack'])
+
             for plant in plants:
                 plant.biome = biome
                 biome.add_plant(plant)

@@ -8,6 +8,7 @@ class PlantTime:
         self.is_day = self.calculate_is_day()
 
     def update(self):
+        new_day = False  # Initialize the flag
         self.update_counter += 1
         if self.update_counter >= 10:
             self.hour += 1
@@ -17,6 +18,7 @@ class PlantTime:
         if self.hour >= 24:
             self.day += 1
             self.hour = 0
+            new_day = True  # Set the flag to True when a new day starts
 
         if self.day > 30:
             self.day = 1
@@ -24,6 +26,8 @@ class PlantTime:
 
         if self.season == 'Winter' and self.day == 30:
             self.year += 1
+
+        return new_day  # Return the flag
 
     def change_season(self):
         seasons = ['Spring', 'Summer', 'Autumn', 'Winter']
