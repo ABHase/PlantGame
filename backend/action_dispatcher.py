@@ -6,6 +6,7 @@ from action_handlers.absorb_resource_handler import handle_absorb_resource
 from action_handlers.toggle_genetic_marker_handler import handle_toggle_genetic_marker
 from action_handlers.purchase_seed_handler import handle_purchase_seed
 from action_handlers.plant_seed_in_biome_handler import handle_plant_seed_in_biome
+from action_handlers.unlock_upgrade_handler import handle_unlock_upgrade
 
 action_handlers = {
     "toggle_sugar": handle_toggle_sugar,
@@ -13,7 +14,8 @@ action_handlers = {
     "absorb_resource": handle_absorb_resource,
     "toggle_genetic_marker": handle_toggle_genetic_marker,
     "purchase_seed": handle_purchase_seed,
-    "plant_seed_in_biome": handle_plant_seed_in_biome
+    "plant_seed_in_biome": handle_plant_seed_in_biome,
+    "unlock_upgrade": handle_unlock_upgrade
 }
 
 

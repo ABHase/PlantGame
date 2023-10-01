@@ -6,14 +6,19 @@ from biomes.biome import Biome
 from plants.plant import Plant
 from game_resource import GameResource
 from upgrades.upgrade import Upgrade
+from upgrades.upgrades_config import UPGRADES
 from game_state import GameState  # Import GameState
 from socket_config import socketio
 from flask_login import current_user, login_required
-from user_auth.user_auth import fetch_game_state_from_db, save_game_state_to_db
+from user_auth.user_auth import fetch_game_state_from_db, save_game_state_to_db, fetch_upgrades_from_db, save_upgrades_to_db, fetch_upgrade_by_index
+from user_auth.models import UpgradeModel
 from action_dispatcher import dispatch_action
 #import log with timestamp function
 from user_auth.user_auth import log_with_timestamp
 from plant_time.plant_time import PlantTime
+import logging
+
+logging.basicConfig(filename='app.log',level=logging.INFO)
 
 
 game_state_bp = Blueprint('game_state', __name__)
@@ -25,9 +30,17 @@ def background_task(app, user_id):
     with app.app_context():
         while True:
             game_state_dict = fetch_game_state_from_db(user_id)
+            upgrades_list = fetch_upgrades_from_db(user_id)
+            
+            # Check if upgrades_list is empty or None, and initialize if needed
+            if upgrades_list is None or len(upgrades_list) == 0:
+                print(f"Upgrades list is empty for user {user_id}. Initializing new upgrades list.")
+                upgrades_list = initialize_new_upgrades(user_id)
+
             #print(f"Game state after fetch: {game_state_dict}")
             if game_state_dict is not None:
                 game_state = GameState.from_dict(game_state_dict)
+                game_state.on("unlock_upgrade", game_state.handle_unlock_upgrade)
             else:
                 game_state = initialize_new_game_state()
 
@@ -36,13 +49,17 @@ def background_task(app, user_id):
                 action = user_actions_queue.pop(0)
                 dispatch_action(action, game_state)
                 save_game_state_to_db(user_id, game_state.to_dict())
+                save_upgrades_to_db(user_id, upgrades_list)
 
             game_state.update()
             save_game_state_to_db(user_id, game_state.to_dict())
+            save_upgrades_to_db(user_id, upgrades_list)
 
             # Emit updated game state to client
             socketio.emit('game_state', game_state.to_dict())
+            socketio.emit('upgrades_list', [upgrade.to_dict() for upgrade in upgrades_list]) 
             sleep(1)
+
 
 def initialize_new_game_state():
     # Initialize a sample plant
@@ -65,21 +82,36 @@ def initialize_new_game_state():
     biome1.add_plant(plant1)
     plant1.biome = biome1  # Set the biome for the plant
 
-    # Initialize a sample upgrade
-    upgrade1 = Upgrade('Desert', 5, 'biome')
-
     # Initialize time object
     initial_time = PlantTime(year=1, season='Spring', day=1, hour=6, update_counter=0)
 
     initial_plants = [plant1]
     initial_biomes = [biome1]
-    initial_upgrades = [upgrade1]
     initial_genetic_markers = 5
 
     # Print initializing game state
     print("Initializing Game State")
+    game_state = GameState(initial_plants, initial_biomes, initial_time, initial_genetic_markers)
+    game_state.on("unlock_upgrade", game_state.handle_unlock_upgrade)
 
-    return GameState(initial_plants, initial_biomes, initial_upgrades, initial_time, initial_genetic_markers)
+    return game_state
+
+def initialize_new_upgrades(user_id):
+    logging.info(f"Inside initialize_new_upgrades for user {user_id}")
+    new_upgrades = []
+    for upgrade in UPGRADES:
+        new_upgrade = UpgradeModel(
+            user_id=user_id,
+            name=upgrade['name'],
+            cost=upgrade['cost'],
+            type=upgrade['type'],
+            unlocked=upgrade['unlocked'],
+            effect=upgrade['effect']
+        )
+        print(f"New upgrade: {new_upgrade}")
+        new_upgrades.append(new_upgrade)
+    return new_upgrades
+
 
 @game_state_bp.route('/init_game', methods=['POST'])
 def init_game():
@@ -242,3 +274,23 @@ def plant_seed_in_biome():
     }
     user_actions_queue.append(action)
     return jsonify({"status": "Plant seed in biome action queued"})
+
+@game_state_bp.route('/unlock_upgrade', methods=['POST'])
+@login_required
+def unlock_upgrade():
+    user_id = current_user.id
+    index = request.json.get('index')
+    cost = request.json.get('cost')
+    upgrade = fetch_upgrade_by_index(user_id, index)  # Fetch the upgrade here
+
+    action = {
+        "type": "unlock_upgrade",
+        "index": index,
+        "cost": cost,
+        "user_id": user_id,  # Add this line
+        "upgrade": upgrade.to_dict()
+    }
+
+    user_actions_queue.append(action)
+    return jsonify({"status": "Unlock upgrade action queued"})
+

@@ -1,4 +1,5 @@
 let socket;
+let gameState = {};  // Define gameState as a global variable
 
 // Initialize the game when the page loads
 window.onload = function() {
@@ -17,7 +18,14 @@ window.onload = function() {
     // Listen for game_state updates from the server
     socket.on('game_state', function(data) {
         // Update your client-side game state here
+        gameState = data;  // Update the global gameState variable
         updateUI(data);
+    });
+
+    // Listen for upgrades_list updates from the server
+    socket.on('upgrades_list', function(data) {
+        // Update your client-side upgrades list here
+        updateUpgradesUI(data, gameState);
     });
 
     // Save game state when the user is about to leave the page
@@ -336,6 +344,40 @@ function purchaseSeed(biomeIndex, plantIndex, cost) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ biomeIndex, plantIndex, cost })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    });
+}
+
+function updateUpgradesUI(upgradesList) {
+    const upgradesContainer = document.getElementById('upgrades-container');
+    upgradesContainer.innerHTML = '';  // Clear existing upgrades
+
+    const table = document.createElement('table');
+    upgradesList.forEach((upgrade, index) => {
+        const row = table.insertRow();
+        const cell1 = row.insertCell(0);
+
+        const isUnlocked = upgrade.unlocked ? 'Unlocked' : 'Locked';
+        const canUnlock = !upgrade.unlocked && gameState.genetic_markers >= upgrade.cost;
+
+        cell1.innerHTML = `${upgrade.name} (${isUnlocked}) <br>` + 
+                          (canUnlock ? `<button onclick="unlockUpgrade(${index})">Unlock (${upgrade.cost} GM)</button>` : '');
+    });
+
+    upgradesContainer.appendChild(table);
+}
+
+
+function unlockUpgrade(index) {
+    fetch('/game_state/unlock_upgrade', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ index })
     })
     .then(response => response.json())
     .then(data => {

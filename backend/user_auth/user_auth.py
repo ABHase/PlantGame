@@ -1,5 +1,5 @@
 from app import db  # Replace 'your_app' with the name of your main app package
-from .models import User  # Replace 'your_app' with the name of your main app package
+from .models import User, UpgradeModel  # Replace 'your_app' with the name of your main app package
 from flask import json
 from datetime import datetime
 
@@ -24,3 +24,17 @@ def save_game_state_to_db(user_id, game_state):
         user.game_state = json.dumps(game_state)
         db.session.commit()
         #log_with_timestamp("Game state after saving: {}".format(game_state))
+
+def fetch_upgrades_from_db(user_id):
+    return UpgradeModel.query.filter_by(user_id=user_id).all()
+
+def save_upgrades_to_db(user_id, upgrades_list):
+    for upgrade in upgrades_list:
+        db.session.merge(upgrade)
+    db.session.commit()
+
+def fetch_upgrade_by_index(user_id, index):
+    upgrades = UpgradeModel.query.filter_by(user_id=user_id).all()
+    if index < len(upgrades):
+        return upgrades[index]
+    return None

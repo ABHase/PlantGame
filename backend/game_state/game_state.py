@@ -4,28 +4,25 @@ GameState Class (game_state.py)
     Attributes:
         plants: A list of all Plant objects.
         biomes: A list of all Biome objects.
-        upgrades: A list of all Upgrade objects.
         genetic_markers: Total genetic markers.
 
     Methods:
         add_plant_to_biome(plant, biome): Add a plant to a biome.
-        unlock_upgrade(upgrade): Unlock an upgrade.
-        purchase_upgrade(upgrade): Purchase an upgrade.
         update(): Update the game state (called in the main game loop).
 """ 
 from constants import INITIAL_GENETIC_MARKER_THRESHOLD
 from plants.plant import Plant
 from biomes.biome import Biome
+from biomes.biomes_config import BIOMES
 from plant_time import PlantTime
 from game_resource import GameResource
-from upgrades.upgrade import Upgrade
+from events.event_emitter import EventEmitter
 
-
-class GameState:
-    def __init__(self, plants, biomes, upgrades, time, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
+class GameState(EventEmitter):
+    def __init__(self, plants, biomes, time, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
+        super().__init__()
         self.plants = plants
         self.biomes = biomes
-        self.upgrades = upgrades
         self.genetic_markers = genetic_markers
         self.genetic_marker_progress = genetic_marker_progress
         self.genetic_marker_threshold = genetic_marker_threshold
@@ -42,16 +39,20 @@ class GameState:
                 if can_produce:
                     self.update_genetic_marker_progress(amount)
 
-        for upgrade in self.upgrades:
-            upgrade_conditions = {
-                'biome': len(self.biomes) >= 2,
-                'plant part': len(self.plants) >= 2,  # You might want to update this condition too
-                'genetic marker production rate': len(self.plants) >= 2,  # And this one
-                'sugar production rate': len(self.plants) >= 2,  # And this one
-                'plant capacity': len(self.biomes) >= 2
-            }
-            if upgrade.type in upgrade_conditions and upgrade_conditions[upgrade.type]:
-                upgrade.unlock()
+    def handle_unlock_upgrade(self, upgrade):
+        if upgrade.type == "biome":
+            biome_name = upgrade.effect  # Fetch the name from the effect field
+            biome_config = BIOMES.get(biome_name)
+            if biome_config:
+                new_biome = Biome(
+                    name=biome_name,
+                    ground_water_level=biome_config['ground_water_level'],
+                    current_weather=biome_config['current_weather']
+                    # ... any other attributes ...
+                )
+                self.biomes.append(new_biome)
+
+
 
     def update_genetic_marker_progress(self, amount):
         self.genetic_marker_progress += amount
@@ -109,7 +110,12 @@ class GameState:
                 'water': GameResource('water', 0),
                 'sugar': GameResource('sugar', 0),
             }
-            initial_plant_parts = {'roots': GameResource('roots', 1), 'leaves': GameResource('leaves', 1)}
+            initial_plant_parts = {
+            'roots': GameResource('roots', 2),
+            'leaves': GameResource('leaves', 1),
+            'vacuoles': GameResource('vacuoles', 1),  # Initialize with 1 vacuole
+            'resin': GameResource('resin', 0),  # Initialize with 0 resin
+            }
             new_plant = Plant(initial_resources, initial_plant_parts, target_biome, 0, 25, 1)
             
             # Debug: Print the new plant details
@@ -132,7 +138,6 @@ class GameState:
     def to_dict(self):
         return {
             'biomes': self.biomes_to_dict(),
-            'upgrades': self.upgrades_to_dict(),
             'plant_time': self.plant_time_to_dict(),
             'seeds': self.seeds,
             'genetic_markers': self.genetic_markers,
@@ -169,17 +174,6 @@ class GameState:
             for plant in biome.plants
         ]
 
-    def upgrades_to_dict(self):
-        return [
-            {
-                'name': upgrade.name,
-                'cost': upgrade.cost,
-                'type': upgrade.type,
-                'unlocked': upgrade.unlocked,
-            }
-            for upgrade in self.upgrades
-        ]
-
     def plant_time_to_dict(self):
         return {
             'year': self.plant_time.year,
@@ -193,12 +187,10 @@ class GameState:
     @classmethod
     def from_dict(cls, data):
         biomes = cls.biomes_from_dict(data['biomes'])
-        upgrades = cls.upgrades_from_dict(data['upgrades'])
         plant_time = cls.plant_time_from_dict(data.get('plant_time', {}))
         return cls(
             [],
             biomes,
-            upgrades,
             plant_time,
             data.get('genetic_markers', 0),
             data.get('seeds', 0),
@@ -238,10 +230,6 @@ class GameState:
             )
             plants.append(plant)
         return plants
-
-    @classmethod
-    def upgrades_from_dict(cls, upgrades_data):
-        return [Upgrade(upgrade_data['name'], upgrade_data['cost'], upgrade_data['type'], upgrade_data['unlocked']) for upgrade_data in upgrades_data]
 
     @classmethod
     def plant_time_from_dict(cls, plant_time_data):

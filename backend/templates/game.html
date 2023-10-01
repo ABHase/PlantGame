@@ -73,58 +73,63 @@
 
     </style>
 </head>
+
 <body>
-    <div class="clearfix">
-    <div id="time-info">
-        <h2>Time</h2>
-        <table id="time-table">
-            <tr>
-                <td>Year:</td>
-                <td><span id="year"></span></td>
-            </tr>
-            <tr>
-                <td>Season:</td>
-                <td><span id="season"></span></td>
-            </tr>
-            <tr>
-                <td>Day:</td>
-                <td><span id="day"></span></td>
-            </tr>
-            <tr>
-                <td>Hour:</td>
-                <td><span id="hour"></span></td>
-            </tr>
-            <tr>
-                <td>Phase:</td>
-                <td><span id="time-of-day"></span></td>
-            </tr>
-        </table>
-    </div>    
+    <div class="header-section">
+        <div id="time-info">
+            <h2>Time</h2>
+            <table id="time-table">
+                <tr>
+                    <td>Year:</td>
+                    <td><span id="year"></span></td>
+                </tr>
+                <tr>
+                    <td>Season:</td>
+                    <td><span id="season"></span></td>
+                </tr>
+                <tr>
+                    <td>Day:</td>
+                    <td><span id="day"></span></td>
+                </tr>
+                <tr>
+                    <td>Hour:</td>
+                    <td><span id="hour"></span></td>
+                </tr>
+                <tr>
+                    <td>Phase:</td>
+                    <td><span id="time-of-day"></span></td>
+                </tr>
+            </table>
+        </div>    
     
-    <div id="genetic-marker-info">
-        <h2>GenoVault</h2>
-        <table id="genetic-marker-table">
-            <tr>
-                <td>Seeds:</td>
-                <td><span id="seeds"></span></td>
-            </tr>
-            <tr>
-                <td>Genetic Markers:</td>
-                <td><span id="genetic-markers"></span></td>
-            </tr>
-            <tr>
-                <td>Progress:</td>
-                <td><span id="genetic-marker-progress"></span>/<span id="genetic-marker-threshold"></span></td>
-            </tr>
-        </table>
-        <!-- Optional: Progress bar -->
-        <div id="progress-bar-container">
-            <div id="progress-bar"></div>
+        <div id="genetic-marker-info">
+            <h2>GenoVault</h2>
+            <table id="genetic-marker-table">
+                <tr>
+                    <td>Seeds:</td>
+                    <td><span id="seeds"></span></td>
+                </tr>
+                <tr>
+                    <td>Genetic Markers:</td>
+                    <td><span id="genetic-markers"></span></td>
+                </tr>
+                <tr>
+                    <td>Progress:</td>
+                    <td><span id="genetic-marker-progress"></span>/<span id="genetic-marker-threshold"></span></td>
+                </tr>
+            </table>
+            <!-- Optional: Progress bar -->
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
         </div>
-    </div>
-    </div>
-    <div id="biome-container">
-        <!-- Biomes and plants will be dynamically added here -->
+        <h2>Upgrades</h2>
+        <div id="upgrades-container">
+            <!-- Upgrades will be dynamically added here -->
+        </div>
+        <div id="biome-container">
+            <!-- Biomes and plants will be dynamically added here -->
+        </div>
     </div>
 </body>
 </html>
