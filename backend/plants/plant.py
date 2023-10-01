@@ -47,16 +47,19 @@ class Plant:
         self.is_genetic_marker_production_on = not self.is_genetic_marker_production_on
 
     def purchase_plant_part(self, type, cost):
-        #Print attempted purchase
-        print(f"Plant ID: {self.id}")
-        print(f"Purchase: {type}")
-        print(f"Cost: {cost}")
-        #If the plant has enough sugar, subtract the cost and add the plant part
         if self.resources['sugar'].amount >= cost:
+            if type == 'resin':
+                if self.plant_parts['resin'].amount >= self.plant_parts['leaves'].amount:
+                    print("Cannot purchase more resin than the number of leaves.")
+                    return
             self.resources['sugar'].subtract_amount(cost)
             self.plant_parts[type].add_amount(1)
         
     def absorb_resource(self, type, amount):
+        if type == 'water':
+            max_water_capacity = self.plant_parts['vacuoles'].amount * 100  # Assuming each vacuole can hold 100 units of water
+            if self.resources['water'].amount + amount > max_water_capacity:
+                return
         self.resources[type].add_amount(amount)
 
     def produce_sugar(self):
@@ -67,18 +70,12 @@ class Plant:
 
         # Resource consumption rate also depends on maturity
         water_consumption = 10 * (1 + 0.4 * self.maturity_level)
-        print(f"Plant ID: {self.id}")
-        print(f"Water consumption: {water_consumption}")
         sunlight_consumption = 10 * (1 + 0.4 * self.maturity_level)
-        print(f"Plant ID: {self.id}")
-        print(f"Sunlight consumption: {sunlight_consumption}")
 
         if self.resources['water'].amount > water_consumption and self.resources['sunlight'].amount > sunlight_consumption:
             self.resources['water'].subtract_amount(water_consumption)
             self.resources['sunlight'].subtract_amount(sunlight_consumption)
             self.resources['sugar'].add_amount(modified_rate)
-            print(f"Plant ID: {self.id}")
-            print(f"Produced {modified_rate} sugar")
     
     def produce_genetic_markers(self):
         if self.resources['sugar'].amount <= SUGAR_THRESHOLD:
@@ -96,40 +93,42 @@ class Plant:
             return True
         print("Not enough sugar to purchase seed.")
         return False
-
-
-    def update(self, is_day, ground_water_level):
-        print(f"Plant ID: {self.id}")
-        print(f"Plant maturity level: {self.maturity_level}")
-        can_produce = False
-        amount = 0
-        water_absorbed = 0  # Initialize water_absorbed
-
+    
+    def update_maturity_level(self):
         self.maturity_level = int(math.sqrt(self.plant_parts['roots'].amount + self.plant_parts['leaves'].amount))
+
+    def absorb_water(self, ground_water_level):
+        water_absorbed = 0
+        for root in range(self.plant_parts['roots'].amount):
+            if ground_water_level > 0 and self.resources['water'].amount < self.plant_parts['vacuoles'].amount * 100:
+                self.resources['water'].add_amount(1)
+                water_absorbed += 1
+                ground_water_level -= 1
+        return water_absorbed, ground_water_level
+
+    def absorb_sunlight(self, is_day, current_weather):
+        water_consumption = 1  # Default water consumption
+        for leaf in range(self.plant_parts['leaves'].amount):
+            if self.plant_parts['resin'].amount > leaf:
+                water_consumption = 0  # No water consumption if there's resin
+            if is_day and current_weather == 'Sunny':
+                self.resources['water'].amount = max(0, self.resources['water'].amount - water_consumption)
+                self.resources['sunlight'].add_amount(1)
+            else:
+                self.resources['sunlight'].amount = max(0, self.resources['sunlight'].amount - 2)
+                self.resources['water'].amount = max(0, self.resources['water'].amount - water_consumption)
+
+    def update(self, is_day, ground_water_level, current_weather):
+        self.update_maturity_level()
 
         if self.is_sugar_production_on:
             self.produce_sugar()
 
-        # For each root absorb 1 water per second
-        for root in range(self.plant_parts['roots'].amount):
-            if ground_water_level > 0:  # Check if there's enough water in the ground
-                self.resources['water'].add_amount(1)
-                water_absorbed += 1  # Increment water_absorbed
-                ground_water_level -= 1  # Decrement ground_water_level
+        water_absorbed, ground_water_level = self.absorb_water(ground_water_level)
+        self.absorb_sunlight(is_day, current_weather)
 
-        # For each leaf, absorb 1 sunlight per second
-        for leaf in range(self.plant_parts['leaves'].amount):
-            if is_day:
-                # Subtract but stop at 0
-                self.resources['water'].amount = max(0, self.resources['water'].amount - 1)
-                self.resources['sunlight'].add_amount(1)
-            else:
-                self.resources['sunlight'].amount = max(0, self.resources['sunlight'].amount - 2)
-                self.resources['water'].amount = max(0, self.resources['water'].amount - 1)
-
-
-
+        can_produce, amount = False, 0
         if self.is_genetic_marker_production_on:
             can_produce, amount = self.produce_genetic_markers()
 
-        return can_produce, amount, water_absorbed  # Return three values
+        return can_produce, amount, water_absorbed

@@ -15,6 +15,7 @@ from action_dispatcher import dispatch_action
 from user_auth.user_auth import log_with_timestamp
 from plant_time.plant_time import PlantTime
 
+
 game_state_bp = Blueprint('game_state', __name__)
 running_tasks = {}
 user_actions_queue = []
@@ -43,49 +44,6 @@ def background_task(app, user_id):
             socketio.emit('game_state', game_state.to_dict())
             sleep(1)
 
-
-@game_state_bp.route('/init_game', methods=['POST'])
-def init_game():
-    user_id = current_user.id if current_user.is_authenticated else None
-    if user_id:
-        if user_id not in running_tasks:
-            running_tasks[user_id] = socketio.start_background_task(target=background_task, app=current_app._get_current_object(), user_id=user_id)
-    print("Initializing game state...")
-    
-    print(f"Is user authenticated? {current_user.is_authenticated}")  # Debugging line
-    
-    if current_user.is_authenticated:
-        saved_game_state = fetch_game_state_from_db(current_user.id)
-        if saved_game_state:
-            return jsonify({"status": "Game state loaded from database"})
-    
-    # Initialize new game state
-    game_state = initialize_new_game_state()
-    print(f"Game state after initialization: {game_state}")
-    print(f"Game state plants: {game_state.plants}")
-    print(f"Game state biomes: {game_state.biomes}")
-    print(f"Game state upgrades: {game_state.upgrades}")
-    print(f"Game state genetic markers: {game_state.genetic_markers}")
-
-    # Save the game state to the database if the user is logged in
-    if current_user.is_authenticated:
-        save_game_state_to_db(current_user.id, game_state.to_dict())
-
-    return jsonify({"status": "Game initialized"})
-
-
-@game_state_bp.route("/game")
-def game():
-    return "This is the game."
-
-@game_state_bp.route('/save_game', methods=['POST'])
-def save_game():
-    if current_user.is_authenticated:
-        game_state = request.json  # Replace with how you actually get the game state
-        save_game_state_to_db(current_user.id, game_state)
-        return jsonify({"status": "Game state saved"})
-    return jsonify({"status": "User not authenticated"})
-
 def initialize_new_game_state():
     # Initialize a sample plant
     initial_resources = {
@@ -93,11 +51,17 @@ def initialize_new_game_state():
         'water': GameResource('water', 0),
         'sugar': GameResource('sugar', 0),
     }
-    initial_plant_parts = {'roots': GameResource('roots', 2), 'leaves': GameResource('leaves', 1)}
+    initial_plant_parts = {
+        'roots': GameResource('roots', 2),
+        'leaves': GameResource('leaves', 1),
+        'vacuoles': GameResource('vacuoles', 1),  # Initialize with 1 vacuole
+        'resin': GameResource('resin', 0),  # Initialize with 0 resin
+    }
+
     plant1 = Plant(initial_resources, initial_plant_parts, None, 0, 1, 1)  # Biome will be set later
 
     # Initialize a sample biome
-    biome1 = Biome('Beginner\'s Garden',ground_water_level=100,current_weather="Sunny")  # Attributes will be fetched from BIOMES dictionary
+    biome1 = Biome('Beginner\'s Garden',ground_water_level=1000,current_weather="Sunny")  # Attributes will be fetched from BIOMES dictionary
     biome1.add_plant(plant1)
     plant1.biome = biome1  # Set the biome for the plant
 
@@ -117,7 +81,43 @@ def initialize_new_game_state():
 
     return GameState(initial_plants, initial_biomes, initial_upgrades, initial_time, initial_genetic_markers)
 
+@game_state_bp.route('/init_game', methods=['POST'])
+def init_game():
+    user_id = current_user.id if current_user.is_authenticated else None
+    if user_id:
+        if user_id not in running_tasks:
+            running_tasks[user_id] = socketio.start_background_task(target=background_task, app=current_app._get_current_object(), user_id=user_id)
+    print("Initializing game state...")
+    
+    print(f"Is user authenticated? {current_user.is_authenticated}")  # Debugging line
+    
+    if current_user.is_authenticated:
+        saved_game_state = fetch_game_state_from_db(current_user.id)
+        if saved_game_state:
+            return jsonify({"status": "Game state loaded from database"})
+    
+    # Initialize new game state
+    game_state = initialize_new_game_state()
 
+
+    # Save the game state to the database if the user is logged in
+    if current_user.is_authenticated:
+        save_game_state_to_db(current_user.id, game_state.to_dict())
+
+    return jsonify({"status": "Game initialized"})
+
+
+@game_state_bp.route("/game")
+def game():
+    return "This is the game."
+
+@game_state_bp.route('/save_game', methods=['POST'])
+def save_game():
+    if current_user.is_authenticated:
+        game_state = request.json  # Replace with how you actually get the game state
+        save_game_state_to_db(current_user.id, game_state)
+        return jsonify({"status": "Game state saved"})
+    return jsonify({"status": "User not authenticated"})
 
 @game_state_bp.route('/buy_root', methods=['POST'])
 @login_required
@@ -158,8 +158,6 @@ def toggle_sugar():
 @game_state_bp.route('/absorb_resource', methods=['POST'])
 @login_required
 def absorb_resource():
-    #print the attempted action
-    print("Absorb Resource")
     user_id = current_user.id
     biomeIndex = request.json.get('biomeIndex')
     plantIndex = request.json.get('plantIndex')
@@ -182,8 +180,6 @@ def absorb_resource():
 @game_state_bp.route('/buy_plant_part', methods=['POST'])
 @login_required
 def buy_plant_part():
-    #print the attempted action
-    print("Buy Plant Part")
     user_id = current_user.id
     biomeIndex = request.json.get('biomeIndex')
     plantIndex = request.json.get('plantIndex')
@@ -206,8 +202,6 @@ def buy_plant_part():
 @game_state_bp.route('/toggle_genetic_marker', methods=['POST'])
 @login_required
 def toggle_genetic_marker():
-    #print the attempted action
-    print("Toggle Genetic Marker")
     user_id = current_user.id
     biomeIndex = request.json.get('biomeIndex')
     plantIndex = request.json.get('plantIndex')
@@ -227,7 +221,6 @@ def toggle_genetic_marker():
 @game_state_bp.route('/purchase_seed', methods=['POST'])
 @login_required
 def purchase_seed():
-    print("Purchase Seed Route Called")  # Debug print
     user_id = current_user.id
     action = {
         "type": "purchase_seed",
@@ -235,11 +228,8 @@ def purchase_seed():
         "plantIndex": request.json.get('plantIndex'),
         "cost": request.json.get('cost')
     }
-    print(f"Action to be queued: {action}")  # Debug print
     user_actions_queue.append(action)
     return jsonify({"status": "Purchase seed action queued"})
-
-
 
 @game_state_bp.route('/plant_seed_in_biome', methods=['POST'])
 @login_required

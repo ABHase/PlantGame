@@ -71,7 +71,7 @@ class Biome:
             self.snowpack += self.snow_intensity  # Accumulate snowpack
 
         # Slowly drain water over time
-        self.decrease_ground_water_level(self.ground_water_level * 0.1)  # Example rate
+        self.decrease_ground_water_level(self.ground_water_level * 0.02)  # Example rate
 
         # Melt snowpack in spring
         if current_season == 'Spring':
@@ -81,7 +81,7 @@ class Biome:
 
         # Update the plants
         for plant in self.plants:
-            can_produce, amount, water_absorbed = plant.update(is_day, self.ground_water_level)  # Get the additional value
+            can_produce, amount, water_absorbed = plant.update(is_day, self.ground_water_level, self.current_weather)  # Get the additional value
             self.ground_water_level -= water_absorbed  # Update the ground_water_level immediately
             if self.ground_water_level < 0:  # Ensure ground_water_level doesn't go below zero
                 self.ground_water_level = 0

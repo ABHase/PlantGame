@@ -19,10 +19,8 @@ action_handlers = {
 
 def dispatch_action(action, game_state):
     action_type = action["type"]
-    print(f"Dispatching action of type: {action_type}")  # Debug print
     handler = action_handlers.get(action_type)
     if handler:
-        print(f"Found handler for action type: {action_type}")  # Debug print
         handler(action, game_state)
     else:
         print(f"Unknown action type: {action_type}")

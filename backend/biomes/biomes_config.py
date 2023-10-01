@@ -8,7 +8,7 @@ BIOMES = {
             'Autumn': {'Sunny': 0.5, 'Rainy': 0.3, 'Cloudy': 0.2},
             'Winter': {'Sunny': 0.4, 'Snowy': 0.4, 'Cloudy': 0.2},
         },
-        'rain_intensity': 5,
+        'rain_intensity': 50,
         'snow_intensity': 4  # Amount of water to add when it snows
     },
     'Desert': {
@@ -20,7 +20,7 @@ BIOMES = {
             'Autumn': {'Sunny': 0.9, 'Rainy': 0.05, 'Cloudy': 0.05},
             'Winter': {'Sunny': 0.9, 'Snowy': 0.05, 'Cloudy': 0.05},
         },
-        'rain_intensity': 20,
+        'rain_intensity': 200,
         'snow_intensity': 15  # Desert snow can be rare but intense
     },
     'Tropical Forest': {
@@ -32,7 +32,7 @@ BIOMES = {
             'Autumn': {'Sunny': 0.4, 'Rainy': 0.5, 'Cloudy': 0.1},
             'Winter': {'Sunny': 0.5, 'Rainy': 0.4, 'Cloudy': 0.1},
         },
-        'rain_intensity': 10,
+        'rain_intensity': 100,
         'snow_intensity': 0  # No snow in tropical forest
     },
     'Mountain': {
@@ -44,7 +44,7 @@ BIOMES = {
             'Autumn': {'Sunny': 0.4, 'Rainy': 0.2, 'Cloudy': 0.4},
             'Winter': {'Sunny': 0.3, 'Snowy': 0.5, 'Cloudy': 0.2},
         },
-        'rain_intensity': 8,
+        'rain_intensity': 80,
         'snow_intensity': 12  # Heavy snowfall in winter
     },
     'Swamp': {
@@ -56,7 +56,7 @@ BIOMES = {
             'Autumn': {'Sunny': 0.3, 'Rainy': 0.6, 'Cloudy': 0.1},
             'Winter': {'Sunny': 0.4, 'Snowy': 0.3, 'Cloudy': 0.3},
         },
-        'rain_intensity': 12,
+        'rain_intensity': 120,
         'snow_intensity': 8  # Moderate snowfall in winter
     }
 }

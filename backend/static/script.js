@@ -144,8 +144,6 @@ function updateUI(gameState) {
 
         biome.plants.forEach((plant, plantIndex) => {
 
-            
-
             const absorbAmount = weather === 'Sunny' ? 10 : 
                                 weather === 'Cloudy' ? 5 : 
                                 weather === 'Rainy' ? 2 : 
@@ -172,6 +170,11 @@ function updateUI(gameState) {
             const isChecked = oldState.hasOwnProperty(checkboxId) ? oldState[checkboxId] : plant.is_sugar_production_on;
             const isGeneticMarkerChecked = oldState.hasOwnProperty(geneticMarkerCheckboxId) ? oldState[geneticMarkerCheckboxId] : plant.is_genetic_marker_production_on;
 
+            //Progress Bar for Water
+            const maxWaterCapacity = plant.plant_parts.vacuoles * 100;  // Assuming each vacuole can hold 100 units of water
+            const currentWaterAmount = plant.resources.water;
+            const waterProgressPercentage = (currentWaterAmount / maxWaterCapacity) * 100;
+
                 plantDiv.innerHTML = `
                 <table style=width: 100%; "border-collapse: collapse;">
                     <tr style="border: 1px solid black;">
@@ -185,6 +188,13 @@ function updateUI(gameState) {
                     <td><span id="water-${biomeIndex}-${plantIndex}">${formatNumber(plant.resources.water)}</span></td>
                     </tr>
                     <tr style="border: 1px solid black;">
+                        <td colspan="3">
+                            <div class="water-progress-bar" id="water-storage-bar-${biomeIndex}-${plantIndex}">
+                                <div class="water-progress-bar-fill" id="water-storage-fill-${biomeIndex}-${plantIndex}" style="width:${waterProgressPercentage}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr style="border: 1px solid black;">
                     <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, 'roots', 10)">Grow</button></td>
                     <td>Roots:</td>
                     <td><span id="roots-${biomeIndex}-${plantIndex}">${plant.plant_parts.roots}</span></td>                
@@ -193,6 +203,16 @@ function updateUI(gameState) {
                     <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, 'leaves', 10)">Grow</button></td>
                     <td>Leaves:</td>
                     <td><span id="leaves-${biomeIndex}-${plantIndex}">${plant.plant_parts.leaves}</span></td>                
+                    </tr>
+                    <tr style="border: 1px solid black;">
+                    <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, 'vacuoles', 10)">Grow</button></td>
+                    <td>Vacuoles:</td>
+                    <td><span id="vacuoles-${biomeIndex}-${plantIndex}">${plant.plant_parts.vacuoles}</span></td>                
+                    </tr>
+                    <tr style="border: 1px solid black;">
+                    <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, 'resin', 10)">Grow</button></td>
+                    <td>Resin:</td>
+                    <td><span id="resin-${biomeIndex}-${plantIndex}">${plant.plant_parts.resin || 0}</span></td>                
                     </tr>
                     <tr style="border: 1px solid black;">
                     <td><input type="checkbox" id="${checkboxId}" ${isChecked ? 'checked' : ''} onchange="toggleSugar(${biomeIndex}, ${plantIndex}, this.checked)"></td>
