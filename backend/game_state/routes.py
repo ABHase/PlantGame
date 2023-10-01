@@ -23,14 +23,11 @@ user_actions_queue = []
 def background_task(app, user_id):
     with app.app_context():
         while True:
-            log_with_timestamp("Background task iteration start")
             game_state_dict = fetch_game_state_from_db(user_id)
-            print(f"Game state loaded from DB: {game_state_dict}")
             #print(f"Game state after fetch: {game_state_dict}")
             if game_state_dict is not None:
                 game_state = GameState.from_dict(game_state_dict)
             else:
-                print("game_state_dict is None, initializing a new game state.")
                 game_state = initialize_new_game_state()
 
             # Process queued actions
@@ -40,13 +37,10 @@ def background_task(app, user_id):
                 save_game_state_to_db(user_id, game_state.to_dict())
 
             game_state.update()
-
-            print(f"Game state to be saved to DB: {game_state.to_dict()}")
             save_game_state_to_db(user_id, game_state.to_dict())
 
             # Emit updated game state to client
             socketio.emit('game_state', game_state.to_dict())
-            log_with_timestamp("Background task iteration end")
             sleep(1)
 
 
@@ -99,8 +93,8 @@ def initialize_new_game_state():
         'water': GameResource('water', 0),
         'sugar': GameResource('sugar', 0),
     }
-    initial_plant_parts = {'roots': GameResource('roots', 1), 'leaves': GameResource('leaves', 1)}
-    plant1 = Plant(initial_resources, initial_plant_parts, None, 0, 25, 1)  # Biome will be set later
+    initial_plant_parts = {'roots': GameResource('roots', 2), 'leaves': GameResource('leaves', 1)}
+    plant1 = Plant(initial_resources, initial_plant_parts, None, 0, 1, 1)  # Biome will be set later
 
     # Initialize a sample biome
     biome1 = Biome('Beginner\'s Garden',ground_water_level=100,current_weather="Sunny")  # Attributes will be fetched from BIOMES dictionary

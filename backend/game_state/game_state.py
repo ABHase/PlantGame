@@ -34,10 +34,10 @@ class GameState:
 
 
     def update(self):
-        new_day = self.plant_time.update()  # Assuming update() returns True if a new day has started
+        new_day, new_hour = self.plant_time.update()  # Assuming update() returns True if a new day has started
 
         for biome in self.biomes:
-            results = biome.update(self.plant_time.is_day, new_day,self.plant_time.season)
+            results = biome.update(self.plant_time.is_day, new_day, new_hour, self.plant_time.season)
             for can_produce, amount in results:
                 if can_produce:
                     self.update_genetic_marker_progress(amount)
@@ -128,85 +128,123 @@ class GameState:
         print("Failed to plant seed.")
         return False  # Failed to plant seed
 
-    
+        
     def to_dict(self):
         return {
-            'biomes': [
-                {
-                    'name': biome.name,
-                    'capacity': biome.capacity,
-                    'resource_modifiers': biome.resource_modifiers,
-                    'ground_water_level': biome.ground_water_level,  # Include the missing field
-                    'current_weather': biome.current_weather,  # Include the missing field
-                    'snowpack': biome.snowpack,  # Include the missing field
-                    'plants': [
-                        {
-                            'id': plant.id,
-                            'maturity_level': plant.maturity_level,
-                            'resources': {k: v.amount for k, v in plant.resources.items()},
-                            'plant_parts': {k: v.amount for k, v in plant.plant_parts.items()},
-                            'is_sugar_production_on': plant.is_sugar_production_on,
-                            'is_genetic_marker_production_on': plant.is_genetic_marker_production_on,
-                        }
-                        for plant in biome.plants
-                    ],
-                }
-                for biome in self.biomes
-            ],
-            'upgrades': [
-                {
-                    'name': upgrade.name,
-                    'cost': upgrade.cost,
-                    'type': upgrade.type,
-                    'unlocked': upgrade.unlocked,
-                }
-                for upgrade in self.upgrades
-            ],
-            'plant_time': {
+            'biomes': self.biomes_to_dict(),
+            'upgrades': self.upgrades_to_dict(),
+            'plant_time': self.plant_time_to_dict(),
+            'seeds': self.seeds,
+            'genetic_markers': self.genetic_markers,
+            'genetic_marker_progress': self.genetic_marker_progress,
+            'genetic_marker_threshold': self.genetic_marker_threshold,
+        }
+
+    def biomes_to_dict(self):
+        return [
+            {
+                'name': biome.name,
+                'capacity': biome.capacity,
+                'resource_modifiers': biome.resource_modifiers,
+                'ground_water_level': biome.ground_water_level,
+                'current_weather': biome.current_weather,
+                'snowpack': biome.snowpack,
+                'plants': self.plants_to_dict(biome)
+            }
+            for biome in self.biomes
+        ]
+
+    def plants_to_dict(self, biome):
+        return [
+            {
+                'id': plant.id,
+                'maturity_level': plant.maturity_level,
+                'resources': {k: v.amount for k, v in plant.resources.items()},
+                'plant_parts': {k: v.amount for k, v in plant.plant_parts.items()},
+                'sugar_production_rate': plant.sugar_production_rate,
+                'genetic_marker_production_rate': plant.genetic_marker_production_rate,
+                'is_sugar_production_on': plant.is_sugar_production_on,
+                'is_genetic_marker_production_on': plant.is_genetic_marker_production_on,
+            }
+            for plant in biome.plants
+        ]
+
+    def upgrades_to_dict(self):
+        return [
+            {
+                'name': upgrade.name,
+                'cost': upgrade.cost,
+                'type': upgrade.type,
+                'unlocked': upgrade.unlocked,
+            }
+            for upgrade in self.upgrades
+        ]
+
+    def plant_time_to_dict(self):
+        return {
             'year': self.plant_time.year,
             'season': self.plant_time.season,
             'day': self.plant_time.day,
             'hour': self.plant_time.hour,
             'update_counter': self.plant_time.update_counter,
             'is_day': self.plant_time.is_day
-            },
-            'seeds': self.seeds,  
-            'genetic_markers': self.genetic_markers,
-            'genetic_marker_progress': self.genetic_marker_progress,
-            'genetic_marker_threshold': self.genetic_marker_threshold,
         }
-
+    
     @classmethod
     def from_dict(cls, data):
-        biomes = []
-        for biome_data in data['biomes']:
-            plants = []
-            for plant_data in biome_data['plants']:
-                resources = {k: GameResource(k, v) for k, v in plant_data['resources'].items()}
-                plant_parts = {k: GameResource(k, v) for k, v in plant_data['plant_parts'].items()}
-                plant = Plant(
-                    resources,
-                    plant_parts,
-                    None,  # Biome will be set later
-                    plant_data['maturity_level'],
-                    plant_data['is_sugar_production_on'],
-                    plant_data['is_genetic_marker_production_on'],
-                    plant_data['id']  # Include the id attribute
-                )
-                plant.is_sugar_production_on = plant_data['is_sugar_production_on']
-                plant.is_genetic_marker_production_on = plant_data['is_genetic_marker_production_on']
-                plants.append(plant)
-            
-                biome = Biome(biome_data['name'], biome_data['ground_water_level'], biome_data['current_weather'], biome_data['snowpack'])
+        biomes = cls.biomes_from_dict(data['biomes'])
+        upgrades = cls.upgrades_from_dict(data['upgrades'])
+        plant_time = cls.plant_time_from_dict(data.get('plant_time', {}))
+        return cls(
+            [],
+            biomes,
+            upgrades,
+            plant_time,
+            data.get('genetic_markers', 0),
+            data.get('seeds', 0),
+            data.get('genetic_marker_progress', 0),
+            data.get('genetic_marker_threshold', 0)
+        )
 
+    @classmethod
+    def biomes_from_dict(cls, biomes_data):
+        biomes = []
+        for biome_data in biomes_data:
+            plants = cls.plants_from_dict(biome_data['plants'])
+            biome = Biome(biome_data['name'], biome_data['ground_water_level'], biome_data['current_weather'], biome_data['snowpack'])
             for plant in plants:
                 plant.biome = biome
                 biome.add_plant(plant)
             biomes.append(biome)
+        return biomes
 
-        upgrades = [Upgrade(upgrade_data['name'], upgrade_data['cost'], upgrade_data['type'], upgrade_data['unlocked']) for upgrade_data in data['upgrades']]
+    @classmethod
+    def plants_from_dict(cls, plants_data):
+        plants = []
+        for plant_data in plants_data:
+            resources = {k: GameResource(k, v) for k, v in plant_data['resources'].items()}
+            plant_parts = {k: GameResource(k, v) for k, v in plant_data['plant_parts'].items()}
+            plant = Plant(
+                resources,
+                plant_parts,
+                None,
+                plant_data['maturity_level'],
+                plant_data['sugar_production_rate'],
+                plant_data['genetic_marker_production_rate'],
+                plant_data['id'],
+                plant_data['is_sugar_production_on'],
+                plant_data['is_genetic_marker_production_on'],
+                
+            )
+            plants.append(plant)
+        return plants
 
-        plant_time_data = data.get('plant_time', {})
+    @classmethod
+    def upgrades_from_dict(cls, upgrades_data):
+        return [Upgrade(upgrade_data['name'], upgrade_data['cost'], upgrade_data['type'], upgrade_data['unlocked']) for upgrade_data in upgrades_data]
+
+    @classmethod
+    def plant_time_from_dict(cls, plant_time_data):
         plant_time = PlantTime()
         plant_time.year = plant_time_data.get('year', 1)
         plant_time.season = plant_time_data.get('season', 'Spring')
@@ -214,17 +252,7 @@ class GameState:
         plant_time.hour = plant_time_data.get('hour', 0)
         plant_time.update_counter = plant_time_data.get('update_counter', 0)
         plant_time.is_day = plant_time_data.get('is_day', True)
-
-        return cls(
-            [],  # Plants will be populated through biomes
-            biomes,
-            upgrades,
-            plant_time,
-            data.get('genetic_markers', 0),  # Corrected this line
-            data.get('seeds', 0),  # Corrected this line
-            data.get('genetic_marker_progress', 0),  # Include the missing field
-            data.get('genetic_marker_threshold', 0)  # Include the missing field
-        )
+        return plant_time
 
 
     def __getstate__(self):
@@ -232,6 +260,4 @@ class GameState:
 
     def __setstate__(self, state):
         #print the state inside set state
-        print("Set State")
-        print(state)
         self.__dict__.update(GameState.from_dict(state).__dict__)

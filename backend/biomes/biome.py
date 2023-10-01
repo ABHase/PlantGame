@@ -53,10 +53,16 @@ class Biome:
         probabilities = list(self.weather_conditions[current_season].values())
         self.current_weather = random.choices(weather_choices, probabilities)[0]
 
+    def set_weather_for_hour(self, current_season):
+        # You could make this more complex by considering the current weather, time of day, etc.
+        weather_choices = list(self.weather_conditions[current_season].keys())
+        probabilities = list(self.weather_conditions[current_season].values())
+        self.current_weather = random.choices(weather_choices, probabilities)[0]
 
-    def update(self, is_day, new_day=False, current_season=None):
-        if new_day and current_season:
-            self.set_weather_for_day(current_season)
+
+    def update(self, is_day, new_day=False, new_hour=False, current_season=None):
+        if new_hour and current_season:
+            self.set_weather_for_hour(current_season)
         results = []
 
         if self.current_weather == 'Rainy':

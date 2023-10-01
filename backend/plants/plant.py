@@ -24,7 +24,8 @@ from game_resource import GameResource
 from constants import SUGAR_THRESHOLD
 
 class Plant:
-    def __init__(self, resources, plant_parts, biome, maturity_level, sugar_production_rate, genetic_marker_production_rate, plant_id=None):
+    def __init__(self, resources, plant_parts, biome, maturity_level, sugar_production_rate, genetic_marker_production_rate, plant_id=None,is_sugar_production_on=False,is_genetic_marker_production_on=False):
+
         self.id = plant_id if plant_id else str(uuid.uuid4())
         self.resources = resources
         self.plant_parts = plant_parts
@@ -32,17 +33,14 @@ class Plant:
         self.maturity_level = maturity_level
         self.sugar_production_rate = sugar_production_rate
         self.genetic_marker_production_rate = genetic_marker_production_rate
-        self.is_sugar_production_on = False
-        self.is_genetic_marker_production_on = False
+        self.is_sugar_production_on = is_sugar_production_on
+        self.is_genetic_marker_production_on = is_genetic_marker_production_on
 
     #Method for plant to die and remove itself from the biome
     def die(self):
         self.biome.remove_plant(self)
 
     def toggle_sugar_production(self):
-        #Print attempted toggle
-        print(f"Plant ID: {self.id}")
-        print(f"Toggle: Sugar Production")
         self.is_sugar_production_on = not self.is_sugar_production_on
 
     def toggle_genetic_marker(self):
@@ -62,7 +60,6 @@ class Plant:
         self.resources[type].add_amount(amount)
 
     def produce_sugar(self):
-        # Base rate of sugar production
         base_rate = self.sugar_production_rate
 
         # Modify the rate based on maturity level
@@ -70,12 +67,18 @@ class Plant:
 
         # Resource consumption rate also depends on maturity
         water_consumption = 10 * (1 + 0.4 * self.maturity_level)
+        print(f"Plant ID: {self.id}")
+        print(f"Water consumption: {water_consumption}")
         sunlight_consumption = 10 * (1 + 0.4 * self.maturity_level)
+        print(f"Plant ID: {self.id}")
+        print(f"Sunlight consumption: {sunlight_consumption}")
 
         if self.resources['water'].amount > water_consumption and self.resources['sunlight'].amount > sunlight_consumption:
             self.resources['water'].subtract_amount(water_consumption)
             self.resources['sunlight'].subtract_amount(sunlight_consumption)
             self.resources['sugar'].add_amount(modified_rate)
+            print(f"Plant ID: {self.id}")
+            print(f"Produced {modified_rate} sugar")
     
     def produce_genetic_markers(self):
         if self.resources['sugar'].amount <= SUGAR_THRESHOLD:
@@ -96,6 +99,8 @@ class Plant:
 
 
     def update(self, is_day, ground_water_level):
+        print(f"Plant ID: {self.id}")
+        print(f"Plant maturity level: {self.maturity_level}")
         can_produce = False
         amount = 0
         water_absorbed = 0  # Initialize water_absorbed
@@ -112,10 +117,17 @@ class Plant:
                 water_absorbed += 1  # Increment water_absorbed
                 ground_water_level -= 1  # Decrement ground_water_level
 
-        # For each leaf absorb 1 sunlight per second
-        if is_day:
-            for leaf in range(self.plant_parts['leaves'].amount):
+        # For each leaf, absorb 1 sunlight per second
+        for leaf in range(self.plant_parts['leaves'].amount):
+            if is_day:
+                # Subtract but stop at 0
+                self.resources['water'].amount = max(0, self.resources['water'].amount - 1)
                 self.resources['sunlight'].add_amount(1)
+            else:
+                self.resources['sunlight'].amount = max(0, self.resources['sunlight'].amount - 2)
+                self.resources['water'].amount = max(0, self.resources['water'].amount - 1)
+
+
 
         if self.is_genetic_marker_production_on:
             can_produce, amount = self.produce_genetic_markers()

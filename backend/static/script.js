@@ -65,10 +65,12 @@ function updateUI(gameState) {
     const geneticMarkersSpan = document.getElementById('genetic-markers');
     const geneticMarkerProgressSpan = document.getElementById('genetic-marker-progress');
     const geneticMarkerThresholdSpan = document.getElementById('genetic-marker-threshold');
+    const seedsSpan = document.getElementById('seeds');
 
     geneticMarkersSpan.textContent = gameState.genetic_markers;
     geneticMarkerProgressSpan.textContent = gameState.genetic_marker_progress;
     geneticMarkerThresholdSpan.textContent = gameState.genetic_marker_threshold;
+    seedsSpan.textContent = gameState.seeds;
 
     // Optional: Update progress bar
     const progressBar = document.getElementById('progress-bar');
@@ -108,18 +110,47 @@ function updateUI(gameState) {
     gameState.biomes.forEach((biome, biomeIndex) => {
         const biomeDiv = document.createElement('div');
         biomeDiv.className = 'biome';
-        biomeDiv.innerHTML = `<h2 id="biome-header-${biomeIndex}">${biome.name} (${biome.plants.length}/${biome.capacity}) - Ground Water: ${biome.ground_water_level} - Snow Pack: ${biome.snowpack}</h2>
-        <button onclick="plantSeedInBiome('${biome.name.replace(/'/g, "\\'")}', 1)">Plant Seed in Biome</button>`;
+
+        const weather = biome.current_weather;
+
+        let weatherIcon = '';
+
+        if (isDay) {
+            weatherIcon = {
+                'Sunny': '<i class="fas fa-sun"></i>',
+                'Rainy': '<i class="fas fa-cloud-rain"></i>',
+                'Snowy': '<i class="fas fa-snowflake"></i>',
+                'Cloudy': '<i class="fas fa-cloud"></i>'
+            }[weather];
+        } else {
+            weatherIcon = weather === 'Sunny' ? '<i class="fas fa-moon"></i>' : 
+                        weather === 'Rainy' ? '<i class="fas fa-cloud-moon-rain"></i>' : 
+                        weather === 'Snowy' ? '<i class="fas fa-cloud-moon"></i>' : 
+                        weather === 'Cloudy' ? '<i class="fas fa-cloud-moon"></i>' : '';
+        }
+
+        biomeDiv.innerHTML = `<h2 id="biome-header-${biomeIndex}">${biome.name} (${biome.plants.length}/${biome.capacity}) ${weatherIcon} 
+            <br>Ground Water: ${Math.floor(biome.ground_water_level)} <br>Snow Pack: ${Math.floor(biome.snowpack)}</h2>
+            <button onclick="plantSeedInBiome('${biome.name.replace(/'/g, "\\'")}', 1)">Plant Seed in Biome</button>`;
 
         
         const plantContainer = document.createElement('div');
         plantContainer.id = `plant-container-${biomeIndex}`;
+        plantContainer.className = 'plant-container';
 
         // Restore the display state or use the default
-        const displayState = oldState.hasOwnProperty(`plant-container-${biomeIndex}`) ? oldState[`plant-container-${biomeIndex}`] : 'block';
+        const displayState = oldState.hasOwnProperty(`plant-container-${biomeIndex}`) ? oldState[`plant-container-${biomeIndex}`] : 'flex';
         plantContainer.style.display = displayState;
 
         biome.plants.forEach((plant, plantIndex) => {
+
+            
+
+            const absorbAmount = weather === 'Sunny' ? 10 : 
+                                weather === 'Cloudy' ? 5 : 
+                                weather === 'Rainy' ? 2 : 
+                                weather === 'Snowy' ? 1 : 0;  // Default to 0 if none match
+
             const plantDiv = document.createElement('div');
             plantDiv.className = 'plant';
             plantDiv.id = `plant-${biomeIndex}-${plantIndex}`;
@@ -129,7 +160,7 @@ function updateUI(gameState) {
             
             // Disable the button if it's night for absorb sunlight
             const absorbSunlightButtonHTML = isDay ? 
-            `<button onclick="absorbResource(${biomeIndex}, ${plantIndex}, 'sunlight', 10)">Absorb</button>` : 
+            `<button onclick="absorbResource(${biomeIndex}, ${plantIndex}, 'sunlight', ${absorbAmount})">Absorb</button>` : 
             `<button disabled>It's night...</button>`;
 
             // Disable the button if ground_water_level is less than 10
@@ -142,7 +173,7 @@ function updateUI(gameState) {
             const isGeneticMarkerChecked = oldState.hasOwnProperty(geneticMarkerCheckboxId) ? oldState[geneticMarkerCheckboxId] : plant.is_genetic_marker_production_on;
 
                 plantDiv.innerHTML = `
-                <table style="border-collapse: collapse;">
+                <table style=width: 100%; "border-collapse: collapse;">
                     <tr style="border: 1px solid black;">
                     <td>${absorbSunlightButtonHTML}</td>
                     <td>Sunlight:</td>
@@ -186,7 +217,7 @@ function updateUI(gameState) {
     
             document.getElementById(`biome-header-${biomeIndex}`).addEventListener('click', function() {
                 const plantContainer = document.getElementById(`plant-container-${biomeIndex}`);
-                plantContainer.style.display = (plantContainer.style.display === 'none' || plantContainer.style.display === '') ? 'block' : 'none';
+                plantContainer.style.display = (plantContainer.style.display === 'none' || plantContainer.style.display === '') ? 'flex' : 'none';
             });
         });
     }

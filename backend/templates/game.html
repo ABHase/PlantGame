@@ -2,6 +2,7 @@
 <html>
 <head>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>Plant Game</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="{{ url_for('static', filename='plant.js') }}"></script>
@@ -18,27 +19,93 @@
             height: 30px;
             background-color: #4CAF50;
         }
-        
+        .plant-container {
+            display: flex;
+            flex-direction: row;  /* Explicitly set */
+            flex-wrap: wrap;
+            border: 1px solid black;
+        }
+
+
+        .plant {
+        width: calc(12.5% - 10px);  /* Takes up half the width of the container minus a little for margin */
+        margin: 5px;
+        border: 1px solid olive;  /* To visualize each plant */
+    }
+    #time-info, #genetic-marker-info {
+        width: 12.5%;  /* Set the width */
+        margin-right: 20px;  /* Add right margin */
+        float: left;  /* Float it to the left */
+    }
+
+    #progress-bar-container {
+        width: 100%;  /* Adjust to fit within the #genetic-marker-info div */
+        background-color: #ccc;
+    }
+
+    #progress-bar {
+        width: 0;
+        height: 30px;
+        background-color: #4CAF50;
+    }
+
+    .clearfix::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
     </style>
 </head>
 <body>
+    <div class="clearfix">
     <div id="time-info">
         <h2>Time</h2>
-        <p>Year: <span id="year"></span></p>
-        <p>Season: <span id="season"></span></p>
-        <p>Day: <span id="day"></span></p>
-        <p>Hour: <span id="hour"></span></p>
-        <p>Time of Day: <span id="time-of-day"></span></p>
-    </div>
+        <table id="time-table">
+            <tr>
+                <td>Year:</td>
+                <td><span id="year"></span></td>
+            </tr>
+            <tr>
+                <td>Season:</td>
+                <td><span id="season"></span></td>
+            </tr>
+            <tr>
+                <td>Day:</td>
+                <td><span id="day"></span></td>
+            </tr>
+            <tr>
+                <td>Hour:</td>
+                <td><span id="hour"></span></td>
+            </tr>
+            <tr>
+                <td>Phase:</td>
+                <td><span id="time-of-day"></span></td>
+            </tr>
+        </table>
+    </div>    
     
     <div id="genetic-marker-info">
-        <h2>Genetic Markers</h2>
-        <p>Genetic Markers: <span id="genetic-markers"></span></p>
-        <p>Progress: <span id="genetic-marker-progress"></span>/<span id="genetic-marker-threshold"></span></p>
+        <h2>GenoVault</h2>
+        <table id="genetic-marker-table">
+            <tr>
+                <td>Seeds:</td>
+                <td><span id="seeds"></span></td>
+            </tr>
+            <tr>
+                <td>Genetic Markers:</td>
+                <td><span id="genetic-markers"></span></td>
+            </tr>
+            <tr>
+                <td>Progress:</td>
+                <td><span id="genetic-marker-progress"></span>/<span id="genetic-marker-threshold"></span></td>
+            </tr>
+        </table>
         <!-- Optional: Progress bar -->
         <div id="progress-bar-container">
             <div id="progress-bar"></div>
         </div>
+    </div>
     </div>
     <div id="biome-container">
         <!-- Biomes and plants will be dynamically added here -->
