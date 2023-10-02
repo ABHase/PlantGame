@@ -26,6 +26,9 @@ def create_app():
     
     with app.app_context():
         from user_auth.models import User  # Import the User model here
+        from user_auth.models import UpgradeModel  # Import the UpgradeModel model here
+        from models.biome_model import BiomeModel
+        from models.plant_model import PlantModel
         print("Creating all db tables...")
         db.create_all()
 

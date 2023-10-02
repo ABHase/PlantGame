@@ -1,6 +1,9 @@
+import uuid
 from flask import Blueprint, jsonify, session, request, current_app
 from time import sleep
-from app import socketio  # Replace 'your_app_name' with the name of the package where app.py resides
+from app import socketio
+from biomes.biomes_config import BIOMES
+from plants.plant_parts_config import PLANT_PARTS_CONFIG  # Replace 'your_app_name' with the name of the package where app.py resides
 from game_controller import GameController
 from biomes.biome import Biome
 from plants.plant import Plant
@@ -10,7 +13,7 @@ from upgrades.upgrades_config import UPGRADES
 from game_state import GameState  # Import GameState
 from socket_config import socketio
 from flask_login import current_user, login_required
-from user_auth.user_auth import fetch_game_state_from_db, save_game_state_to_db, fetch_upgrades_from_db, save_upgrades_to_db, fetch_upgrade_by_index
+from user_auth.user_auth import fetch_game_state_from_db, save_game_state_to_db, fetch_upgrades_from_db, save_upgrades_to_db, fetch_upgrade_by_index, fetch_biomes_from_db, save_biomes_to_db, fetch_plants_from_db, save_plants_to_db
 from user_auth.models import UpgradeModel
 from action_dispatcher import dispatch_action
 #import log with timestamp function
@@ -18,7 +21,9 @@ from user_auth.user_auth import log_with_timestamp
 from plant_time.plant_time import PlantTime
 import logging
 from .initial_resources_config import INITIAL_RESOURCES
-
+from models.biome_model import BiomeModel
+from models.plant_model import PlantModel
+from .plants_config import INITIAL_PLANT_CONFIG
 
 logging.basicConfig(filename='app.log',level=logging.INFO)
 
@@ -30,14 +35,37 @@ user_actions_queue = []
 
 def background_task(app, user_id):
     with app.app_context():
+        biomes_initialized = False  # Flag to check if biomes have been initialized and saved
         while True:
             game_state_dict = fetch_game_state_from_db(user_id)
             upgrades_list = fetch_upgrades_from_db(user_id)
-            
+            biomes_list = fetch_biomes_from_db(user_id)  # Assuming you have a similar function for biomes
+            plants_list = fetch_plants_from_db(user_id)  # Assuming you have a similar function for plants
+
             # Check if upgrades_list is empty or None, and initialize if needed
             if upgrades_list is None or len(upgrades_list) == 0:
                 print(f"Upgrades list is empty for user {user_id}. Initializing new upgrades list.")
                 upgrades_list = initialize_new_upgrades(user_id)
+
+            # Initialize biomes if needed
+            if not biomes_initialized and (biomes_list is None or len(biomes_list) == 0):
+                print(f"Biomes list is empty for user {user_id}. Initializing new biomes list.")
+                biomes_list = initialize_new_biomes(user_id)  # Assuming you have a similar function for biomes
+                save_biomes_to_db(user_id, biomes_list)  # Assuming you have a similar function for biomes
+                biomes_initialized = True  # Set the flag to True
+
+                # Refresh biomes_list after saving to DB
+                biomes_list = fetch_biomes_from_db(user_id)
+
+                # Initialize plants if needed
+                if plants_list is None or len(plants_list) == 0:
+                    print(f"Plants list is empty for user {user_id}. Initializing new plants list.")
+                    # Get the biome_id for "Beginner's Garden" from biomes_list
+                    beginner_garden_biome = next((biome for biome in biomes_list if biome.name == "Beginner's Garden"), None)
+                    if beginner_garden_biome:
+                        plants_list = initialize_new_plants(user_id, beginner_garden_biome.id)
+
+
 
             #print(f"Game state after fetch: {game_state_dict}")
             if game_state_dict is not None:
@@ -53,15 +81,19 @@ def background_task(app, user_id):
                     user_actions_queue.remove(action)  # Remove the processed action
                 save_game_state_to_db(user_id, game_state.to_dict())
                 save_upgrades_to_db(user_id, upgrades_list)
+                save_biomes_to_db(user_id, biomes_list)  # Assuming you have a similar function for biomes
+                save_plants_to_db(user_id, plants_list)  # Assuming you have a similar function for plants
 
 
             game_state.update()
             save_game_state_to_db(user_id, game_state.to_dict())
             save_upgrades_to_db(user_id, upgrades_list)
+            save_biomes_to_db(user_id, biomes_list)  # Assuming you have a similar function for biomes
+            save_plants_to_db(user_id, plants_list)  # Assuming you have a similar function for plants
 
             # Emit updated game state to client
             socketio.emit('game_state', game_state.to_dict())
-            socketio.emit('upgrades_list', [upgrade.to_dict() for upgrade in upgrades_list]) 
+            socketio.emit('upgrades_list', [upgrade.to_dict() for upgrade in upgrades_list])
             sleep(1)
 
 
@@ -107,6 +139,46 @@ def initialize_new_upgrades(user_id):
         new_upgrades.append(new_upgrade)
     return new_upgrades
 
+def initialize_new_biomes(user_id):
+    logging.info(f"Inside initialize_new_biomes for user {user_id}")
+    new_biomes = []
+
+    # Only initialize the "Beginner's Garden" biome
+    biome_data = BIOMES["Beginner's Garden"]
+    new_biome = BiomeModel(
+        user_id=user_id,
+        name="Beginner's Garden",
+        capacity=biome_data['capacity'],
+        ground_water_level=biome_data['ground_water_level'],
+        current_weather=biome_data['current_weather'],
+        current_pest=None,  # Initialize with no pests
+        snowpack=biome_data['snowpack'],
+        resource_modifiers=biome_data['resource_modifiers'],
+        rain_intensity=biome_data['rain_intensity'],
+        snow_intensity=biome_data['snow_intensity']
+    )
+    print(f"New biome: {new_biome}")
+    new_biomes.append(new_biome)
+
+    return new_biomes
+
+def initialize_new_plants(user_id, biome_id):
+    logging.info(f"Inside initialize_new_plants for user {user_id}")
+    new_plants = []
+
+    # Initialize a standard plant for "Beginner's Garden"
+    new_plant = PlantModel(
+         id=str(uuid.uuid4()),
+        user_id=user_id,
+        biome_id=biome_id,
+        **INITIAL_PLANT_CONFIG
+    )
+    print(f"New plant: {new_plant}")
+    new_plants.append(new_plant)
+
+    return new_plants
+
+
 
 @game_state_bp.route('/init_game', methods=['POST'])
 def init_game():
@@ -115,14 +187,14 @@ def init_game():
         if user_id not in running_tasks:
             running_tasks[user_id] = socketio.start_background_task(target=background_task, app=current_app._get_current_object(), user_id=user_id)
     print("Initializing game state...")
-    
+
     print(f"Is user authenticated? {current_user.is_authenticated}")  # Debugging line
-    
+
     if current_user.is_authenticated:
         saved_game_state = fetch_game_state_from_db(current_user.id)
         if saved_game_state:
             return jsonify({"status": "Game state loaded from database"})
-    
+
     # Initialize new game state
     game_state = initialize_new_game_state()
 

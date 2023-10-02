@@ -1,15 +1,3 @@
-"""
-GameResource Class (game_resource.py)
-
-    Attributes:
-        resource_type: Type of the resource (sunlight, water, etc.)
-        amount: Amount of the resource.
-
-    Methods:
-        add_amount(amount): Add to the resource.
-        subtract_amount(amount): Subtract from the resource.
-"""
-
 class GameResource:
     def __init__(self, resource_type, amount, is_locked=False, is_unlocked=False):
         self.resource_type = resource_type
@@ -31,3 +19,11 @@ class GameResource:
 
     def set_unlocked(self, value):
         self.is_unlocked = value
+
+    def to_dict(self):
+        return {
+            'resource_type': self.resource_type,
+            'amount': self.amount,
+            'is_locked': self.is_locked,
+            'is_unlocked': self.is_unlocked
+        }
