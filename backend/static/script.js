@@ -50,7 +50,6 @@ function formatNumber(num) {
 
 // Function to update the UI based on the game state
 function updateUI(gameState) {
-    console.log("Updating UI with gameState:", gameState);
     
     // Determine if it's day or night
     const isDay = gameState.plant_time.is_day;
@@ -120,6 +119,7 @@ function updateUI(gameState) {
         biomeDiv.className = 'biome';
 
         const weather = biome.current_weather;
+        const currentPest = biome.current_pest;
 
         let weatherIcon = '';
 
@@ -137,7 +137,14 @@ function updateUI(gameState) {
                         weather === 'Cloudy' ? '<i class="fas fa-cloud-moon"></i>' : '';
         }
 
-        biomeDiv.innerHTML = `<h2 id="biome-header-${biomeIndex}">${biome.name} (${biome.plants.length}/${biome.capacity}) ${weatherIcon} 
+        let pestIcon = currentPest ? {
+            'Aphids': '🐛',
+            'Deer': '🦌',
+            'Boar': '🐗',
+            'None': ''
+        }[currentPest] : '';
+      
+        biomeDiv.innerHTML = `<h2 id="biome-header-${biomeIndex}">${biome.name} (${biome.plants.length}/${biome.capacity}) ${weatherIcon} ${pestIcon}
             <br>Ground Water: ${Math.floor(biome.ground_water_level)} <br>Snow Pack: ${Math.floor(biome.snowpack)}</h2>
             <button onclick="plantSeedInBiome('${biome.name.replace(/'/g, "\\'")}', 1)">Plant Seed in Biome</button>`;
 
@@ -179,8 +186,8 @@ function updateUI(gameState) {
             const isGeneticMarkerChecked = oldState.hasOwnProperty(geneticMarkerCheckboxId) ? oldState[geneticMarkerCheckboxId] : plant.is_genetic_marker_production_on;
 
             //Progress Bar for Water
-            const maxWaterCapacity = plant.plant_parts.vacuoles * 100;  // Assuming each vacuole can hold 100 units of water
-            const currentWaterAmount = plant.resources.water;
+            const maxWaterCapacity = plant.plant_parts.vacuoles.amount * 100;  // Assuming each vacuole can hold 100 units of water
+            const currentWaterAmount = plant.resources.water.amount;
             const waterProgressPercentage = (currentWaterAmount / maxWaterCapacity) * 100;
 
             let plantPartsRows = '';
@@ -188,7 +195,7 @@ function updateUI(gameState) {
                 if (!partData.is_locked) {
                     plantPartsRows += `
                     <tr style="border: 1px solid black;">
-                        <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, '${partType}', 10)">Grow</button></td>
+                        <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, '${partType}')">Grow</button>Grow</button></td>
                         <td>${capitalizeFirstLetter(partType)}:</td>
                         <td><span id="${partType}-${biomeIndex}-${plantIndex}">${partData.amount || 0}</span></td>
                     </tr>`;
@@ -244,13 +251,13 @@ function updateUI(gameState) {
     }
 
  //Function to buy plant parts
-function buyPlantPart(biomeIndex, plantIndex, partType, cost) {
+ function buyPlantPart(biomeIndex, plantIndex, partType) {
     fetch('/game_state/buy_plant_part', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ biomeIndex, plantIndex, partType, cost })
+        body: JSON.stringify({ biomeIndex, plantIndex, partType  })
     })
     .then(response => response.json())
     .then(data => {

@@ -23,6 +23,8 @@ import uuid
 from game_resource import GameResource
 from constants import SUGAR_THRESHOLD
 from plants.plant_parts_config import PLANT_PARTS_CONFIG
+from plants.part_cost_config import PARTS_COST_CONFIG
+
 
 class Plant:
     def __init__(self, resources, plant_parts=None, biome=None, maturity_level=0, sugar_production_rate=1, genetic_marker_production_rate=1, plant_id=None,is_sugar_production_on=False,is_genetic_marker_production_on=False):
@@ -52,7 +54,8 @@ class Plant:
     def toggle_genetic_marker(self):
         self.is_genetic_marker_production_on = not self.is_genetic_marker_production_on
 
-    def purchase_plant_part(self, type, cost):
+    def purchase_plant_part(self, type):
+        cost = PARTS_COST_CONFIG.get(type, 0)
         #Check if the plant part is locked
         if self.plant_parts[type].is_locked:
             print("Cannot purchase locked plant part.")
@@ -118,7 +121,7 @@ class Plant:
                 ground_water_level -= 1
 
         # Handle taproots
-        for taproot in range(self.plant_parts['taproots'].amount):
+        for taproot in range(self.plant_parts['taproot'].amount):
             if self.resources['water'].amount < self.plant_parts['vacuoles'].amount * 100:
                 self.resources['water'].add_amount(1)
                 water_absorbed += 1
@@ -136,10 +139,32 @@ class Plant:
                 self.resources['sunlight'].add_amount(1)
             else:
                 self.resources['sunlight'].amount = max(0, self.resources['sunlight'].amount - 2)
-                self.resources['water'].amount = max(0, self.resources['water'].amount - water_consumption)
+                self.resources['water'].amount = max(0, self.resources['water'].amount - water_consumption)\
+                
+    def attract_ladybugs(self):
+        #Attract lady bugs and subtract pheromones from plant
+        if self.plant_parts['pheromones'].amount > 0:
+            self.resources['ladybugs'].amount += 1
+            self.plant_parts['pheromones'].amount -= 1
+
+    # In Plant class
+    def handle_pest(self, current_pest):
+        if current_pest == 'Aphids':
+            if self.resources.get('ladybugs', 0).amount > 0:  # Added .amount
+                self.resources['ladybugs'].amount -= 1
+            else:
+                self.resources['sugar'].amount = max(0, self.resources['sugar'].amount - 10)
+        elif current_pest == 'Deer':
+            if self.plant_parts.get('thorns', 0).amount > 0:  # Added .amount
+                self.plant_parts['thorns'].amount -= 1
+            else:
+                self.plant_parts['leaves'].amount = max(0, self.plant_parts['leaves'].amount - 1)
+
+
 
     def update(self, is_day, ground_water_level, current_weather):
         self.update_maturity_level()
+        self.attract_ladybugs()
 
         if self.is_sugar_production_on:
             self.produce_sugar()

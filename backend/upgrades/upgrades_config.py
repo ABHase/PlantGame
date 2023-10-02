@@ -43,5 +43,19 @@ UPGRADES = [
         'unlocked': False,
         'effect': 'taproot'  # The name of the plant part to unlock
     },
+    {
+    'name': 'Unlock Pheromones',
+    'cost': 2,
+    'type': 'plant_part',
+    'unlocked': False,
+    'effect': 'pheromones'  # The name of the plant part to unlock
+    },
+    {
+    'name': 'Unlock Thorns',
+    'cost': 2,
+    'type': 'plant_part',
+    'unlocked': False,
+    'effect': 'thorns'  # The name of the plant part to unlock
+    },
     # ... more upgrades ...
 ]

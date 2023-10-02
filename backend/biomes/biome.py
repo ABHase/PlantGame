@@ -16,7 +16,7 @@ import random
 from biomes.biomes_config import BIOMES
 
 class Biome:
-    def __init__(self, name, ground_water_level, current_weather, snowpack=0):
+    def __init__(self, name, ground_water_level, current_weather,current_pest=None, snowpack=0):
         self.name = name
         self.capacity = BIOMES[name]['capacity']
         self.resource_modifiers = BIOMES[name]['resource_modifiers']
@@ -24,6 +24,7 @@ class Biome:
         self.rain_intensity = BIOMES[name]['rain_intensity']  # New field
         self.snow_intensity = BIOMES[name]['snow_intensity']
         self.plants = []
+        self.current_pest = current_pest
         self.ground_water_level = ground_water_level  # Set to passed-in value
         self.current_weather = current_weather  # Set to passed-in value
         self.snowpack = snowpack  # Set to passed-in value
@@ -46,6 +47,11 @@ class Biome:
     # Method to check if enough ground water is available
     def has_enough_ground_water(self, amount):
         return self.ground_water_level >= amount
+    
+    def set_pest_for_day(self, current_season):
+        pest_choices = list(BIOMES[self.name].get('pests', {}).keys())
+        probabilities = list(BIOMES[self.name].get('pests', {}).values())
+        self.current_pest = random.choices(pest_choices, probabilities)[0]
 
     def set_weather_for_day(self, current_season):
         
@@ -58,6 +64,11 @@ class Biome:
         weather_choices = list(self.weather_conditions[current_season].keys())
         probabilities = list(self.weather_conditions[current_season].values())
         self.current_weather = random.choices(weather_choices, probabilities)[0]
+
+    def handle_pests(self, current_pest):
+        for plant in self.plants:
+            plant.handle_pest(current_pest)
+
 
 
     def update(self, is_day, new_day=False, new_hour=False, current_season=None):
@@ -78,6 +89,12 @@ class Biome:
             melt_amount = min(self.snowpack, 50)  # You can adjust the melt rate
             self.increase_ground_water_level(melt_amount)
             self.snowpack -= melt_amount
+
+        if new_day and current_season:
+            self.set_pest_for_day(current_season)
+
+        if new_hour and self.current_pest is not None:
+            self.handle_pests(self.current_pest)
 
         # Update the plants
         for plant in self.plants:

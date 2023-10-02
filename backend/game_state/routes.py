@@ -17,6 +17,8 @@ from action_dispatcher import dispatch_action
 from user_auth.user_auth import log_with_timestamp
 from plant_time.plant_time import PlantTime
 import logging
+from .initial_resources_config import INITIAL_RESOURCES
+
 
 logging.basicConfig(filename='app.log',level=logging.INFO)
 
@@ -44,12 +46,14 @@ def background_task(app, user_id):
             else:
                 game_state = initialize_new_game_state()
 
-            # Process queued actions
+            # Process all queued actions in a single tick
             while user_actions_queue:
-                action = user_actions_queue.pop(0)
-                dispatch_action(action, game_state)
+                for action in list(user_actions_queue):  # Create a copy of the queue to iterate over
+                    dispatch_action(action, game_state)
+                    user_actions_queue.remove(action)  # Remove the processed action
                 save_game_state_to_db(user_id, game_state.to_dict())
                 save_upgrades_to_db(user_id, upgrades_list)
+
 
             game_state.update()
             save_game_state_to_db(user_id, game_state.to_dict())
@@ -63,11 +67,7 @@ def background_task(app, user_id):
 
 def initialize_new_game_state():
     # Initialize a sample plant
-    initial_resources = {
-        'sunlight': GameResource('sunlight', 0),
-        'water': GameResource('water', 0),
-        'sugar': GameResource('sugar', 0),
-    }
+    initial_resources = INITIAL_RESOURCES
 
     plant1 = Plant(initial_resources, None, None, 0, 1, 1)  # Biome will be set later
 
@@ -211,14 +211,12 @@ def buy_plant_part():
     biomeIndex = request.json.get('biomeIndex')
     plantIndex = request.json.get('plantIndex')
     partType = request.json.get('partType')
-    cost = request.json.get('cost')
 
     action = {
         "type": "buy_plant_part",
         "biomeIndex": biomeIndex,
         "plantIndex": plantIndex,
         "partType": partType,
-        "cost": cost
     }
 
     user_actions_queue.append(action)

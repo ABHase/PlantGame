@@ -17,6 +17,7 @@ from biomes.biomes_config import BIOMES
 from plant_time import PlantTime
 from game_resource import GameResource
 from events.event_emitter import EventEmitter
+from .initial_resources_config import INITIAL_RESOURCES
 
 class GameState(EventEmitter):
     def __init__(self, plants, biomes, time, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
@@ -129,11 +130,7 @@ class GameState(EventEmitter):
         print(f"Target Biome: {target_biome.name}, Capacity: {target_biome.capacity}, Current Plants: {len(target_biome.plants)}")
         
         if target_biome and self.seeds > 0 and self.genetic_markers > genetic_marker_cost and len(target_biome.plants) < target_biome.capacity:
-            initial_resources = {
-                'sunlight': GameResource('sunlight', 0),
-                'water': GameResource('water', 0),
-                'sugar': GameResource('sugar', 0),
-            }
+            initial_resources = INITIAL_RESOURCES
             new_plant = Plant(initial_resources, None, None, 0, 1, 1)
             
             # Debug: Print the new plant details
@@ -171,6 +168,7 @@ class GameState(EventEmitter):
                 'resource_modifiers': biome.resource_modifiers,
                 'ground_water_level': biome.ground_water_level,
                 'current_weather': biome.current_weather,
+                'current_pest': biome.current_pest,
                 'snowpack': biome.snowpack,
                 'plants': self.plants_to_dict(biome)
             }
@@ -221,7 +219,7 @@ class GameState(EventEmitter):
         biomes = []
         for biome_data in biomes_data:
             plants = cls.plants_from_dict(biome_data['plants'])
-            biome = Biome(biome_data['name'], biome_data['ground_water_level'], biome_data['current_weather'], biome_data['snowpack'])
+            biome = Biome(biome_data['name'], biome_data['ground_water_level'], biome_data['current_weather'], biome_data['current_pest'], biome_data['snowpack'])
             for plant in plants:
                 plant.biome = biome
                 biome.add_plant(plant)
