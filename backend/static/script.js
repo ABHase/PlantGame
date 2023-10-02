@@ -183,17 +183,29 @@ function updateUI(gameState) {
             const currentWaterAmount = plant.resources.water;
             const waterProgressPercentage = (currentWaterAmount / maxWaterCapacity) * 100;
 
+            let plantPartsRows = '';
+            for (const [partType, partData] of Object.entries(plant.plant_parts)) {
+                if (!partData.is_locked) {
+                    plantPartsRows += `
+                    <tr style="border: 1px solid black;">
+                        <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, '${partType}', 10)">Grow</button></td>
+                        <td>${capitalizeFirstLetter(partType)}:</td>
+                        <td><span id="${partType}-${biomeIndex}-${plantIndex}">${partData.amount || 0}</span></td>
+                    </tr>`;
+                }
+            }
+
                 plantDiv.innerHTML = `
                 <table style=width: 100%; "border-collapse: collapse;">
                     <tr style="border: 1px solid black;">
                     <td>${absorbSunlightButtonHTML}</td>
                     <td>Sunlight:</td>
-                    <td><span id="sunlight-${biomeIndex}-${plantIndex}">${formatNumber(plant.resources.sunlight)}</span></td>
+                    <td><span id="sunlight-${biomeIndex}-${plantIndex}">${formatNumber(plant.resources.sunlight.amount)}</span></td>
                     </tr>
                     <tr style="border: 1px solid black;">
                     <td>${absorbWaterButtonHTML}</td>
                     <td>Water:</td>
-                    <td><span id="water-${biomeIndex}-${plantIndex}">${formatNumber(plant.resources.water)}</span></td>
+                    <td><span id="water-${biomeIndex}-${plantIndex}">${formatNumber(plant.resources.water.amount)}</span></td>
                     </tr>
                     <tr style="border: 1px solid black;">
                         <td colspan="3">
@@ -202,30 +214,11 @@ function updateUI(gameState) {
                             </div>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid black;">
-                    <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, 'roots', 10)">Grow</button></td>
-                    <td>Roots:</td>
-                    <td><span id="roots-${biomeIndex}-${plantIndex}">${plant.plant_parts.roots}</span></td>                
-                    </tr>
-                    <tr style="border: 1px solid black;">
-                    <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, 'leaves', 10)">Grow</button></td>
-                    <td>Leaves:</td>
-                    <td><span id="leaves-${biomeIndex}-${plantIndex}">${plant.plant_parts.leaves}</span></td>                
-                    </tr>
-                    <tr style="border: 1px solid black;">
-                    <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, 'vacuoles', 10)">Grow</button></td>
-                    <td>Vacuoles:</td>
-                    <td><span id="vacuoles-${biomeIndex}-${plantIndex}">${plant.plant_parts.vacuoles}</span></td>                
-                    </tr>
-                    <tr style="border: 1px solid black;">
-                    <td><button onclick="buyPlantPart(${biomeIndex}, ${plantIndex}, 'resin', 10)">Grow</button></td>
-                    <td>Resin:</td>
-                    <td><span id="resin-${biomeIndex}-${plantIndex}">${plant.plant_parts.resin || 0}</span></td>                
-                    </tr>
+                    ${plantPartsRows}
                     <tr style="border: 1px solid black;">
                     <td><input type="checkbox" id="${checkboxId}" ${isChecked ? 'checked' : ''} onchange="toggleSugar(${biomeIndex}, ${plantIndex}, this.checked)"></td>
                     <td>Sugar:</td>
-                    <td><span id="sugar-${biomeIndex}-${plantIndex}">${formatNumber(plant.resources.sugar)}</span></td>
+                    <td><span id="sugar-${biomeIndex}-${plantIndex}">${formatNumber(plant.resources.sugar.amount)}</span></td>
                     <td></td>
                     </tr>
                     <tr style="border: 1px solid black;">
@@ -357,6 +350,10 @@ function updateUpgradesUI(upgradesList) {
 
     const table = document.createElement('table');
     upgradesList.forEach((upgrade, index) => {
+        if (upgrade.unlocked) {
+            return;  // Skip this iteration if the upgrade is already unlocked
+        }
+
         const row = table.insertRow();
         const cell1 = row.insertCell(0);
 
@@ -364,23 +361,28 @@ function updateUpgradesUI(upgradesList) {
         const canUnlock = !upgrade.unlocked && gameState.genetic_markers >= upgrade.cost;
 
         cell1.innerHTML = `${upgrade.name} (${isUnlocked}) <br>` + 
-                          (canUnlock ? `<button onclick="unlockUpgrade(${index})">Unlock (${upgrade.cost} GM)</button>` : '');
+                          (canUnlock ? `<button onclick="unlockUpgrade(${index}, ${upgrade.cost})">Unlock (${upgrade.cost} GM)</button>` : '');
     });
 
     upgradesContainer.appendChild(table);
 }
 
 
-function unlockUpgrade(index) {
+
+function unlockUpgrade(index, cost) {  // Add cost as a parameter
     fetch('/game_state/unlock_upgrade', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ index })
+        body: JSON.stringify({ index, cost })  // Include cost in the payload
     })
     .then(response => response.json())
     .then(data => {
         console.log(data);
     });
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }

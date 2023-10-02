@@ -22,13 +22,19 @@ import math
 import uuid
 from game_resource import GameResource
 from constants import SUGAR_THRESHOLD
+from plants.plant_parts_config import PLANT_PARTS_CONFIG
 
 class Plant:
-    def __init__(self, resources, plant_parts, biome, maturity_level, sugar_production_rate, genetic_marker_production_rate, plant_id=None,is_sugar_production_on=False,is_genetic_marker_production_on=False):
+    def __init__(self, resources, plant_parts=None, biome=None, maturity_level=0, sugar_production_rate=1, genetic_marker_production_rate=1, plant_id=None,is_sugar_production_on=False,is_genetic_marker_production_on=False):
 
         self.id = plant_id if plant_id else str(uuid.uuid4())
         self.resources = resources
-        self.plant_parts = plant_parts
+        self.plant_parts = {} 
+        if plant_parts is None:
+            for part, config in PLANT_PARTS_CONFIG.items():
+                self.plant_parts[part] = GameResource(part, config['initial_amount'], config['is_locked'], config['is_unlocked'])
+        else:
+            self.plant_parts = plant_parts
         self.biome = biome
         self.maturity_level = maturity_level
         self.sugar_production_rate = sugar_production_rate
@@ -47,6 +53,10 @@ class Plant:
         self.is_genetic_marker_production_on = not self.is_genetic_marker_production_on
 
     def purchase_plant_part(self, type, cost):
+        #Check if the plant part is locked
+        if self.plant_parts[type].is_locked:
+            print("Cannot purchase locked plant part.")
+            return
         if self.resources['sugar'].amount >= cost:
             if type == 'resin':
                 if self.plant_parts['resin'].amount >= self.plant_parts['leaves'].amount:
@@ -99,12 +109,22 @@ class Plant:
 
     def absorb_water(self, ground_water_level):
         water_absorbed = 0
+
+        # Handle regular roots
         for root in range(self.plant_parts['roots'].amount):
             if ground_water_level > 0 and self.resources['water'].amount < self.plant_parts['vacuoles'].amount * 100:
                 self.resources['water'].add_amount(1)
                 water_absorbed += 1
                 ground_water_level -= 1
+
+        # Handle taproots
+        for taproot in range(self.plant_parts['taproots'].amount):
+            if self.resources['water'].amount < self.plant_parts['vacuoles'].amount * 100:
+                self.resources['water'].add_amount(1)
+                water_absorbed += 1
+
         return water_absorbed, ground_water_level
+
 
     def absorb_sunlight(self, is_day, current_weather):
         water_consumption = 1  # Default water consumption

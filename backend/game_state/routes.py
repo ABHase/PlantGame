@@ -68,17 +68,11 @@ def initialize_new_game_state():
         'water': GameResource('water', 0),
         'sugar': GameResource('sugar', 0),
     }
-    initial_plant_parts = {
-        'roots': GameResource('roots', 2),
-        'leaves': GameResource('leaves', 1),
-        'vacuoles': GameResource('vacuoles', 1),  # Initialize with 1 vacuole
-        'resin': GameResource('resin', 0),  # Initialize with 0 resin
-    }
 
-    plant1 = Plant(initial_resources, initial_plant_parts, None, 0, 1, 1)  # Biome will be set later
+    plant1 = Plant(initial_resources, None, None, 0, 1, 1)  # Biome will be set later
 
     # Initialize a sample biome
-    biome1 = Biome('Beginner\'s Garden',ground_water_level=1000,current_weather="Sunny")  # Attributes will be fetched from BIOMES dictionary
+    biome1 = Biome('Beginner\'s Garden', ground_water_level=1000, current_weather="Sunny")  # Attributes will be fetched from BIOMES dictionary
     biome1.add_plant(plant1)
     plant1.biome = biome1  # Set the biome for the plant
 
@@ -95,6 +89,7 @@ def initialize_new_game_state():
     game_state.on("unlock_upgrade", game_state.handle_unlock_upgrade)
 
     return game_state
+
 
 def initialize_new_upgrades(user_id):
     logging.info(f"Inside initialize_new_upgrades for user {user_id}")
@@ -282,6 +277,7 @@ def unlock_upgrade():
     index = request.json.get('index')
     cost = request.json.get('cost')
     upgrade = fetch_upgrade_by_index(user_id, index)  # Fetch the upgrade here
+    print(f"Cost from request: {request.json.get('cost')}")
 
     action = {
         "type": "unlock_upgrade",

@@ -30,8 +30,15 @@ UPGRADES = [
         'effect': 'Swamp'  # The name of the biome to unlock
     },
     {
+        'name': 'Unlock Resin',
+        'cost': 1,
+        'type': 'plant_part',
+        'unlocked': False,
+        'effect': 'resin'  # The name of the plant part to unlock
+    },
+    {
         'name': 'Unlock Taproot',
-        'cost': 50,
+        'cost': 5,
         'type': 'plant_part',
         'unlocked': False,
         'effect': 'taproot'  # The name of the plant part to unlock

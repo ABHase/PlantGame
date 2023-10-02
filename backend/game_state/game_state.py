@@ -39,18 +39,42 @@ class GameState(EventEmitter):
                 if can_produce:
                     self.update_genetic_marker_progress(amount)
 
-    def handle_unlock_upgrade(self, upgrade):
-        if upgrade.type == "biome":
-            biome_name = upgrade.effect  # Fetch the name from the effect field
-            biome_config = BIOMES.get(biome_name)
-            if biome_config:
-                new_biome = Biome(
-                    name=biome_name,
-                    ground_water_level=biome_config['ground_water_level'],
-                    current_weather=biome_config['current_weather']
-                    # ... any other attributes ...
-                )
-                self.biomes.append(new_biome)
+    def handle_unlock_upgrade(self, upgrade, cost):
+        if self.genetic_markers >= cost:
+            if upgrade.type == "biome":
+                self.unlock_biome(upgrade)
+            elif upgrade.type == "plant_part":
+                self.unlock_plant_part(upgrade)
+            # Subtract the cost here
+            self.genetic_markers -= cost
+        else:
+            print(f"Not enough genetic markers to unlock this upgrade.")
+
+
+    def unlock_biome(self, upgrade):
+        biome_name = upgrade.effect  # Fetch the name from the effect field
+        biome_config = BIOMES.get(biome_name)
+        if biome_config:
+            new_biome = Biome(
+                name=biome_name,
+                ground_water_level=biome_config['ground_water_level'],
+                current_weather=biome_config['current_weather']
+                # ... any other attributes ...
+            )
+            self.biomes.append(new_biome)
+
+    def unlock_plant_part(self, upgrade):
+        plant_part_to_unlock = upgrade.effect  # Fetch the plant part name from the effect field
+
+        # Iterate through all biomes
+        for biome in self.biomes:
+            # Iterate through all plants in each biome
+            for plant in biome.plants:
+                # Check if the plant part exists in this plant
+                if plant_part_to_unlock in plant.plant_parts:
+                    # Unlock the plant part
+                    plant.plant_parts[plant_part_to_unlock].unlock()
+                    plant.plant_parts[plant_part_to_unlock].set_unlocked(True)
 
 
 
@@ -110,13 +134,7 @@ class GameState(EventEmitter):
                 'water': GameResource('water', 0),
                 'sugar': GameResource('sugar', 0),
             }
-            initial_plant_parts = {
-            'roots': GameResource('roots', 2),
-            'leaves': GameResource('leaves', 1),
-            'vacuoles': GameResource('vacuoles', 1),  # Initialize with 1 vacuole
-            'resin': GameResource('resin', 0),  # Initialize with 0 resin
-            }
-            new_plant = Plant(initial_resources, initial_plant_parts, target_biome, 0, 25, 1)
+            new_plant = Plant(initial_resources, None, None, 0, 1, 1)
             
             # Debug: Print the new plant details
             print(f"New Plant: {new_plant}")
@@ -164,8 +182,8 @@ class GameState(EventEmitter):
             {
                 'id': plant.id,
                 'maturity_level': plant.maturity_level,
-                'resources': {k: v.amount for k, v in plant.resources.items()},
-                'plant_parts': {k: v.amount for k, v in plant.plant_parts.items()},
+                'resources': {k: {'amount': v.amount} for k, v in plant.resources.items()},
+                'plant_parts': {k: {'amount': v.amount, 'is_locked': v.is_locked, 'is_unlocked': v.is_unlocked} for k, v in plant.plant_parts.items()},
                 'sugar_production_rate': plant.sugar_production_rate,
                 'genetic_marker_production_rate': plant.genetic_marker_production_rate,
                 'is_sugar_production_on': plant.is_sugar_production_on,
@@ -214,8 +232,8 @@ class GameState(EventEmitter):
     def plants_from_dict(cls, plants_data):
         plants = []
         for plant_data in plants_data:
-            resources = {k: GameResource(k, v) for k, v in plant_data['resources'].items()}
-            plant_parts = {k: GameResource(k, v) for k, v in plant_data['plant_parts'].items()}
+            resources = {k: GameResource(k, v['amount']) for k, v in plant_data['resources'].items()}
+            plant_parts = {k: GameResource(k, v['amount'], v['is_locked'], v['is_unlocked']) for k, v in plant_data['plant_parts'].items()}
             plant = Plant(
                 resources,
                 plant_parts,
@@ -226,10 +244,10 @@ class GameState(EventEmitter):
                 plant_data['id'],
                 plant_data['is_sugar_production_on'],
                 plant_data['is_genetic_marker_production_on'],
-                
             )
             plants.append(plant)
         return plants
+
 
     @classmethod
     def plant_time_from_dict(cls, plant_time_data):
