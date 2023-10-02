@@ -4,20 +4,24 @@ from time import sleep
 from app import socketio
 from biomes.biomes_config import BIOMES
 from plants.plant_parts_config import PLANT_PARTS_CONFIG  # Replace 'your_app_name' with the name of the package where app.py resides
-from game_controller import GameController
 from biomes.biome import Biome
 from plants.plant import Plant
-from game_resource import GameResource
-from upgrades.upgrade import Upgrade
 from upgrades.upgrades_config import UPGRADES
 from game_state import GameState  # Import GameState
 from socket_config import socketio
 from flask_login import current_user, login_required
-from user_auth.user_auth import fetch_game_state_from_db, save_game_state_to_db, fetch_upgrades_from_db, save_upgrades_to_db, fetch_upgrade_by_index, fetch_biomes_from_db, save_biomes_to_db, fetch_plants_from_db, save_plants_to_db
-from user_auth.models import UpgradeModel
+from user_auth.user_auth import (
+    fetch_game_state_from_db, save_game_state_to_db,
+    fetch_upgrades_from_db, save_upgrades_to_db,
+    fetch_upgrade_by_index,
+    fetch_biomes_from_db, save_biomes_to_db,
+    fetch_plants_from_db, save_plants_to_db,
+    fetch_global_state_from_db, save_global_state_to_db,
+    fetch_plant_time_from_db, save_plant_time_to_db
+)
+from user_auth.models import UpgradeModel, PlantTimeModel, GlobalState
 from action_dispatcher import dispatch_action
 #import log with timestamp function
-from user_auth.user_auth import log_with_timestamp
 from plant_time.plant_time import PlantTime
 import logging
 from .initial_resources_config import INITIAL_RESOURCES
@@ -41,6 +45,20 @@ def background_task(app, user_id):
             upgrades_list = fetch_upgrades_from_db(user_id)
             biomes_list = fetch_biomes_from_db(user_id)  # Assuming you have a similar function for biomes
             plants_list = fetch_plants_from_db(user_id)  # Assuming you have a similar function for plants
+            plant_time = fetch_plant_time_from_db(user_id)
+            global_state = fetch_global_state_from_db(user_id)
+
+            # Initialize PlantTime if needed
+            if plant_time is None:
+                print(f"PlantTime is empty for user {user_id}. Initializing new PlantTime.")
+                plant_time = initialize_new_plant_time(user_id)
+                save_plant_time_to_db(user_id, plant_time)
+
+            # Initialize GlobalState if needed
+            if global_state is None:
+                print(f"GlobalState is empty for user {user_id}. Initializing new GlobalState.")
+                global_state = initialize_new_global_state(user_id)
+                save_global_state_to_db(user_id, global_state)
 
             # Check if upgrades_list is empty or None, and initialize if needed
             if upgrades_list is None or len(upgrades_list) == 0:
@@ -177,6 +195,33 @@ def initialize_new_plants(user_id, biome_id):
     new_plants.append(new_plant)
 
     return new_plants
+
+def initialize_new_plant_time(user_id):
+    logging.info(f"Inside initialize_new_plant_time for user {user_id}")
+    new_plant_time = PlantTimeModel(
+        user_id=user_id,
+        day=1,
+        hour=6,
+        is_day=True,
+        season="Spring",
+        update_counter=6,
+        year=1
+    )
+    print(f"New PlantTime: {new_plant_time}")
+    return new_plant_time
+
+def initialize_new_global_state(user_id):
+    logging.info(f"Inside initialize_new_global_state for user {user_id}")
+    new_global_state = GlobalState(
+        user_id=user_id,
+        genetic_marker_progress=0,
+        genetic_marker_threshold=10,
+        genetic_markers=5,
+        seeds=5
+    )
+    print(f"New GlobalState: {new_global_state}")
+    return new_global_state
+
 
 
 

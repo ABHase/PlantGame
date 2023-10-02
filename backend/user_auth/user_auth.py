@@ -1,5 +1,5 @@
 from app import db  # Replace 'your_app' with the name of your main app package
-from .models import User, UpgradeModel  # Replace 'your_app' with the name of your main app package
+from .models import User, UpgradeModel, GlobalState, PlantTimeModel  # Replace 'your_app' with the name of your main app package
 from flask import json
 from datetime import datetime
 from models.biome_model import BiomeModel
@@ -85,3 +85,19 @@ def save_plants_to_db(user_id, plants_list):
             existing_plant.thorns = plant.thorns
         else:
             db.session.add(plant)
+
+def fetch_global_state_from_db(user_id):
+    return GlobalState.query.filter_by(user_id=user_id).first()
+
+def save_global_state_to_db(user_id, global_state):
+    global_state.user_id = user_id  # Set the user_id
+    db.session.merge(global_state)
+    db.session.commit()
+
+def fetch_plant_time_from_db(user_id):
+    return PlantTimeModel.query.filter_by(user_id=user_id).first()
+
+def save_plant_time_to_db(user_id, plant_time):
+    plant_time.user_id = user_id  # Set the user_id
+    db.session.merge(plant_time)
+    db.session.commit()
