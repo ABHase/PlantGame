@@ -50,3 +50,27 @@ class PlantTime:
             return 7, 19
         elif self.season == 'Winter':
             return 8, 18
+        else:
+            print(f"Unexpected season value: {self.season}")
+            return 6, 18  # Default values
+
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            year=data['year'],
+            season=data['season'],
+            day=data['day'],
+            hour=data['hour'],
+            update_counter=data['update_counter']
+        )
+
+    def to_dict(self):
+        return {
+            'year': self.year,
+            'season': self.season,
+            'day': self.day,
+            'hour': self.hour,
+            'update_counter': self.update_counter,
+            'is_day': self.calculate_is_day()  # You can also directly call methods like this
+        }

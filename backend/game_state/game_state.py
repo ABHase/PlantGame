@@ -10,6 +10,7 @@ GameState Class (game_state.py)
         add_plant_to_biome(plant, biome): Add a plant to a biome.
         update(): Update the game state (called in the main game loop).
 """ 
+from user_auth.models import PlantTimeModel
 from constants import INITIAL_GENETIC_MARKER_THRESHOLD
 from plants.plant import Plant
 from biomes.biome import Biome
@@ -18,6 +19,8 @@ from plant_time import PlantTime
 from game_resource import GameResource
 from events.event_emitter import EventEmitter
 from .initial_resources_config import INITIAL_RESOURCES
+from user_auth.user_auth import fetch_plant_time_from_db, save_plant_time_to_db
+
 
 class GameState(EventEmitter):
     def __init__(self, plants, biomes, time, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
@@ -31,14 +34,32 @@ class GameState(EventEmitter):
         self.plant_time = time
 
 
-    def update(self):
-        new_day, new_hour = self.plant_time.update()  # Assuming update() returns True if a new day has started
+    def update(self, user_id=None):
+        # Fetch PlantTimeModel from the database
+        plant_time_model = fetch_plant_time_from_db(user_id)
+        
+        # Convert PlantTimeModel to PlantTime
+        plant_time = PlantTime.from_dict(plant_time_model.to_dict())
+        
+        # Perform the update
+        new_day, new_hour = plant_time.update()
+        
+        # Convert updated PlantTime back to a dictionary
+        updated_plant_time_dict = plant_time.to_dict()
+        
+        # Update the PlantTimeModel with the new data
+        for key, value in updated_plant_time_dict.items():
+            setattr(plant_time_model, key, value)
+        
+        # Save updated PlantTimeModel back to the database
+        save_plant_time_to_db(user_id, plant_time_model)
 
         for biome in self.biomes:
-            results = biome.update(self.plant_time.is_day, new_day, new_hour, self.plant_time.season)
+            results = biome.update(plant_time.is_day, new_day, new_hour, plant_time.season)
             for can_produce, amount in results:
                 if can_produce:
                     self.update_genetic_marker_progress(amount)
+
 
     def handle_unlock_upgrade(self, upgrade, cost):
         if self.genetic_markers >= cost:

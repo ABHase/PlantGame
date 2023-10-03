@@ -1,5 +1,7 @@
 let socket;
 let gameState = {};  // Define gameState as a global variable
+let plantTimeState = null;  // Declare a global variable to hold the plant_time object
+
 
 // Initialize the game when the page loads
 window.onload = function() {
@@ -28,6 +30,13 @@ window.onload = function() {
         updateUpgradesUI(data, gameState);
     });
 
+    // Listen for plant_time updates from the server
+    socket.on('plant_time', function(plant_time) {
+        plantTimeState = plant_time;  // Update the global plantTimeState variable
+        updatePlantTimeUI(plant_time);
+    });
+    
+
     // Save game state when the user is about to leave the page
     window.onbeforeunload = function() {
         // Notify the server that the user is about to leave
@@ -52,21 +61,8 @@ function formatNumber(num) {
 function updateUI(gameState) {
     
     // Determine if it's day or night
-    const isDay = gameState.plant_time.is_day;
-
-    // Update time information
-    const yearSpan = document.getElementById('year');
-    const seasonSpan = document.getElementById('season');
-    const daySpan = document.getElementById('day');
-    const hourSpan = document.getElementById('hour');
-    const timeOfDaySpan = document.getElementById('time-of-day');
-    
-    yearSpan.textContent = gameState.plant_time.year;
-    seasonSpan.textContent = gameState.plant_time.season;
-    daySpan.textContent = gameState.plant_time.day;
-    hourSpan.textContent = gameState.plant_time.hour;
-    timeOfDaySpan.textContent = gameState.plant_time.is_day ? 'Day' : 'Night';
-    
+    const isDay = plantTimeState ? plantTimeState.is_day : false;  // Use the global plantTimeState variable
+        
     // Update genetic marker information
 
     const geneticMarkersSpan = document.getElementById('genetic-markers');
@@ -373,6 +369,21 @@ function updateUpgradesUI(upgradesList) {
 
     upgradesContainer.appendChild(table);
 }
+
+function updatePlantTimeUI(plant_time) {
+    const yearSpan = document.getElementById('year');
+    const seasonSpan = document.getElementById('season');
+    const daySpan = document.getElementById('day');
+    const hourSpan = document.getElementById('hour');
+    const timeOfDaySpan = document.getElementById('time-of-day');
+    
+    yearSpan.textContent = plant_time.year;
+    seasonSpan.textContent = plant_time.season;
+    daySpan.textContent = plant_time.day;
+    hourSpan.textContent = plant_time.hour;
+    timeOfDaySpan.textContent = plant_time.is_day ? 'Day' : 'Night';
+}
+
 
 
 

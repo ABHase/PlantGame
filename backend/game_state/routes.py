@@ -103,7 +103,7 @@ def background_task(app, user_id):
                 save_plants_to_db(user_id, plants_list)  # Assuming you have a similar function for plants
 
 
-            game_state.update()
+            game_state.update(user_id)
             save_game_state_to_db(user_id, game_state.to_dict())
             save_upgrades_to_db(user_id, upgrades_list)
             save_biomes_to_db(user_id, biomes_list)  # Assuming you have a similar function for biomes
@@ -111,6 +111,7 @@ def background_task(app, user_id):
 
             # Emit updated game state to client
             socketio.emit('game_state', game_state.to_dict())
+            socketio.emit('plant_time', plant_time.to_dict())
             socketio.emit('upgrades_list', [upgrade.to_dict() for upgrade in upgrades_list])
             sleep(1)
 

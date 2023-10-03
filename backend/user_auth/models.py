@@ -61,8 +61,9 @@ class PlantTimeModel(db.Model):
     
     @classmethod
     def from_dict(cls, data):
-        return cls(
-            id=data['id'],
+        print(f"Data received in from_dict: {data}")  # Debugging line
+        instance = cls(
+            id=data.get('id', None),  # Using .get() to avoid KeyError
             day=data['day'],
             hour=data['hour'],
             is_day=data['is_day'],
@@ -70,6 +71,9 @@ class PlantTimeModel(db.Model):
             update_counter=data['update_counter'],
             year=data['year']
         )
+        print(f"Instance created from from_dict: {instance}")  # Debugging line
+        return instance
+
 
 class GlobalState(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -91,9 +95,11 @@ class GlobalState(db.Model):
     @classmethod
     def from_dict(cls, data):
         return cls(
-            id=data['id'],
-            genetic_marker_progress=data['genetic_marker_progress'],
-            genetic_marker_threshold=data['genetic_marker_threshold'],
-            genetic_markers=data['genetic_markers'],
-            seeds=data['seeds']
+            id=data.get('id', None),
+            day=data['day'],
+            hour=data['hour'],
+            is_day=data['is_day'],
+            season=data['season'],
+            update_counter=data['update_counter'],
+            year=data['year']
         )
