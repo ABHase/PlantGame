@@ -14,20 +14,59 @@ Biome Class (biome.py)
 """
 import random
 from biomes.biomes_config import BIOMES
+from plants.plant import Plant
 
 class Biome:
-    def __init__(self, name, ground_water_level, current_weather,current_pest=None, snowpack=0):
+    def __init__(self, id, user_id, name, capacity, ground_water_level, current_weather, current_pest, snowpack, resource_modifiers, rain_intensity, snow_intensity):
+        self.id = id
+        self.user_id = user_id
         self.name = name
-        self.capacity = BIOMES[name]['capacity']
-        self.resource_modifiers = BIOMES[name]['resource_modifiers']
-        self.weather_conditions = BIOMES[name]['weather_conditions']
-        self.rain_intensity = BIOMES[name]['rain_intensity']  # New field
-        self.snow_intensity = BIOMES[name]['snow_intensity']
-        self.plants = []
+        self.capacity = capacity
+        self.ground_water_level = ground_water_level
+        self.current_weather = current_weather
         self.current_pest = current_pest
-        self.ground_water_level = ground_water_level  # Set to passed-in value
-        self.current_weather = current_weather  # Set to passed-in value
-        self.snowpack = snowpack  # Set to passed-in value
+        self.snowpack = snowpack
+        self.resource_modifiers = resource_modifiers
+        self.rain_intensity = rain_intensity
+        self.snow_intensity = snow_intensity
+        self.weather_conditions = BIOMES[self.name]['weather_conditions']
+        self.plants = []  # Initialize an empty list for plants
+
+    @classmethod
+    def from_dict(cls, data):
+        biome = cls(
+            id=data['id'],
+            user_id=data['user_id'],
+            name=data['name'],
+            capacity=data['capacity'],
+            ground_water_level=data['ground_water_level'],
+            current_weather=data['current_weather'],
+            current_pest=data['current_pest'],
+            snowpack=data['snowpack'],
+            resource_modifiers=data['resource_modifiers'],
+            rain_intensity=data['rain_intensity'],
+            snow_intensity=data['snow_intensity']
+        )
+        # If 'plants' key exists in data, convert plant dictionaries to Plant objects
+        if 'plants' in data:
+            biome.plants = [Plant.from_dict(plant_data) for plant_data in data['plants']]
+        return biome
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'name': self.name,
+            'capacity': self.capacity,
+            'ground_water_level': self.ground_water_level,
+            'current_weather': self.current_weather,
+            'current_pest': self.current_pest,
+            'snowpack': self.snowpack,
+            'resource_modifiers': self.resource_modifiers,
+            'rain_intensity': self.rain_intensity,
+            'snow_intensity': self.snow_intensity,
+            'plants': [plant.to_dict() for plant in self.plants]  # Convert each plant to a dictionary
+        }
 
 
     #Method to decrease ground water level
@@ -72,6 +111,8 @@ class Biome:
 
 
     def update(self, is_day, new_day=False, new_hour=False, current_season=None):
+        print(f"Biome {self.id} updating...")
+        print(f"Number of plants in Biome {self.id}: {len(self.plants)}")
         if new_hour and current_season:
             self.set_weather_for_hour(current_season)
         results = []
@@ -82,7 +123,7 @@ class Biome:
             self.snowpack += self.snow_intensity  # Accumulate snowpack
 
         # Slowly drain water over time
-        self.decrease_ground_water_level(self.ground_water_level * 0.02)  # Example rate
+        #self.decrease_ground_water_level(self.ground_water_level * 0.02)  # Example rate
 
         # Melt snowpack in spring
         if current_season == 'Spring':

@@ -42,7 +42,6 @@ def fetch_upgrade_by_index(user_id, index):
     return None
 
 def fetch_biomes_from_db(user_id):
-    print("fetch_biomes_from_db")
     return BiomeModel.query.filter_by(user_id=user_id).all()
 
 def save_biomes_to_db(user_id, biomes_list):
@@ -60,6 +59,10 @@ def save_biomes_to_db(user_id, biomes_list):
 
 def fetch_plants_from_db(user_id):
     return PlantModel.query.filter_by(user_id=user_id).all()
+
+def fetch_plants_from_db_by_biome_id_and_user(biome_id, user_id):
+    return PlantModel.query.filter_by(biome_id=biome_id, user_id=user_id).all()
+
 
 def save_plants_to_db(user_id, plants_list):
     for plant in plants_list:

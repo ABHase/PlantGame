@@ -19,46 +19,70 @@ from plant_time import PlantTime
 from game_resource import GameResource
 from events.event_emitter import EventEmitter
 from .initial_resources_config import INITIAL_RESOURCES
-from user_auth.user_auth import fetch_plant_time_from_db, save_plant_time_to_db
+from user_auth.user_auth import fetch_biomes_from_db, fetch_plant_time_from_db, save_plant_time_to_db, save_biomes_to_db, save_plants_to_db, fetch_plants_from_db, fetch_plants_from_db_by_biome_id_and_user
 
 
 class GameState(EventEmitter):
-    def __init__(self, plants, biomes, time, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
+    def __init__(self, time, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
         super().__init__()
-        self.plants = plants
-        self.biomes = biomes
         self.genetic_markers = genetic_markers
         self.genetic_marker_progress = genetic_marker_progress
         self.genetic_marker_threshold = genetic_marker_threshold
         self.seeds = seeds
         self.plant_time = time
 
+    
+
 
     def update(self, user_id=None):
-        # Fetch PlantTimeModel from the database
+        # Fetch and update PlantTime
         plant_time_model = fetch_plant_time_from_db(user_id)
-        
-        # Convert PlantTimeModel to PlantTime
         plant_time = PlantTime.from_dict(plant_time_model.to_dict())
-        
-        # Perform the update
         new_day, new_hour = plant_time.update()
-        
-        # Convert updated PlantTime back to a dictionary
         updated_plant_time_dict = plant_time.to_dict()
-        
-        # Update the PlantTimeModel with the new data
         for key, value in updated_plant_time_dict.items():
             setattr(plant_time_model, key, value)
-        
-        # Save updated PlantTimeModel back to the database
         save_plant_time_to_db(user_id, plant_time_model)
 
-        for biome in self.biomes:
+        # Fetch BiomeModels from the database
+        biome_models = fetch_biomes_from_db(user_id)
+        
+        # Convert BiomeModels to Biome objects
+        biomes = [Biome.from_dict(model.to_dict()) for model in biome_models]
+        
+        for biome in biomes:
+            #Print biome id
+            print(f"Biome ID: {biome.id}")
+            # Fetch PlantModels for this biome from the database
+            plant_models = plant_models = fetch_plants_from_db_by_biome_id_and_user(biome.id, user_id)
+            print(f"Plant Models: {plant_models}")
+            # Convert PlantModels to Plant objects
+            plants = [Plant.from_dict(model.to_dict()) for model in plant_models]
+            print(f"Plants: {plants}")
+            # Populate the plants attribute of the biome
+            biome.plants = plants
+            
+            # Update each plant
+            for plant in plants:
+                can_produce, amount, water_absorbed = plant.update(plant_time.is_day, biome.ground_water_level, biome.current_weather)
+                biome.ground_water_level -= water_absorbed
+                if biome.ground_water_level < 0:
+                    biome.ground_water_level = 0
+                
+                # Handle genetic markers, etc.
+            
+            # Update the biome
             results = biome.update(plant_time.is_day, new_day, new_hour, plant_time.season)
+            
             for can_produce, amount in results:
                 if can_produce:
                     self.update_genetic_marker_progress(amount)
+            
+            # Save updated Biome and Plant objects back to the database
+            save_biomes_to_db(user_id, biomes)  # Pass the list of Biome objects
+            for plant in plants:
+                save_plants_to_db(user_id, plants)
+
 
 
     def handle_unlock_upgrade(self, upgrade, cost):
@@ -173,43 +197,11 @@ class GameState(EventEmitter):
         
     def to_dict(self):
         return {
-            'biomes': self.biomes_to_dict(),
-            'plant_time': self.plant_time_to_dict(),
             'seeds': self.seeds,
             'genetic_markers': self.genetic_markers,
             'genetic_marker_progress': self.genetic_marker_progress,
             'genetic_marker_threshold': self.genetic_marker_threshold,
         }
-
-    def biomes_to_dict(self):
-        return [
-            {
-                'name': biome.name,
-                'capacity': biome.capacity,
-                'resource_modifiers': biome.resource_modifiers,
-                'ground_water_level': biome.ground_water_level,
-                'current_weather': biome.current_weather,
-                'current_pest': biome.current_pest,
-                'snowpack': biome.snowpack,
-                'plants': self.plants_to_dict(biome)
-            }
-            for biome in self.biomes
-        ]
-
-    def plants_to_dict(self, biome):
-        return [
-            {
-                'id': plant.id,
-                'maturity_level': plant.maturity_level,
-                'resources': {k: {'amount': v.amount} for k, v in plant.resources.items()},
-                'plant_parts': {k: {'amount': v.amount, 'is_locked': v.is_locked, 'is_unlocked': v.is_unlocked} for k, v in plant.plant_parts.items()},
-                'sugar_production_rate': plant.sugar_production_rate,
-                'genetic_marker_production_rate': plant.genetic_marker_production_rate,
-                'is_sugar_production_on': plant.is_sugar_production_on,
-                'is_genetic_marker_production_on': plant.is_genetic_marker_production_on,
-            }
-            for plant in biome.plants
-        ]
 
     def plant_time_to_dict(self):
         return {
@@ -223,50 +215,13 @@ class GameState(EventEmitter):
     
     @classmethod
     def from_dict(cls, data):
-        biomes = cls.biomes_from_dict(data['biomes'])
-        plant_time = cls.plant_time_from_dict(data.get('plant_time', {}))
         return cls(
             [],
-            biomes,
-            plant_time,
             data.get('genetic_markers', 0),
             data.get('seeds', 0),
             data.get('genetic_marker_progress', 0),
             data.get('genetic_marker_threshold', 0)
         )
-
-    @classmethod
-    def biomes_from_dict(cls, biomes_data):
-        biomes = []
-        for biome_data in biomes_data:
-            plants = cls.plants_from_dict(biome_data['plants'])
-            biome = Biome(biome_data['name'], biome_data['ground_water_level'], biome_data['current_weather'], biome_data['current_pest'], biome_data['snowpack'])
-            for plant in plants:
-                plant.biome = biome
-                biome.add_plant(plant)
-            biomes.append(biome)
-        return biomes
-
-    @classmethod
-    def plants_from_dict(cls, plants_data):
-        plants = []
-        for plant_data in plants_data:
-            resources = {k: GameResource(k, v['amount']) for k, v in plant_data['resources'].items()}
-            plant_parts = {k: GameResource(k, v['amount'], v['is_locked'], v['is_unlocked']) for k, v in plant_data['plant_parts'].items()}
-            plant = Plant(
-                resources,
-                plant_parts,
-                None,
-                plant_data['maturity_level'],
-                plant_data['sugar_production_rate'],
-                plant_data['genetic_marker_production_rate'],
-                plant_data['id'],
-                plant_data['is_sugar_production_on'],
-                plant_data['is_genetic_marker_production_on'],
-            )
-            plants.append(plant)
-        return plants
-
 
     @classmethod
     def plant_time_from_dict(cls, plant_time_data):

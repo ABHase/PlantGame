@@ -27,26 +27,97 @@ from plants.part_cost_config import PARTS_COST_CONFIG
 
 
 class Plant:
-    def __init__(self, resources, plant_parts=None, biome=None, maturity_level=0, sugar_production_rate=1, genetic_marker_production_rate=1, plant_id=None,is_sugar_production_on=False,is_genetic_marker_production_on=False):
-
-        self.id = plant_id if plant_id else str(uuid.uuid4())
-        self.resources = resources
-        self.plant_parts = {} 
-        if plant_parts is None:
-            for part, config in PLANT_PARTS_CONFIG.items():
-                self.plant_parts[part] = GameResource(part, config['initial_amount'], config['is_locked'], config['is_unlocked'])
-        else:
-            self.plant_parts = plant_parts
-        self.biome = biome
+    def __init__(self, 
+                 id, 
+                 user_id, 
+                 biome_id, 
+                 maturity_level, 
+                 sugar_production_rate, 
+                 genetic_marker_production_rate, 
+                 is_sugar_production_on, 
+                 is_genetic_marker_production_on,
+                 sunlight, 
+                 water, 
+                 sugar, 
+                 ladybugs, 
+                 roots, 
+                 leaves, 
+                 vacuoles, 
+                 resin, 
+                 taproot, 
+                 pheromones, 
+                 thorns):
+        
+        self.id = id
+        self.user_id = user_id
+        self.biome_id = biome_id
         self.maturity_level = maturity_level
         self.sugar_production_rate = sugar_production_rate
         self.genetic_marker_production_rate = genetic_marker_production_rate
         self.is_sugar_production_on = is_sugar_production_on
         self.is_genetic_marker_production_on = is_genetic_marker_production_on
+        
+        # Resources
+        self.sunlight = sunlight
+        self.water = water
+        self.sugar = sugar
+        self.ladybugs = ladybugs
+        
+        # Plant parts
+        self.roots = roots
+        self.leaves = leaves
+        self.vacuoles = vacuoles
+        self.resin = resin
+        self.taproot = taproot
+        self.pheromones = pheromones
+        self.thorns = thorns
 
-    #Method for plant to die and remove itself from the biome
-    def die(self):
-        self.biome.remove_plant(self)
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            id=data['id'],
+            user_id=data['user_id'],
+            biome_id=data['biome_id'],
+            maturity_level=data['maturity_level'],
+            sugar_production_rate=data['sugar_production_rate'],
+            genetic_marker_production_rate=data['genetic_marker_production_rate'],
+            is_sugar_production_on=data['is_sugar_production_on'],
+            is_genetic_marker_production_on=data['is_genetic_marker_production_on'],
+            sunlight=data['sunlight'],
+            water=data['water'],
+            sugar=data['sugar'],
+            ladybugs=data['ladybugs'],
+            roots=data['roots'],
+            leaves=data['leaves'],
+            vacuoles=data['vacuoles'],
+            resin=data['resin'],
+            taproot=data['taproot'],
+            pheromones=data['pheromones'],
+            thorns=data['thorns']
+        )
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'biome_id': self.biome_id,
+            'maturity_level': self.maturity_level,
+            'sugar_production_rate': self.sugar_production_rate,
+            'genetic_marker_production_rate': self.genetic_marker_production_rate,
+            'is_sugar_production_on': self.is_sugar_production_on,
+            'is_genetic_marker_production_on': self.is_genetic_marker_production_on,
+            'sunlight': self.sunlight,
+            'water': self.water,
+            'sugar': self.sugar,
+            'ladybugs': self.ladybugs,
+            'roots': self.roots,
+            'leaves': self.leaves,
+            'vacuoles': self.vacuoles,
+            'resin': self.resin,
+            'taproot': self.taproot,
+            'pheromones': self.pheromones,
+            'thorns': self.thorns
+        }
 
     def toggle_sugar_production(self):
         self.is_sugar_production_on = not self.is_sugar_production_on
@@ -54,115 +125,89 @@ class Plant:
     def toggle_genetic_marker(self):
         self.is_genetic_marker_production_on = not self.is_genetic_marker_production_on
 
-    def purchase_plant_part(self, type):
-        cost = PARTS_COST_CONFIG.get(type, 0)
-        #Check if the plant part is locked
-        if self.plant_parts[type].is_locked:
-            print("Cannot purchase locked plant part.")
+    def purchase_plant_part(self, type, cost):
+        if type == 'resin' and self.resin >= self.leaves:
+            print("Cannot purchase more resin than the number of leaves.")
             return
-        if self.resources['sugar'].amount >= cost:
-            if type == 'resin':
-                if self.plant_parts['resin'].amount >= self.plant_parts['leaves'].amount:
-                    print("Cannot purchase more resin than the number of leaves.")
-                    return
-            self.resources['sugar'].subtract_amount(cost)
-            self.plant_parts[type].add_amount(1)
-        
+        if self.sugar >= cost:
+            setattr(self, type, getattr(self, type) + 1)
+            self.sugar -= cost
+
     def absorb_resource(self, type, amount):
         if type == 'water':
-            max_water_capacity = self.plant_parts['vacuoles'].amount * 100  # Assuming each vacuole can hold 100 units of water
-            if self.resources['water'].amount + amount > max_water_capacity:
+            max_water_capacity = self.vacuoles * 100
+            if self.water + amount > max_water_capacity:
                 return
-        self.resources[type].add_amount(amount)
+        setattr(self, type, getattr(self, type) + amount)
 
     def produce_sugar(self):
         base_rate = self.sugar_production_rate
-
-        # Modify the rate based on maturity level
         modified_rate = base_rate * (1 + 0.1 * self.maturity_level)
-
-        # Resource consumption rate also depends on maturity
         water_consumption = 10 * (1 + 0.4 * self.maturity_level)
         sunlight_consumption = 10 * (1 + 0.4 * self.maturity_level)
 
-        if self.resources['water'].amount > water_consumption and self.resources['sunlight'].amount > sunlight_consumption:
-            self.resources['water'].subtract_amount(water_consumption)
-            self.resources['sunlight'].subtract_amount(sunlight_consumption)
-            self.resources['sugar'].add_amount(modified_rate)
-    
+        if self.water > water_consumption and self.sunlight > sunlight_consumption:
+            self.water -= water_consumption
+            self.sunlight -= sunlight_consumption
+            self.sugar += modified_rate
+
     def produce_genetic_markers(self):
-        if self.resources['sugar'].amount <= SUGAR_THRESHOLD:
+        if self.sugar <= SUGAR_THRESHOLD:
             return False, 0
-        self.resources['sugar'].subtract_amount(SUGAR_THRESHOLD)
+        self.sugar -= SUGAR_THRESHOLD
         return True, 1
 
     def grow_plant_part(self, type):
-        self.plant_parts[type].add_amount(1)
+        setattr(self, type, getattr(self, type) + 1)
 
     def purchase_seed(self, cost):
-        print(f"Plant's sugar before purchase: {self.resources['sugar'].amount}")
-        if self.resources['sugar'].amount >= cost:
-            self.resources['sugar'].subtract_amount(cost)
+        if self.sugar >= cost:
+            self.sugar -= cost
             return True
-        print("Not enough sugar to purchase seed.")
         return False
-    
+
     def update_maturity_level(self):
-        self.maturity_level = int(math.sqrt(self.plant_parts['roots'].amount + self.plant_parts['leaves'].amount))
+        self.maturity_level = int(math.sqrt(self.roots + self.leaves))
 
     def absorb_water(self, ground_water_level):
         water_absorbed = 0
-
-        # Handle regular roots
-        for root in range(self.plant_parts['roots'].amount):
-            if ground_water_level > 0 and self.resources['water'].amount < self.plant_parts['vacuoles'].amount * 100:
-                self.resources['water'].add_amount(1)
+        for _ in range(int(self.roots)):
+            if ground_water_level > 0 and self.water < self.vacuoles * 100:
+                self.water += 1
                 water_absorbed += 1
                 ground_water_level -= 1
-
-        # Handle taproots
-        for taproot in range(self.plant_parts['taproot'].amount):
-            if self.resources['water'].amount < self.plant_parts['vacuoles'].amount * 100:
-                self.resources['water'].add_amount(1)
-                water_absorbed += 1
-
         return water_absorbed, ground_water_level
 
-
     def absorb_sunlight(self, is_day, current_weather):
-        water_consumption = 1  # Default water consumption
-        for leaf in range(self.plant_parts['leaves'].amount):
-            if self.plant_parts['resin'].amount > leaf:
-                water_consumption = 0  # No water consumption if there's resin
+        water_consumption = 1
+        for _ in range(int(self.leaves)):
+            if self.resin > 0:
+                water_consumption = 0
             if is_day and current_weather == 'Sunny':
-                self.resources['water'].amount = max(0, self.resources['water'].amount - water_consumption)
-                self.resources['sunlight'].add_amount(1)
-            else:
-                self.resources['sunlight'].amount = max(0, self.resources['sunlight'].amount - 2)
-                self.resources['water'].amount = max(0, self.resources['water'].amount - water_consumption)\
-                
-    def attract_ladybugs(self):
-        #Attract lady bugs and subtract pheromones from plant
-        if self.plant_parts['pheromones'].amount > 0:
-            self.resources['ladybugs'].amount += 1
-            self.plant_parts['pheromones'].amount -= 1
+                self.water = max(0, self.water - water_consumption)
+                self.sunlight += 1
 
-    # In Plant class
+    def attract_ladybugs(self):
+        if self.pheromones > 0:
+            self.ladybugs += 1
+            self.pheromones -= 1
+
     def handle_pest(self, current_pest):
         if current_pest == 'Aphids':
-            if self.resources.get('ladybugs', 0).amount > 0:  # Added .amount
-                self.resources['ladybugs'].amount -= 1
+            if self.ladybugs > 0:
+                self.ladybugs -= 1
             else:
-                self.resources['sugar'].amount = max(0, self.resources['sugar'].amount - 10)
+                self.sugar = max(0, self.sugar - 10)
         elif current_pest == 'Deer':
-            if self.plant_parts.get('thorns', 0).amount > 0:  # Added .amount
-                self.plant_parts['thorns'].amount -= 1
+            if self.thorns > 0:
+                self.thorns -= 1
             else:
-                self.plant_parts['leaves'].amount = max(0, self.plant_parts['leaves'].amount - 1)
+                self.leaves = max(0, self.leaves - 1)
 
 
 
     def update(self, is_day, ground_water_level, current_weather):
+        print(f"Plant {self.id} updating...")
         self.update_maturity_level()
         self.attract_ladybugs()
 

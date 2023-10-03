@@ -120,23 +120,23 @@ def initialize_new_game_state():
     # Initialize a sample plant
     initial_resources = INITIAL_RESOURCES
 
-    plant1 = Plant(initial_resources, None, None, 0, 1, 1)  # Biome will be set later
+    #plant1 = Plant(initial_resources, None, None, 0, 1, 1)  # Biome will be set later
 
     # Initialize a sample biome
-    biome1 = Biome('Beginner\'s Garden', ground_water_level=1000, current_weather="Sunny")  # Attributes will be fetched from BIOMES dictionary
-    biome1.add_plant(plant1)
-    plant1.biome = biome1  # Set the biome for the plant
+    #biome1 = Biome('Beginner\'s Garden', ground_water_level=1000, current_weather="Sunny")  # Attributes will be fetched from BIOMES dictionary
+    #biome1.add_plant(plant1)
+    #plant1.biome = biome1  # Set the biome for the plant
 
     # Initialize time object
     initial_time = PlantTime(year=1, season='Spring', day=1, hour=6, update_counter=0)
 
-    initial_plants = [plant1]
-    initial_biomes = [biome1]
+    #initial_plants = [plant1]
+    #initial_biomes = [biome1]
     initial_genetic_markers = 5
 
     # Print initializing game state
     print("Initializing Game State")
-    game_state = GameState(initial_plants, initial_biomes, initial_time, initial_genetic_markers)
+    game_state = GameState(initial_time, initial_genetic_markers)
     game_state.on("unlock_upgrade", game_state.handle_unlock_upgrade)
 
     return game_state

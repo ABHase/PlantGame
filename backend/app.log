@@ -2370,3 +2370,303 @@ INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 11:17:52] "POST /game_state/init_game H
 INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 11:17:52] "POST /socket.io/?EIO=4&transport=polling&t=Ohs7VI2&sid=Qv2J9U8FgGPsbNdmAAAA HTTP/1.1" 200 -
 INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 11:17:52] "GET /socket.io/?EIO=4&transport=polling&t=Ohs7VI2.0&sid=Qv2J9U8FgGPsbNdmAAAA HTTP/1.1" 200 -
 INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 11:17:52] "GET /socket.io/?EIO=4&transport=polling&t=Ohs7VID&sid=Qv2J9U8FgGPsbNdmAAAA HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:41] "GET /socket.io/?EIO=4&transport=polling&t=OhsSzII HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:41] "POST /socket.io/?EIO=4&transport=polling&t=OhsSzMU&sid=GC4NDM1qSPnFzMPCAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:41] "GET /socket.io/?EIO=4&transport=polling&t=OhsSzMV&sid=GC4NDM1qSPnFzMPCAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:41] "GET /socket.io/?EIO=4&transport=polling&t=OhsSzMa&sid=GC4NDM1qSPnFzMPCAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:43] "GET /socket.io/?EIO=4&transport=websocket&sid=GC4NDM1qSPnFzMPCAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:43] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:44] "GET /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:47] "POST /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:47] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:47] "[36mGET /static/login.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:49] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:49] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:49] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:49] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:50] "GET /socket.io/?EIO=4&transport=polling&t=OhsS_Xr HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plant_time for user 2
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:50] "POST /socket.io/?EIO=4&transport=polling&t=OhsS_Y1&sid=vi1W_2c383Y5osm3AAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:50] "GET /socket.io/?EIO=4&transport=polling&t=OhsS_Y1.0&sid=vi1W_2c383Y5osm3AAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:50] "GET /socket.io/?EIO=4&transport=polling&t=OhsS_Y8&sid=vi1W_2c383Y5osm3AAAC HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_global_state for user 2
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:51:50] "[35m[1mPOST /game_state/init_game HTTP/1.1[0m" 500 -
+INFO:root:Inside initialize_new_upgrades for user 2
+INFO:root:Inside initialize_new_biomes for user 2
+INFO:root:Inside initialize_new_plants for user 2
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:40] "POST /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:40] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:40] "[36mGET /static/login.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:43] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:43] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:43] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:43] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:43] "GET /socket.io/?EIO=4&transport=polling&t=OhsTCc7 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:43] "POST /socket.io/?EIO=4&transport=polling&t=OhsTCcH&sid=SyTqc9N7gEFYrHBeAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:43] "GET /socket.io/?EIO=4&transport=polling&t=OhsTCcH.0&sid=SyTqc9N7gEFYrHBeAAAA HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plant_time for user 2
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:43] "GET /socket.io/?EIO=4&transport=polling&t=OhsTCcS&sid=SyTqc9N7gEFYrHBeAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:52:43] "[35m[1mPOST /game_state/init_game HTTP/1.1[0m" 500 -
+INFO:root:Inside initialize_new_global_state for user 2
+INFO:root:Inside initialize_new_upgrades for user 2
+INFO:root:Inside initialize_new_biomes for user 2
+INFO:root:Inside initialize_new_plants for user 2
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:02] "POST /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:02] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:02] "[36mGET /static/login.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:04] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:04] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:04] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:04] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:05] "GET /socket.io/?EIO=4&transport=polling&t=OhsUR56 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:05] "POST /socket.io/?EIO=4&transport=polling&t=OhsUR5G&sid=uetoIJlo1A2ou4mtAAAA HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plant_time for user 2
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:05] "GET /socket.io/?EIO=4&transport=polling&t=OhsUR5H&sid=uetoIJlo1A2ou4mtAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:05] "GET /socket.io/?EIO=4&transport=polling&t=OhsUR5N&sid=uetoIJlo1A2ou4mtAAAA HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_global_state for user 2
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 12:58:05] "[35m[1mPOST /game_state/init_game HTTP/1.1[0m" 500 -
+INFO:root:Inside initialize_new_upgrades for user 2
+INFO:root:Inside initialize_new_biomes for user 2
+INFO:root:Inside initialize_new_plants for user 2
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:00:59] "POST /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:00:59] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:00:59] "[36mGET /static/login.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:01:02] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:01:02] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:01:02] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:01:02] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:01:02] "GET /socket.io/?EIO=4&transport=polling&t=OhsV6PC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:01:02] "POST /socket.io/?EIO=4&transport=polling&t=OhsV6PL&sid=K9Yy4I1FLjnq1TmyAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:01:02] "GET /socket.io/?EIO=4&transport=polling&t=OhsV6PM&sid=K9Yy4I1FLjnq1TmyAAAA HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plant_time for user 2
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:01:02] "GET /socket.io/?EIO=4&transport=polling&t=OhsV6Pa&sid=K9Yy4I1FLjnq1TmyAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:01:02] "[35m[1mPOST /game_state/init_game HTTP/1.1[0m" 500 -
+INFO:root:Inside initialize_new_global_state for user 2
+INFO:root:Inside initialize_new_upgrades for user 2
+INFO:root:Inside initialize_new_biomes for user 2
+INFO:root:Inside initialize_new_plants for user 2
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:38] "POST /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:38] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:38] "[36mGET /static/login.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:40] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:40] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:40] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:40] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:40] "GET /socket.io/?EIO=4&transport=polling&t=OhsWAFN HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:40] "POST /socket.io/?EIO=4&transport=polling&t=OhsWAFU&sid=NvrDJVT16WYWdfyzAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:40] "GET /socket.io/?EIO=4&transport=polling&t=OhsWAFU.0&sid=NvrDJVT16WYWdfyzAAAA HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plant_time for user 2
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:40] "GET /socket.io/?EIO=4&transport=polling&t=OhsWAFf&sid=NvrDJVT16WYWdfyzAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:05:40] "[35m[1mPOST /game_state/init_game HTTP/1.1[0m" 500 -
+INFO:root:Inside initialize_new_global_state for user 2
+INFO:root:Inside initialize_new_upgrades for user 2
+INFO:root:Inside initialize_new_biomes for user 2
+INFO:root:Inside initialize_new_plants for user 2
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:34] "GET /socket.io/?EIO=4&transport=polling&t=OhsWbsv HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:34] "POST /socket.io/?EIO=4&transport=polling&t=OhsWcB6&sid=SixeGC6RddWtbBmkAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:34] "GET /socket.io/?EIO=4&transport=polling&t=OhsWcB7&sid=SixeGC6RddWtbBmkAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:34] "GET /socket.io/?EIO=4&transport=polling&t=OhsWcBD&sid=SixeGC6RddWtbBmkAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:37] "GET /socket.io/?EIO=4&transport=websocket&sid=SixeGC6RddWtbBmkAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:38] "POST /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:38] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:38] "[36mGET /static/login.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:40] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:40] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:40] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:40] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:40] "GET /socket.io/?EIO=4&transport=polling&t=OhsWddT HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:40] "POST /socket.io/?EIO=4&transport=polling&t=OhsWddc&sid=3LtmgmF2d3QTK9GfAAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:40] "GET /socket.io/?EIO=4&transport=polling&t=OhsWddd&sid=3LtmgmF2d3QTK9GfAAAC HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plant_time for user 2
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:40] "GET /socket.io/?EIO=4&transport=polling&t=OhsWddl&sid=3LtmgmF2d3QTK9GfAAAC HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_global_state for user 2
+INFO:root:Inside initialize_new_upgrades for user 2
+INFO:root:Inside initialize_new_biomes for user 2
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:07:40] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plants for user 2
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:12] "POST /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:12] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:12] "[36mGET /static/login.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:14] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:14] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:14] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:14] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:14] "GET /socket.io/?EIO=4&transport=polling&t=OhsXv9F HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:14] "POST /socket.io/?EIO=4&transport=polling&t=OhsXv9R&sid=RU9HtbrtQFRHYbHxAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:14] "GET /socket.io/?EIO=4&transport=polling&t=OhsXv9R.0&sid=RU9HtbrtQFRHYbHxAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:14] "GET /socket.io/?EIO=4&transport=polling&t=OhsXv9Y&sid=RU9HtbrtQFRHYbHxAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:13:14] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plant_time for user 2
+INFO:root:Inside initialize_new_global_state for user 2
+INFO:root:Inside initialize_new_upgrades for user 2
+INFO:root:Inside initialize_new_biomes for user 2
+INFO:root:Inside initialize_new_plants for user 2
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:40] "GET /socket.io/?EIO=4&transport=polling&t=OhsZ7un HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:40] "POST /socket.io/?EIO=4&transport=polling&t=OhsZ8fN&sid=bcmj45wC4PdUcSYpAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:40] "GET /socket.io/?EIO=4&transport=polling&t=OhsZ8fN.0&sid=bcmj45wC4PdUcSYpAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:40] "GET /socket.io/?EIO=4&transport=polling&t=OhsZ8fS&sid=bcmj45wC4PdUcSYpAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:41] "GET /socket.io/?EIO=4&transport=websocket&sid=bcmj45wC4PdUcSYpAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:43] "POST /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:43] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:43] "[36mGET /static/login.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:45] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:45] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:45] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:45] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:45] "GET /socket.io/?EIO=4&transport=polling&t=OhsZ9yW HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:45] "POST /socket.io/?EIO=4&transport=polling&t=OhsZ9yh&sid=aqVe5UN297yaI4PnAAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:45] "GET /socket.io/?EIO=4&transport=polling&t=OhsZ9yh.0&sid=aqVe5UN297yaI4PnAAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:45] "GET /socket.io/?EIO=4&transport=polling&t=OhsZ9yn&sid=aqVe5UN297yaI4PnAAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:18:45] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plant_time for user 2
+INFO:root:Inside initialize_new_global_state for user 2
+INFO:root:Inside initialize_new_upgrades for user 2
+INFO:root:Inside initialize_new_biomes for user 2
+INFO:root:Inside initialize_new_plants for user 2
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:22:23] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:22:23] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:22:23] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:22:23] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:22:23] "GET /static/favicon.ico HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:22:24] "GET /socket.io/?EIO=4&transport=polling&t=OhsZ_H_ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:22:24] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:22:24] "POST /socket.io/?EIO=4&transport=polling&t=OhsZ_IC&sid=MI1pLrFiLwnFsltOAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:22:24] "GET /socket.io/?EIO=4&transport=polling&t=OhsZ_IC.0&sid=MI1pLrFiLwnFsltOAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:22:24] "GET /socket.io/?EIO=4&transport=polling&t=OhsZ_IP&sid=MI1pLrFiLwnFsltOAAAA HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:13] "GET /socket.io/?EIO=4&transport=polling&t=OhsaAkX HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:13] "POST /socket.io/?EIO=4&transport=polling&t=OhsaBIZ&sid=NTQAou5Q4FY0IVjrAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:13] "GET /socket.io/?EIO=4&transport=polling&t=OhsaBIa&sid=NTQAou5Q4FY0IVjrAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:13] "GET /socket.io/?EIO=4&transport=polling&t=OhsaBIf&sid=NTQAou5Q4FY0IVjrAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:14] "GET /socket.io/?EIO=4&transport=websocket&sid=NTQAou5Q4FY0IVjrAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:15] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:15] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:15] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:15] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:15] "GET /socket.io/?EIO=4&transport=polling&t=OhsaBno HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:15] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:15] "POST /socket.io/?EIO=4&transport=polling&t=OhsaBn-&sid=6PurLCsPVqZ6bL_RAAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:15] "GET /socket.io/?EIO=4&transport=polling&t=OhsaBn-.0&sid=6PurLCsPVqZ6bL_RAAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:23:15] "GET /socket.io/?EIO=4&transport=polling&t=OhsaBoA&sid=6PurLCsPVqZ6bL_RAAAC HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:26:41] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:26:41] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:26:41] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:26:41] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:26:41] "GET /socket.io/?EIO=4&transport=polling&t=Ohsa-EH HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:26:41] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:26:41] "POST /socket.io/?EIO=4&transport=polling&t=Ohsa-ES&sid=UwARHLf6iQby2PkHAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:26:41] "GET /socket.io/?EIO=4&transport=polling&t=Ohsa-ET&sid=UwARHLf6iQby2PkHAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:26:41] "GET /socket.io/?EIO=4&transport=polling&t=Ohsa-Eg&sid=UwARHLf6iQby2PkHAAAA HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:26] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:26] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:26] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:26] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:26] "GET /socket.io/?EIO=4&transport=polling&t=OhscIP9 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:26] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:26] "POST /socket.io/?EIO=4&transport=polling&t=OhscIPL&sid=O0XZfQgQZH7RhbtHAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:26] "GET /socket.io/?EIO=4&transport=polling&t=OhscIPL.0&sid=O0XZfQgQZH7RhbtHAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:26] "GET /socket.io/?EIO=4&transport=polling&t=OhscIPZ&sid=O0XZfQgQZH7RhbtHAAAA HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:47] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:47] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:47] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:47] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:47] "GET /socket.io/?EIO=4&transport=polling&t=OhscNan HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:47] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:47] "POST /socket.io/?EIO=4&transport=polling&t=OhscNa_&sid=gbMRjcAY-GxeoP0kAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:47] "GET /socket.io/?EIO=4&transport=polling&t=OhscNa_.0&sid=gbMRjcAY-GxeoP0kAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:32:47] "GET /socket.io/?EIO=4&transport=polling&t=OhscNb9&sid=gbMRjcAY-GxeoP0kAAAA HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:34] "GET /socket.io/?EIO=4&transport=polling&t=OhscY7C HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:34] "POST /socket.io/?EIO=4&transport=polling&t=OhscYtZ&sid=7aelDM794DHImu2sAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:34] "GET /socket.io/?EIO=4&transport=polling&t=OhscYtZ.0&sid=7aelDM794DHImu2sAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:34] "GET /socket.io/?EIO=4&transport=polling&t=OhscYtd&sid=7aelDM794DHImu2sAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:35] "GET /socket.io/?EIO=4&transport=websocket&sid=7aelDM794DHImu2sAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:36] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:36] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:36] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:36] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:36] "GET /socket.io/?EIO=4&transport=polling&t=OhscZNJ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:36] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:36] "POST /socket.io/?EIO=4&transport=polling&t=OhscZNX&sid=QWiDK0CZrp-Zr5B2AAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:36] "GET /socket.io/?EIO=4&transport=polling&t=OhscZNX.0&sid=QWiDK0CZrp-Zr5B2AAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:33:36] "GET /socket.io/?EIO=4&transport=polling&t=OhscZNg&sid=QWiDK0CZrp-Zr5B2AAAC HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:29] "POST /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:29] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:29] "[36mGET /static/login.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:32] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:32] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:32] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:32] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:32] "GET /socket.io/?EIO=4&transport=polling&t=OhsdwMn HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:32] "POST /socket.io/?EIO=4&transport=polling&t=OhsdwMx&sid=ROtPtNjVEIBgJtfuAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:32] "GET /socket.io/?EIO=4&transport=polling&t=OhsdwMx.0&sid=ROtPtNjVEIBgJtfuAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:32] "GET /socket.io/?EIO=4&transport=polling&t=OhsdwN3&sid=ROtPtNjVEIBgJtfuAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:39:32] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plant_time for user 2
+INFO:root:Inside initialize_new_global_state for user 2
+INFO:root:Inside initialize_new_upgrades for user 2
+INFO:root:Inside initialize_new_biomes for user 2
+INFO:root:Inside initialize_new_plants for user 2
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:25] "POST /user_auth/register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:25] "GET /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:25] "[36mGET /static/login.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:27] "POST /user_auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:27] "GET /game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:27] "[36mGET /static/plant.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:27] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:27] "GET /socket.io/?EIO=4&transport=polling&t=OhsfH8U HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:27] "POST /socket.io/?EIO=4&transport=polling&t=OhsfH8f&sid=4ZN5_Y-bceJ-Pu0wAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:27] "GET /socket.io/?EIO=4&transport=polling&t=OhsfH8g&sid=4ZN5_Y-bceJ-Pu0wAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:27] "GET /socket.io/?EIO=4&transport=polling&t=OhsfH8l&sid=4ZN5_Y-bceJ-Pu0wAAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [03/Oct/2023 13:45:27] "POST /game_state/init_game HTTP/1.1" 200 -
+INFO:root:Inside initialize_new_plant_time for user 2
+INFO:root:Inside initialize_new_global_state for user 2
+INFO:root:Inside initialize_new_upgrades for user 2
+INFO:root:Inside initialize_new_biomes for user 2
+INFO:root:Inside initialize_new_plants for user 2
