@@ -55,14 +55,10 @@ class GameState(EventEmitter):
         biomes = [Biome.from_dict(model.to_dict()) for model in biome_models]
         
         for biome in biomes:
-            #Print biome id
-            print(f"Biome ID: {biome.id}")
             # Fetch PlantModels for this biome from the database
             plant_models = fetch_plants_from_db_by_biome_id_and_user(biome.id, user_id)
-            print(f"Plant Models: {plant_models}")
             # Convert PlantModels to Plant objects
             plants = [Plant.from_dict(model.to_dict()) for model in plant_models]
-            print(f"Plants: {plants}")
             # Populate the plants attribute of the biome
             biome.plants = plants
             

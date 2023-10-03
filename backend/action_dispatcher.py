@@ -19,11 +19,11 @@ action_handlers = {
 }
 
 
-def dispatch_action(action, game_state):
+def dispatch_action(action):
     action_type = action["type"]
     handler = action_handlers.get(action_type)
     if handler:
-        handler(action, game_state)
+        handler(action)
     else:
         print(f"Unknown action type: {action_type}")
 

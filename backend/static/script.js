@@ -69,121 +69,6 @@ window.onload = function() {
     };
 };
 
-function formatNumber(num) {
-    if (num < 1000) {
-        return Math.floor(num);
-    } else {
-        let formatted = (num / 1000).toFixed(1);
-        // Remove trailing zeros after the decimal point
-        formatted = parseFloat(formatted).toString();
-        return formatted + 'K';
-    }
-}
-
-
-
-
- //Function to buy plant parts
- function buyPlantPart(biomeIndex, plantIndex, partType) {
-    fetch('/game_state/buy_plant_part', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ biomeIndex, plantIndex, partType  })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-    });
-}
-  
- function toggleSugar(biomeIndex, plantIndex, isChecked) {
-    fetch('/game_state/toggle_sugar', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ biomeIndex, plantIndex, isChecked })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        if (data.status === "Sugar toggled successfully") {
-            // Update the UI here or wait for the next game_state update from the server
-        }
-    });
-}
-
-
-function absorbResource(biomeIndex, plantIndex, resourceType, amount) {
-    fetch('/game_state/absorb_resource', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ biomeIndex, plantIndex, resourceType, amount })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data);
-    })
-    .catch(error => {
-        console.log('Fetch error:', error);
-    });
-}
-
-function toggleGeneticMarker(biomeIndex, plantIndex, isChecked) {
-    fetch('/game_state/toggle_genetic_marker', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ biomeIndex, plantIndex, isChecked })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        if (data.status === "Genetic Marker toggled successfully") {
-            // Update the UI here or wait for the next game_state update from the server
-        }
-    });
-}
-
-
-function plantSeedInBiome(biomeName, geneticMarkerCost) {
-    fetch('/game_state/plant_seed_in_biome', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ biome_name: biomeName, genetic_marker_cost: geneticMarkerCost })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-    });
-}
-
-function purchaseSeed(biomeIndex, plantIndex, cost) {
-    fetch('/game_state/purchase_seed', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ biomeIndex, plantIndex, cost })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-    });
-}
-
 function updateUpgradesUI(upgradesList) {
     const upgradesContainer = document.getElementById('upgrades-container');
     upgradesContainer.innerHTML = '';  // Clear existing upgrades
@@ -367,9 +252,9 @@ function updatePlantListUI(plantList) {
                 </tr>
                 ${plantPartsRows}
                 <tr style="border: 1px solid black;">
-                    <td><input type="checkbox" id="${checkboxId}" ${plant.is_sugar_production_on ? 'checked' : ''} onchange="toggleSugar('${plant.id}', this.checked)"></td>
+                <td><input type="checkbox" id="${checkboxId}" ${plant.is_sugar_production_on ? 'checked' : ''} onchange="toggleSugar('${plant.id}', this.checked)"></td>
                     <td>Sugar:</td>
-                    <td><span id="sugar-${plant.id}">${plant.sugar}</span></td>
+                    <td><span id="sugar-${plant.id}">${formatNumber(plant.sugar)}</span></td>
                 </tr>
                 <tr style="border: 1px solid black;">
                     <td><input type="checkbox" id="${geneticMarkerCheckboxId}" ${plant.is_genetic_marker_production_on ? 'checked' : ''} onchange="toggleGeneticMarker('${plant.id}', this.checked)"></td>
@@ -383,8 +268,6 @@ function updatePlantListUI(plantList) {
         plantContainer.appendChild(plantDiv);
     });
 }
-
-
 
 function unlockUpgrade(index, cost) {  // Add cost as a parameter
     fetch('/game_state/unlock_upgrade', {
@@ -402,4 +285,117 @@ function unlockUpgrade(index, cost) {  // Add cost as a parameter
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function formatNumber(num) {
+    if (num < 1000) {
+        return Math.floor(num);
+    } else {
+        let formatted = (num / 1000).toFixed(1);
+        // Remove trailing zeros after the decimal point
+        formatted = parseFloat(formatted).toString();
+        return formatted + 'K';
+    }
+}
+
+ //Function to buy plant parts
+ function buyPlantPart(plantId, partType) {
+    fetch('/game_state/buy_plant_part', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plantId, partType  })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    });
+}
+  
+function toggleSugar(plantId, isChecked) {
+    fetch('/game_state/toggle_sugar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plantId, isChecked })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.status === "Sugar toggled successfully") {
+            // Update the UI here or wait for the next game_state update from the server
+        }
+    });
+}
+
+
+
+function absorbResource(plantId, resourceType, amount) {
+    fetch('/game_state/absorb_resource', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plantId, resourceType, amount })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.log('Fetch error:', error);
+    });
+}
+
+function toggleGeneticMarker(plantId, isChecked) {
+    fetch('/game_state/toggle_genetic_marker', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plantId, isChecked })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.status === "Genetic Marker toggled successfully") {
+            // Update the UI here or wait for the next game_state update from the server
+        }
+    });
+}
+
+
+function plantSeedInBiome(biomeName, geneticMarkerCost) {
+    fetch('/game_state/plant_seed_in_biome', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ biome_name: biomeName, genetic_marker_cost: geneticMarkerCost })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    });
+}
+
+function purchaseSeed(biomeIndex, plantIndex, cost) {
+    fetch('/game_state/purchase_seed', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ biomeIndex, plantIndex, cost })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    });
 }

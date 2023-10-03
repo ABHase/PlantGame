@@ -20,6 +20,7 @@ Methods:
 """
 import math
 import uuid
+from user_auth.user_auth import save_single_plant_to_db
 from game_resource import GameResource
 from constants import SUGAR_THRESHOLD
 from plants.plant_parts_config import PLANT_PARTS_CONFIG
@@ -121,17 +122,29 @@ class Plant:
 
     def toggle_sugar_production(self):
         self.is_sugar_production_on = not self.is_sugar_production_on
+        save_single_plant_to_db(self)
 
     def toggle_genetic_marker(self):
         self.is_genetic_marker_production_on = not self.is_genetic_marker_production_on
+        save_single_plant_to_db(self)
 
-    def purchase_plant_part(self, type, cost):
+    def purchase_plant_part(self, type):
+        cost = PARTS_COST_CONFIG.get(type, 0)  # Get the cost from the config, default to 0 if type is not found
+
+        if cost == 0:
+            print(f"Invalid plant part type: {type}")
+            return
+
         if type == 'resin' and self.resin >= self.leaves:
             print("Cannot purchase more resin than the number of leaves.")
             return
+
         if self.sugar >= cost:
             setattr(self, type, getattr(self, type) + 1)
             self.sugar -= cost
+        else:
+            print(f"Not enough sugar to purchase {type}.")
+        save_single_plant_to_db(self)
 
     def absorb_resource(self, type, amount):
         if type == 'water':
@@ -139,6 +152,7 @@ class Plant:
             if self.water + amount > max_water_capacity:
                 return
         setattr(self, type, getattr(self, type) + amount)
+        save_single_plant_to_db(self)
 
     def produce_sugar(self):
         base_rate = self.sugar_production_rate
@@ -203,8 +217,6 @@ class Plant:
                 self.thorns -= 1
             else:
                 self.leaves = max(0, self.leaves - 1)
-
-
 
     def update(self, is_day, ground_water_level, current_weather):
         print(f"Plant {self.id} updating...")

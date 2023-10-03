@@ -41,12 +41,18 @@ def background_task(app, user_id):
     with app.app_context():
         biomes_initialized = False  # Flag to check if biomes have been initialized and saved
         while True:
-            game_state_dict = fetch_game_state_from_db(user_id)
             upgrades_list = fetch_upgrades_from_db(user_id)
             biomes_list = fetch_biomes_from_db(user_id)  # Assuming you have a similar function for biomes
             plants_list = fetch_plants_from_db(user_id)  # Assuming you have a similar function for plants
             plant_time = fetch_plant_time_from_db(user_id)
             global_state = fetch_global_state_from_db(user_id)
+
+            # Initialize game_state from global_state
+            if global_state is not None:
+                game_state = GameState.from_dict(global_state.to_dict())
+            else:
+                print("GlobalState is empty. Cannot initialize GameState.")
+                continue  # Skip the rest of the loop iteration
 
             # Initialize PlantTime if needed
             if plant_time is None:
@@ -83,28 +89,17 @@ def background_task(app, user_id):
                     if beginner_garden_biome:
                         plants_list = initialize_new_plants(user_id, beginner_garden_biome.id)
 
-
-
-            #print(f"Game state after fetch: {game_state_dict}")
-            if game_state_dict is not None:
-                game_state = GameState.from_dict(game_state_dict)
-                game_state.on("unlock_upgrade", game_state.handle_unlock_upgrade)
-            else:
-                game_state = initialize_new_game_state()
-
             # Process all queued actions in a single tick
             while user_actions_queue:
                 for action in list(user_actions_queue):  # Create a copy of the queue to iterate over
-                    dispatch_action(action, game_state)
+                    dispatch_action(action)
                     user_actions_queue.remove(action)  # Remove the processed action
-                save_game_state_to_db(user_id, game_state.to_dict())
                 save_upgrades_to_db(user_id, upgrades_list)
                 save_biomes_to_db(user_id, biomes_list)  # Assuming you have a similar function for biomes
                 save_plants_to_db(user_id, plants_list)  # Assuming you have a similar function for plants
 
 
             game_state.update(user_id)
-            save_game_state_to_db(user_id, game_state.to_dict())
             save_upgrades_to_db(user_id, upgrades_list)
             save_biomes_to_db(user_id, biomes_list)  # Assuming you have a similar function for biomes
             save_plants_to_db(user_id, plants_list)  # Assuming you have a similar function for plants
@@ -117,33 +112,6 @@ def background_task(app, user_id):
             socketio.emit('biomes_list', [biome.to_dict() for biome in biomes_list])
             socketio.emit('plants_list', [plant.to_dict() for plant in plants_list])
             sleep(1)
-
-
-def initialize_new_game_state():
-    # Initialize a sample plant
-    #initial_resources = INITIAL_RESOURCES
-
-    #plant1 = Plant(initial_resources, None, None, 0, 1, 1)  # Biome will be set later
-
-    # Initialize a sample biome
-    #biome1 = Biome('Beginner\'s Garden', ground_water_level=1000, current_weather="Sunny")  # Attributes will be fetched from BIOMES dictionary
-    #biome1.add_plant(plant1)
-    #plant1.biome = biome1  # Set the biome for the plant
-
-    # Initialize time object
-    #initial_time = PlantTime(year=1, season='Spring', day=1, hour=6, update_counter=0)
-
-    #initial_plants = [plant1]
-    #initial_biomes = [biome1]
-    initial_genetic_markers = 5
-
-    # Print initializing game state
-    print("Initializing Game State")
-    game_state = GameState(initial_genetic_markers)
-    game_state.on("unlock_upgrade", game_state.handle_unlock_upgrade)
-
-    return game_state
-
 
 def initialize_new_upgrades(user_id):
     logging.info(f"Inside initialize_new_upgrades for user {user_id}")
@@ -228,7 +196,6 @@ def initialize_new_global_state(user_id):
 
 
 
-
 @game_state_bp.route('/init_game', methods=['POST'])
 def init_game():
     user_id = current_user.id if current_user.is_authenticated else None
@@ -240,19 +207,19 @@ def init_game():
     print(f"Is user authenticated? {current_user.is_authenticated}")  # Debugging line
 
     if current_user.is_authenticated:
-        saved_game_state = fetch_game_state_from_db(current_user.id)
-        if saved_game_state:
+        saved_global_state = fetch_global_state_from_db(current_user.id)
+        if saved_global_state:
             return jsonify({"status": "Game state loaded from database"})
 
-    # Initialize new game state
-    game_state = initialize_new_game_state()
+    # Initialize new global state
+    global_state = initialize_new_global_state(user_id)
 
-
-    # Save the game state to the database if the user is logged in
+    # Save the global state to the database if the user is logged in
     if current_user.is_authenticated:
-        save_game_state_to_db(current_user.id, game_state.to_dict())
+        save_global_state_to_db(current_user.id, global_state)  # Removed to_dict()
 
     return jsonify({"status": "Game initialized"})
+
 
 
 @game_state_bp.route("/game")
@@ -267,34 +234,16 @@ def save_game():
         return jsonify({"status": "Game state saved"})
     return jsonify({"status": "User not authenticated"})
 
-@game_state_bp.route('/buy_root', methods=['POST'])
-@login_required
-def buy_root():
-    user_id = current_user.id
-    biomeIndex = request.json.get('biomeIndex')
-    plantIndex = request.json.get('plantIndex')
-
-    game_state_dict = fetch_game_state_from_db(user_id)
-    game_state = GameState.from_dict(game_state_dict)
-
-    plant = game_state.biomes[biomeIndex].plants[plantIndex]
-    plant.purchase_plant_part('roots', 10)  # Assuming 10 is the cost
-
-    save_game_state_to_db(user_id, game_state.to_dict())
-    return jsonify({"status": "Root bought successfully"})
-
 @game_state_bp.route('/toggle_sugar', methods=['POST'])
 @login_required
 def toggle_sugar():
     user_id = current_user.id
-    biomeIndex = request.json.get('biomeIndex')
-    plantIndex = request.json.get('plantIndex')
+    plantId = request.json.get('plantId')
     isChecked = request.json.get('isChecked')
 
     action = {
         "type": "toggle_sugar",
-        "biomeIndex": biomeIndex,
-        "plantIndex": plantIndex,
+        "plant_id": plantId,
         "isChecked": isChecked
     }
 
@@ -302,20 +251,19 @@ def toggle_sugar():
 
     return jsonify({"status": "Sugar toggle action queued"})
 
+
 #Absorb Resource Route and Function
 @game_state_bp.route('/absorb_resource', methods=['POST'])
 @login_required
 def absorb_resource():
     user_id = current_user.id
-    biomeIndex = request.json.get('biomeIndex')
-    plantIndex = request.json.get('plantIndex')
+    plantId = request.json.get('plantId')
     resourceType = request.json.get('resourceType')
     amount = request.json.get('amount')
 
     action = {
         "type": "absorb_resource",
-        "biomeIndex": biomeIndex,
-        "plantIndex": plantIndex,
+        "plant_id": plantId,
         "resourceType": resourceType,
         "amount": amount
     }
@@ -329,14 +277,12 @@ def absorb_resource():
 @login_required
 def buy_plant_part():
     user_id = current_user.id
-    biomeIndex = request.json.get('biomeIndex')
-    plantIndex = request.json.get('plantIndex')
+    plantId = request.json.get('plantId')
     partType = request.json.get('partType')
 
     action = {
         "type": "buy_plant_part",
-        "biomeIndex": biomeIndex,
-        "plantIndex": plantIndex,
+        "plant_id": plantId,
         "partType": partType,
     }
 
@@ -349,14 +295,12 @@ def buy_plant_part():
 @login_required
 def toggle_genetic_marker():
     user_id = current_user.id
-    biomeIndex = request.json.get('biomeIndex')
-    plantIndex = request.json.get('plantIndex')
+    plantId = request.json.get('plantId')
     isChecked = request.json.get('isChecked')
 
     action = {
         "type": "toggle_genetic_marker",
-        "biomeIndex": biomeIndex,
-        "plantIndex": plantIndex,
+        "plant_id": plantId,
         "isChecked": isChecked
     }
 

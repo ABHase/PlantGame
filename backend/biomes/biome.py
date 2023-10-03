@@ -13,6 +13,7 @@ Biome Class (biome.py)
         update(): Update the biome's state (called in the main game loop).
 """
 import random
+from user_auth.user_auth import save_single_biome_to_db
 from biomes.biomes_config import BIOMES
 from plants.plant import Plant
 
@@ -72,6 +73,7 @@ class Biome:
     #Method to decrease ground water level
     def decrease_ground_water_level(self, amount):
         self.ground_water_level = max(0, self.ground_water_level - amount)
+        save_single_biome_to_db(self)
     
     #Method to increase ground water level
     def increase_ground_water_level(self, amount):
