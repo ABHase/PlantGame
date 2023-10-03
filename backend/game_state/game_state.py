@@ -19,20 +19,16 @@ from plant_time import PlantTime
 from game_resource import GameResource
 from events.event_emitter import EventEmitter
 from .initial_resources_config import INITIAL_RESOURCES
-from user_auth.user_auth import fetch_biomes_from_db, fetch_plant_time_from_db, save_plant_time_to_db, save_biomes_to_db, save_plants_to_db, fetch_plants_from_db, fetch_plants_from_db_by_biome_id_and_user
+from user_auth.user_auth import fetch_biomes_from_db, fetch_plant_time_from_db, save_plant_time_to_db, save_biomes_to_db, save_plants_to_db, fetch_plants_from_db, fetch_plants_from_db_by_biome_id_and_user, fetch_global_state_from_db, save_global_state_to_db
 
 
 class GameState(EventEmitter):
-    def __init__(self, time, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
+    def __init__(self, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
         super().__init__()
         self.genetic_markers = genetic_markers
         self.genetic_marker_progress = genetic_marker_progress
         self.genetic_marker_threshold = genetic_marker_threshold
-        self.seeds = seeds
-        self.plant_time = time
-
-    
-
+        self.seeds = seeds  
 
     def update(self, user_id=None):
         # Fetch and update PlantTime
@@ -44,6 +40,14 @@ class GameState(EventEmitter):
             setattr(plant_time_model, key, value)
         save_plant_time_to_db(user_id, plant_time_model)
 
+        # Fetch and update GlobalState
+        global_state_model = fetch_global_state_from_db(user_id)
+        if global_state_model:
+            self.genetic_markers = global_state_model.genetic_markers
+            self.genetic_marker_progress = global_state_model.genetic_marker_progress
+            self.genetic_marker_threshold = global_state_model.genetic_marker_threshold
+            self.seeds = global_state_model.seeds
+
         # Fetch BiomeModels from the database
         biome_models = fetch_biomes_from_db(user_id)
         
@@ -54,7 +58,7 @@ class GameState(EventEmitter):
             #Print biome id
             print(f"Biome ID: {biome.id}")
             # Fetch PlantModels for this biome from the database
-            plant_models = plant_models = fetch_plants_from_db_by_biome_id_and_user(biome.id, user_id)
+            plant_models = fetch_plants_from_db_by_biome_id_and_user(biome.id, user_id)
             print(f"Plant Models: {plant_models}")
             # Convert PlantModels to Plant objects
             plants = [Plant.from_dict(model.to_dict()) for model in plant_models]
@@ -83,7 +87,10 @@ class GameState(EventEmitter):
             for plant in plants:
                 save_plants_to_db(user_id, plants)
 
-
+            # Update GlobalState in the database
+            for key, value in self.to_dict().items():
+                setattr(global_state_model, key, value)
+            save_global_state_to_db(user_id, global_state_model)
 
     def handle_unlock_upgrade(self, upgrade, cost):
         if self.genetic_markers >= cost:
@@ -95,7 +102,6 @@ class GameState(EventEmitter):
             self.genetic_markers -= cost
         else:
             print(f"Not enough genetic markers to unlock this upgrade.")
-
 
     def unlock_biome(self, upgrade):
         biome_name = upgrade.effect  # Fetch the name from the effect field
@@ -111,7 +117,6 @@ class GameState(EventEmitter):
 
     def unlock_plant_part(self, upgrade):
         plant_part_to_unlock = upgrade.effect  # Fetch the plant part name from the effect field
-
         # Iterate through all biomes
         for biome in self.biomes:
             # Iterate through all plants in each biome
@@ -130,7 +135,6 @@ class GameState(EventEmitter):
             self.genetic_markers += 1
             self.genetic_marker_progress -= self.genetic_marker_threshold
             self.genetic_marker_threshold += self.genetic_marker_threshold  # Increase the threshold
-
 
     # Method to purchase a seed using a specific plant
     def purchase_seed_using_plant(self, plant_id, cost):
@@ -194,46 +198,24 @@ class GameState(EventEmitter):
         print("Failed to plant seed.")
         return False  # Failed to plant seed
 
-        
+            
     def to_dict(self):
         return {
-            'seeds': self.seeds,
             'genetic_markers': self.genetic_markers,
             'genetic_marker_progress': self.genetic_marker_progress,
             'genetic_marker_threshold': self.genetic_marker_threshold,
+            'seeds': self.seeds
         }
 
-    def plant_time_to_dict(self):
-        return {
-            'year': self.plant_time.year,
-            'season': self.plant_time.season,
-            'day': self.plant_time.day,
-            'hour': self.plant_time.hour,
-            'update_counter': self.plant_time.update_counter,
-            'is_day': self.plant_time.is_day
-        }
-    
+
     @classmethod
     def from_dict(cls, data):
         return cls(
-            [],
             data.get('genetic_markers', 0),
             data.get('seeds', 0),
             data.get('genetic_marker_progress', 0),
             data.get('genetic_marker_threshold', 0)
         )
-
-    @classmethod
-    def plant_time_from_dict(cls, plant_time_data):
-        plant_time = PlantTime()
-        plant_time.year = plant_time_data.get('year', 1)
-        plant_time.season = plant_time_data.get('season', 'Spring')
-        plant_time.day = plant_time_data.get('day', 1)
-        plant_time.hour = plant_time_data.get('hour', 0)
-        plant_time.update_counter = plant_time_data.get('update_counter', 0)
-        plant_time.is_day = plant_time_data.get('is_day', True)
-        return plant_time
-
 
     def __getstate__(self):
         return self.to_dict()

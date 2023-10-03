@@ -111,14 +111,17 @@ def background_task(app, user_id):
 
             # Emit updated game state to client
             socketio.emit('game_state', game_state.to_dict())
+            socketio.emit('global_state', global_state.to_dict())
             socketio.emit('plant_time', plant_time.to_dict())
             socketio.emit('upgrades_list', [upgrade.to_dict() for upgrade in upgrades_list])
+            socketio.emit('biomes_list', [biome.to_dict() for biome in biomes_list])
+            socketio.emit('plants_list', [plant.to_dict() for plant in plants_list])
             sleep(1)
 
 
 def initialize_new_game_state():
     # Initialize a sample plant
-    initial_resources = INITIAL_RESOURCES
+    #initial_resources = INITIAL_RESOURCES
 
     #plant1 = Plant(initial_resources, None, None, 0, 1, 1)  # Biome will be set later
 
@@ -128,7 +131,7 @@ def initialize_new_game_state():
     #plant1.biome = biome1  # Set the biome for the plant
 
     # Initialize time object
-    initial_time = PlantTime(year=1, season='Spring', day=1, hour=6, update_counter=0)
+    #initial_time = PlantTime(year=1, season='Spring', day=1, hour=6, update_counter=0)
 
     #initial_plants = [plant1]
     #initial_biomes = [biome1]
@@ -136,7 +139,7 @@ def initialize_new_game_state():
 
     # Print initializing game state
     print("Initializing Game State")
-    game_state = GameState(initial_time, initial_genetic_markers)
+    game_state = GameState(initial_genetic_markers)
     game_state.on("unlock_upgrade", game_state.handle_unlock_upgrade)
 
     return game_state
