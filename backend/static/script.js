@@ -86,7 +86,7 @@ function updateUpgradesUI(upgradesList) {
         const canUnlock = !upgrade.unlocked && gameState.genetic_markers >= upgrade.cost;
 
         cell1.innerHTML = `${upgrade.name} (${isUnlocked}) <br>` + 
-                          (canUnlock ? `<button onclick="unlockUpgrade(${index}, ${upgrade.cost})">Unlock (${upgrade.cost} GM)</button>` : '');
+                          (canUnlock ? `<button onclick="unlockUpgrade(${upgrade.id})">Unlock (${upgrade.cost} GM)</button>` : '');
     });
 
     upgradesContainer.appendChild(table);
@@ -167,7 +167,7 @@ function updateBiomeListUI(biomeList) {
                 <br>Ground Water: ${Math.floor(biome.ground_water_level)}
                 <br>Snow Pack: ${Math.floor(biome.snowpack)}
             </h2>
-            <button onclick="plantSeedInBiome('${biome.name.replace(/'/g, "\\'")}', 1)">Plant Seed in Biome</button>
+            <button onclick="plantSeedInBiome('${biome.id}')">Plant Seed in Biome</button>
         `;
         // Add an empty container for plants
         const plantContainer = document.createElement('div');
@@ -262,20 +262,20 @@ function updatePlantListUI(plantList) {
                     <td></td>
                 </tr>
             </table>
-            <button onclick="purchaseSeed('${plant.id}', 10)">Purchase Seed</button>
+            <button onclick="purchaseSeed('${plant.id}')">Purchase Seed</button>
         `;
 
         plantContainer.appendChild(plantDiv);
     });
 }
 
-function unlockUpgrade(index, cost) {  // Add cost as a parameter
+function unlockUpgrade(upgradeId) {  // Add cost as a parameter
     fetch('/game_state/unlock_upgrade', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ index, cost })  // Include cost in the payload
+        body: JSON.stringify({ "upgrade_id": upgradeId })
     })
     .then(response => response.json())
     .then(data => {
@@ -371,14 +371,13 @@ function toggleGeneticMarker(plantId, isChecked) {
     });
 }
 
-
-function plantSeedInBiome(biomeName, geneticMarkerCost) {
+function plantSeedInBiome(biomeId) {
     fetch('/game_state/plant_seed_in_biome', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ biome_name: biomeName, genetic_marker_cost: geneticMarkerCost })
+        body: JSON.stringify({ biome_id: biomeId })
     })
     .then(response => response.json())
     .then(data => {
@@ -386,13 +385,13 @@ function plantSeedInBiome(biomeName, geneticMarkerCost) {
     });
 }
 
-function purchaseSeed(biomeIndex, plantIndex, cost) {
+function purchaseSeed(plantId) {
     fetch('/game_state/purchase_seed', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ biomeIndex, plantIndex, cost })
+        body: JSON.stringify({ plant_id: plantId })
     })
     .then(response => response.json())
     .then(data => {

@@ -153,47 +153,6 @@ class GameState(EventEmitter):
             return True  # Seed successfully purchased
         
         return False  # Failed to purchase seed
-
-    
-    # Method to plant a seed in a specific biome
-    def plant_seed_in_biome(self, biome_name, genetic_marker_cost):
-        print("Plant Seed in Biome backend")
-        
-        # Debug: Print the incoming parameters
-        print(f"Biome Name: {biome_name}, Genetic Marker Cost: {genetic_marker_cost}")
-        
-        # Debug: Print the current state
-        print(f"Current Seeds: {self.seeds}, Current Genetic Markers: {self.genetic_markers}")
-        
-        target_biome = next((biome for biome in self.biomes if biome.name == biome_name), None)
-        
-        # Debug: Check if the target biome was found
-        if target_biome is None:
-            print("Target biome not found.")
-            return False
-        
-        print(f"Target Biome: {target_biome.name}, Capacity: {target_biome.capacity}, Current Plants: {len(target_biome.plants)}")
-        
-        if target_biome and self.seeds > 0 and self.genetic_markers > genetic_marker_cost and len(target_biome.plants) < target_biome.capacity:
-            initial_resources = INITIAL_RESOURCES
-            new_plant = Plant(initial_resources, None, None, 0, 1, 1)
-            
-            # Debug: Print the new plant details
-            print(f"New Plant: {new_plant}")
-            
-            target_biome.add_plant(new_plant)
-            self.seeds -= 1  # Decrement the number of seeds
-            self.genetic_markers -= genetic_marker_cost
-            
-            # Debug: Confirm successful planting
-            print("Seed successfully planted.")
-            
-            return True  # Seed successfully planted
-        
-        # Debug: Print why the seed planting failed
-        print("Failed to plant seed.")
-        return False  # Failed to plant seed
-
             
     def to_dict(self):
         return {

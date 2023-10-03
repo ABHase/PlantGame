@@ -113,8 +113,6 @@ class Biome:
 
 
     def update(self, is_day, new_day=False, new_hour=False, current_season=None):
-        print(f"Biome {self.id} updating...")
-        print(f"Number of plants in Biome {self.id}: {len(self.plants)}")
         if new_hour and current_season:
             self.set_weather_for_hour(current_season)
         results = []

@@ -312,11 +312,11 @@ def toggle_genetic_marker():
 @login_required
 def purchase_seed():
     user_id = current_user.id
+    plant_id = request.json.get('plant_id')
     action = {
         "type": "purchase_seed",
-        "biomeIndex": request.json.get('biomeIndex'),
-        "plantIndex": request.json.get('plantIndex'),
-        "cost": request.json.get('cost')
+        "plant_id": plant_id
+
     }
     user_actions_queue.append(action)
     return jsonify({"status": "Purchase seed action queued"})
@@ -325,29 +325,25 @@ def purchase_seed():
 @login_required
 def plant_seed_in_biome():
     user_id = current_user.id
+    biome_id = request.json.get('biome_id')
     action = {
         "type": "plant_seed_in_biome",
-        "biome_name": request.json.get('biome_name'),
-        "genetic_marker_cost": request.json.get('genetic_marker_cost')
+        "biome_id": request.json.get('biome_id')
     }
     user_actions_queue.append(action)
     return jsonify({"status": "Plant seed in biome action queued"})
+
+
 
 @game_state_bp.route('/unlock_upgrade', methods=['POST'])
 @login_required
 def unlock_upgrade():
     user_id = current_user.id
-    index = request.json.get('index')
-    cost = request.json.get('cost')
-    upgrade = fetch_upgrade_by_index(user_id, index)  # Fetch the upgrade here
-    print(f"Cost from request: {request.json.get('cost')}")
+    upgrade_id = request.json.get('upgrade_id')
 
     action = {
         "type": "unlock_upgrade",
-        "index": index,
-        "cost": cost,
-        "user_id": user_id,  # Add this line
-        "upgrade": upgrade.to_dict()
+        "upgrade_id": upgrade_id
     }
 
     user_actions_queue.append(action)

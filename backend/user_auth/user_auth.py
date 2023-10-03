@@ -1,5 +1,8 @@
-from app import db  # Replace 'your_app' with the name of your main app package
-from .models import User, UpgradeModel, GlobalState, PlantTimeModel  # Replace 'your_app' with the name of your main app package
+import uuid
+from app import db
+from biomes.biomes_config import BIOMES
+from game_state.plants_config import INITIAL_PLANT_CONFIG  
+from .models import User, UpgradeModel, GlobalState, PlantTimeModel  
 from flask import json
 from datetime import datetime
 from models.biome_model import BiomeModel
@@ -73,6 +76,27 @@ def save_single_biome_to_db(biome):
     else:
         print(f"No biome found with id {biome.id}")
 
+def initialize_new_biome(user_id, biome_name):
+    biome_data = BIOMES.get(biome_name)
+    if biome_data:
+        new_biome = BiomeModel(
+        user_id=user_id,
+        name=biome_name,
+        capacity=biome_data['capacity'],
+        ground_water_level=biome_data['ground_water_level'],
+        current_weather=biome_data['current_weather'],
+        current_pest=None,  # Initialize with no pests
+        snowpack=biome_data['snowpack'],
+        resource_modifiers=biome_data['resource_modifiers'],
+        rain_intensity=biome_data['rain_intensity'],
+        snow_intensity=biome_data['snow_intensity']
+    )
+        db.session.add(new_biome)
+        db.session.commit()
+        print(f"New biome {biome_name} initialized.")
+    else:
+        print(f"Biome {biome_name} not found in config.")
+
 def fetch_plants_from_db(user_id):
     return PlantModel.query.filter_by(user_id=user_id).all()
 
@@ -129,6 +153,17 @@ def save_single_plant_to_db(plant):
         db.session.commit()
     else:
         print(f"No plant found with id {plant.id}")
+
+def save_new_plant_to_db(user_id, biome_id):
+    new_plant = PlantModel(
+        id=str(uuid.uuid4()),
+        user_id=user_id,
+        biome_id=biome_id,
+        **INITIAL_PLANT_CONFIG
+    )
+    db.session.add(new_plant)
+    db.session.commit()
+
 
 
 def fetch_global_state_from_db(user_id):
