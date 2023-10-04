@@ -120,40 +120,6 @@ class Plant:
             'thorns': self.thorns
         }
 
-    def toggle_sugar_production(self):
-        self.is_sugar_production_on = not self.is_sugar_production_on
-        save_single_plant_to_db(self)
-
-    def toggle_genetic_marker(self):
-        self.is_genetic_marker_production_on = not self.is_genetic_marker_production_on
-        save_single_plant_to_db(self)
-
-    def purchase_plant_part(self, type):
-        cost = PARTS_COST_CONFIG.get(type, 0)  # Get the cost from the config, default to 0 if type is not found
-
-        if cost == 0:
-            print(f"Invalid plant part type: {type}")
-            return
-
-        if type == 'resin' and self.resin >= self.leaves:
-            print("Cannot purchase more resin than the number of leaves.")
-            return
-
-        if self.sugar >= cost:
-            setattr(self, type, getattr(self, type) + 1)
-            self.sugar -= cost
-        else:
-            print(f"Not enough sugar to purchase {type}.")
-        save_single_plant_to_db(self)
-
-    def absorb_resource(self, type, amount):
-        if type == 'water':
-            max_water_capacity = self.vacuoles * 100
-            if self.water + amount > max_water_capacity:
-                return
-        setattr(self, type, getattr(self, type) + amount)
-        save_single_plant_to_db(self)
-
     def produce_sugar(self):
         base_rate = self.sugar_production_rate
         modified_rate = base_rate * (1 + 0.1 * self.maturity_level)
@@ -170,15 +136,6 @@ class Plant:
             return False, 0
         self.sugar -= SUGAR_THRESHOLD
         return True, 1
-
-    def grow_plant_part(self, type):
-        setattr(self, type, getattr(self, type) + 1)
-
-    def purchase_seed(self, cost):
-        if self.sugar >= cost:
-            self.sugar -= cost
-            return True
-        return False
 
     def update_maturity_level(self):
         self.maturity_level = int(math.sqrt(self.roots + self.leaves))
@@ -219,7 +176,6 @@ class Plant:
                 self.leaves = max(0, self.leaves - 1)
 
     def update(self, is_day, ground_water_level, current_weather):
-        print(f"Plant {self.id} updating...")
         self.update_maturity_level()
         self.attract_ladybugs()
 

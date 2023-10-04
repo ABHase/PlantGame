@@ -3,6 +3,7 @@
 PARTS_COST_CONFIG = {
     'roots': 10,
     'leaves': 20,
+    'vacuoles': 30,
     'resin': 30,
     'taproot': 40,
     'pheromones': 2,

@@ -110,8 +110,6 @@ class Biome:
         for plant in self.plants:
             plant.handle_pest(current_pest)
 
-
-
     def update(self, is_day, new_day=False, new_hour=False, current_season=None):
         if new_hour and current_season:
             self.set_weather_for_hour(current_season)

@@ -3,6 +3,8 @@ let gameState = {};  // Define gameState as a global variable
 let isDay = null;
 let biomeGroundWaterLevels = {}; // At the top of your script
 const plantContainerVisibility = {};
+let partsCostConfig = {};
+let unlockedUpgrades = [];
 
 
 // Initialize the game when the page loads
@@ -19,6 +21,13 @@ window.onload = function() {
         console.log(data);  // Should print {"status": "Game initialized"}
     });
 
+    // Fetch the parts cost config
+    fetch('/game_state/part_costs')
+    .then(response => response.json())
+    .then(data => {
+        partsCostConfig = data;  // Update the global partsCostConfig variable
+    });
+
     // Listen for game_state updates from the server
     socket.on('game_state', function(data) {
         // Update your client-side game state here
@@ -30,6 +39,7 @@ window.onload = function() {
     socket.on('upgrades_list', function(data) {
         // Update your client-side upgrades list here
         updateUpgradesUI(data, gameState);
+        unlockedUpgrades = data.filter(upgrade => upgrade.unlocked && upgrade.type === 'plant_part').map(upgrade => upgrade.effect);
     });
 
     // Listen for global_state updates from the server
@@ -58,7 +68,6 @@ window.onload = function() {
     // Listen for plant_list updates from the server
     socket.on('plants_list', function(data) {
         // Update your client-side plant_list here
-        console.log(data);
         updatePlantListUI(data);
     });
 
@@ -223,13 +232,17 @@ function updatePlantListUI(plantList) {
         let plantPartsRows = '';
         const plantParts = ['roots', 'leaves', 'vacuoles', 'resin', 'taproot', 'pheromones', 'thorns'];
         plantParts.forEach((partType) => {
-            plantPartsRows += `
-                <tr style="border: 1px solid black;">
-                    <td><button onclick="buyPlantPart('${plant.id}', '${partType}')">Grow</button></td>
-                    <td>${capitalizeFirstLetter(partType)}:</td>
-                    <td><span id="${partType}-${plant.id}">${plant[partType] || 0}</span></td>
-                </tr>`;
-        });
+            const cost = partsCostConfig[partType] || 'N/A';  // Fetch the cost from the config, default to 'N/A' if not found
+            const isDisabled = plant.sugar < cost ? 'disabled' : '';
+            if (unlockedUpgrades.includes(partType)) {
+                plantPartsRows += `
+                    <tr style="border: 1px solid black;">
+                        <td><button ${isDisabled} onclick="buyPlantPart('${plant.id}', '${partType}')">Grow (${cost})</button></td>
+                        <td>${capitalizeFirstLetter(partType)}:</td>
+                        <td><span id="${partType}-${plant.id}">${plant[partType] || 0}</span></td>
+                    </tr>`;
+            }
+        });        
 
         plantDiv.innerHTML = `
             <table style="width: 100%; border-collapse: collapse;">

@@ -62,7 +62,7 @@ UPGRADES = [
     'cost': 0,
     'type': 'plant_part',
     'unlocked': True,
-    'effect': 'pheromones'  # The name of the plant part to unlock
+    'effect': 'leaves'  # The name of the plant part to unlock
     },
     {
     'name': 'Unlock Roots',

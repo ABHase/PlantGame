@@ -2,6 +2,7 @@ import uuid
 from flask import Blueprint, jsonify, session, request, current_app
 from time import sleep
 from app import socketio
+from plants.part_cost_config import PARTS_COST_CONFIG
 from biomes.biomes_config import BIOMES
 from plants.plant_parts_config import PLANT_PARTS_CONFIG  # Replace 'your_app_name' with the name of the package where app.py resides
 from biomes.biome import Biome
@@ -349,3 +350,6 @@ def unlock_upgrade():
     user_actions_queue.append(action)
     return jsonify({"status": "Unlock upgrade action queued"})
 
+@game_state_bp.route('/part_costs', methods=['GET'])
+def get_part_costs():
+    return jsonify(PARTS_COST_CONFIG)

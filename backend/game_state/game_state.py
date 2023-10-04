@@ -88,42 +88,6 @@ class GameState(EventEmitter):
                 setattr(global_state_model, key, value)
             save_global_state_to_db(user_id, global_state_model)
 
-    def handle_unlock_upgrade(self, upgrade, cost):
-        if self.genetic_markers >= cost:
-            if upgrade.type == "biome":
-                self.unlock_biome(upgrade)
-            elif upgrade.type == "plant_part":
-                self.unlock_plant_part(upgrade)
-            # Subtract the cost here
-            self.genetic_markers -= cost
-        else:
-            print(f"Not enough genetic markers to unlock this upgrade.")
-
-    def unlock_biome(self, upgrade):
-        biome_name = upgrade.effect  # Fetch the name from the effect field
-        biome_config = BIOMES.get(biome_name)
-        if biome_config:
-            new_biome = Biome(
-                name=biome_name,
-                ground_water_level=biome_config['ground_water_level'],
-                current_weather=biome_config['current_weather']
-                # ... any other attributes ...
-            )
-            self.biomes.append(new_biome)
-
-    def unlock_plant_part(self, upgrade):
-        plant_part_to_unlock = upgrade.effect  # Fetch the plant part name from the effect field
-        # Iterate through all biomes
-        for biome in self.biomes:
-            # Iterate through all plants in each biome
-            for plant in biome.plants:
-                # Check if the plant part exists in this plant
-                if plant_part_to_unlock in plant.plant_parts:
-                    # Unlock the plant part
-                    plant.plant_parts[plant_part_to_unlock].unlock()
-                    plant.plant_parts[plant_part_to_unlock].set_unlocked(True)
-
-
 
     def update_genetic_marker_progress(self, amount):
         self.genetic_marker_progress += amount
@@ -132,27 +96,6 @@ class GameState(EventEmitter):
             self.genetic_marker_progress -= self.genetic_marker_threshold
             self.genetic_marker_threshold += self.genetic_marker_threshold  # Increase the threshold
 
-    # Method to purchase a seed using a specific plant
-    def purchase_seed_using_plant(self, plant_id, cost):
-        print(f"Plant ID: {plant_id}")
-        print(f"Purchase: Seed")
-        
-        # Search for the plant in all biomes
-        plant = None
-        for biome in self.biomes:
-            plant = next((plant for plant in biome.plants if plant.id == plant_id), None)
-            if plant is not None:
-                break  # Exit the loop if the plant is found
-        
-        if plant is None:
-            print("Plant is None.")
-            return False  # Failed to purchase seed
-        
-        if plant.purchase_seed(cost):
-            self.seeds += 1  # Increment the number of seeds
-            return True  # Seed successfully purchased
-        
-        return False  # Failed to purchase seed
             
     def to_dict(self):
         return {
@@ -161,7 +104,6 @@ class GameState(EventEmitter):
             'genetic_marker_threshold': self.genetic_marker_threshold,
             'seeds': self.seeds
         }
-
 
     @classmethod
     def from_dict(cls, data):
