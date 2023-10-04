@@ -5,6 +5,9 @@ let biomeGroundWaterLevels = {}; // At the top of your script
 const plantContainerVisibility = {};
 let partsCostConfig = {};
 let unlockedUpgrades = [];
+let biomePlantCounts = {};  // Global variable to hold plant counts for each biome
+let biomeIdToNameMap = {};  // Global variable to hold the mappinglet biomeIdToNameMap = {};  // Global variable to hold the mapping
+
 
 
 // Initialize the game when the page loads
@@ -62,6 +65,7 @@ window.onload = function() {
         // Update the ground water levels for each biome
         data.forEach(biome => {
             biomeGroundWaterLevels[biome.id] = biome.ground_water_level;
+            biomeIdToNameMap[biome.id] = biome.name;  // Populate the mapping
         });
     });
 
@@ -69,7 +73,19 @@ window.onload = function() {
     socket.on('plants_list', function(data) {
         // Update your client-side plant_list here
         updatePlantListUI(data);
+
+        // Reset the plant counts
+        biomePlantCounts = {};
+
+        // Count the number of plants for each biome
+        data.forEach(plant => {
+            if (!biomePlantCounts[plant.biome_id]) {
+                biomePlantCounts[plant.biome_id] = 0;
+            }
+            biomePlantCounts[plant.biome_id]++;
+        });
     });
+
 
     // Save game state when the user is about to leave the page
     window.onbeforeunload = function() {
@@ -122,11 +138,22 @@ function updateGlobalStateUI(globalStateData) {
     const geneticMarkerProgressSpan = document.getElementById('genetic-marker-progress');
     const geneticMarkerThresholdSpan = document.getElementById('genetic-marker-threshold');
     const seedsSpan = document.getElementById('seeds');
+    // UI elements for other global state variables silica, tannins, calcium, fulvic
+    const silicaSpan = document.getElementById('silica');
+    const tanninsSpan = document.getElementById('tannins');
+    const calciumSpan = document.getElementById('calcium');
+    const fulvicSpan = document.getElementById('fulvic');
+
 
     geneticMarkersSpan.textContent = globalStateData.genetic_markers;
     geneticMarkerProgressSpan.textContent = globalStateData.genetic_marker_progress;
     geneticMarkerThresholdSpan.textContent = globalStateData.genetic_marker_threshold;
     seedsSpan.textContent = globalStateData.seeds;
+    // Update the UI elements for other global state variables silica, tannins, calcium, fulvic
+    silicaSpan.textContent = globalStateData.silica;
+    tanninsSpan.textContent = globalStateData.tannins;
+    calciumSpan.textContent = globalStateData.calcium;
+    fulvicSpan.textContent = globalStateData.fulvic;
 
     // Optional: Update progress bar
     const progressBar = document.getElementById('progress-bar');
@@ -170,14 +197,40 @@ function updateBiomeListUI(biomeList) {
             'None': ''
         }[currentPest] : '';
 
+
+        const plantCount = biomePlantCounts[biome.id] || 0;
+
         biomeDiv.innerHTML = `
             <h2 id="biome-header-${biomeIndex}">
                 ${biome.name} ${weatherIcon} ${pestIcon}
-                <br>Ground Water: ${Math.floor(biome.ground_water_level)}
-                <br>Snow Pack: ${Math.floor(biome.snowpack)}
             </h2>
+            <table>
+                <tr>
+                    <td style="border: 1px solid black;">
+                        Surface Water:
+                    </td> 
+                    <td style="border: 1px solid black;">
+                        Snow Pack:
+                    </td>
+                    <td style="border: 1px solid black;">
+                        Capacity:
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black;">
+                        ${Math.floor(biome.ground_water_level)}
+                    </td>
+                    <td style="border: 1px solid black;">
+                        ${Math.floor(biome.snowpack)}
+                    </td>
+                    <td style="border: 1px solid black;">
+                    ${plantCount} / ${biome.capacity}
+                    </td>
+                </tr>
+            </table>
             <button onclick="plantSeedInBiome('${biome.id}')">Plant Seed in Biome</button>
         `;
+
         // Add an empty container for plants
         const plantContainer = document.createElement('div');
         const plantContainerId = `plant-container-${biome.id}`;
@@ -201,6 +254,7 @@ function updateBiomeListUI(biomeList) {
         });
     });
 }
+
 // Function to update the plant list UI
 function updatePlantListUI(plantList) {
     plantList.forEach((plant) => {
@@ -228,6 +282,18 @@ function updatePlantListUI(plantList) {
         const maxWaterCapacity = plant.vacuoles * 100;
         const currentWaterAmount = plant.water;
         const waterProgressPercentage = (currentWaterAmount / maxWaterCapacity) * 100;
+        const biomeName = biomeIdToNameMap[plant.biome_id] || 'Unknown';  // Fetch the biome name, default to 'Unknown' if not found
+
+        let secondaryResource = 'Resource';  // Default value
+        if (biomeName === 'Desert') {
+            secondaryResource = 'Silica';
+        } else if (biomeName === 'Tropical Forest') {
+            secondaryResource = 'Tannins';
+        } else if (biomeName === 'Mountain') {
+            secondaryResource = 'Calcium';
+        } else if (biomeName === 'Swamp') {
+            secondaryResource = 'Fulvic';
+        }
 
         let plantPartsRows = '';
         const plantParts = ['roots', 'leaves', 'vacuoles', 'resin', 'taproot', 'pheromones', 'thorns'];
@@ -243,6 +309,17 @@ function updatePlantListUI(plantList) {
                     </tr>`;
             }
         });        
+
+        const shouldSkipRow = (biomeName === 'Beginner\'s Garden');  // Replace this condition with your actual criteria
+
+        const secondaryResourceRow = shouldSkipRow ? '' : `
+            <tr style="border: 1px solid black;">
+                <td><input type="checkbox" id="${'secondaryResourceCheckbox' + plant.id}" ${plant.is_secondary_resource_production_on ? 'checked' : ''} onchange="toggleSecondaryResource('${plant.id}', this.checked)"></td>
+                <td>${secondaryResource}</td>
+                <td></td>
+            </tr>
+        `;
+
 
         plantDiv.innerHTML = `
             <table style="width: 100%; border-collapse: collapse;">
@@ -265,14 +342,16 @@ function updatePlantListUI(plantList) {
                 </tr>
                 ${plantPartsRows}
                 <tr style="border: 1px solid black;">
-                <td><input type="checkbox" id="${checkboxId}" ${plant.is_sugar_production_on ? 'checked' : ''} onchange="toggleSugar('${plant.id}', this.checked)"></td>
+                <td><input type="checkbox" id="${'sugarCheckbox' + plant.id}" ${plant.is_sugar_production_on ? 'checked' : ''} onchange="toggleSugar('${plant.id}', this.checked)"></td>
                     <td>Sugar:</td>
                     <td><span id="sugar-${plant.id}">${formatNumber(plant.sugar)}</span></td>
                 </tr>
                 <tr style="border: 1px solid black;">
-                    <td><input type="checkbox" id="${geneticMarkerCheckboxId}" ${plant.is_genetic_marker_production_on ? 'checked' : ''} onchange="toggleGeneticMarker('${plant.id}', this.checked)"></td>
+                <td><input type="checkbox" id="${'geneticMarkerCheckbox' + plant.id}" ${plant.is_genetic_marker_production_on ? 'checked' : ''} onchange="toggleGeneticMarker('${plant.id}', this.checked)"></td>
                     <td>DNA</td>
                     <td></td>
+                </tr>
+                ${secondaryResourceRow} 
                 </tr>
             </table>
             <button onclick="purchaseSeed('${plant.id}')">Purchase Seed</button>
@@ -379,6 +458,24 @@ function toggleGeneticMarker(plantId, isChecked) {
     .then(data => {
         console.log(data);
         if (data.status === "Genetic Marker toggled successfully") {
+            // Update the UI here or wait for the next game_state update from the server
+        }
+    });
+}
+
+// Function to toggle secondary resource production
+function toggleSecondaryResource(plantId, isChecked) {
+    fetch('/game_state/toggle_secondary_resource', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plantId, isChecked })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.status === "Secondary resource toggled successfully") {
             // Update the UI here or wait for the next game_state update from the server
         }
     });

@@ -22,7 +22,7 @@ import math
 import uuid
 from user_auth.user_auth import save_single_plant_to_db
 from game_resource import GameResource
-from constants import SUGAR_THRESHOLD
+from constants import SECONDARY_SUGAR_THRESHOLD, SUGAR_THRESHOLD
 from plants.plant_parts_config import PLANT_PARTS_CONFIG
 from plants.part_cost_config import PARTS_COST_CONFIG
 
@@ -37,6 +37,7 @@ class Plant:
                  genetic_marker_production_rate, 
                  is_sugar_production_on, 
                  is_genetic_marker_production_on,
+                 is_secondary_resource_production_on,
                  sunlight, 
                  water, 
                  sugar, 
@@ -57,6 +58,7 @@ class Plant:
         self.genetic_marker_production_rate = genetic_marker_production_rate
         self.is_sugar_production_on = is_sugar_production_on
         self.is_genetic_marker_production_on = is_genetic_marker_production_on
+        self.is_secondary_resource_production_on = is_secondary_resource_production_on
         
         # Resources
         self.sunlight = sunlight
@@ -84,6 +86,7 @@ class Plant:
             genetic_marker_production_rate=data['genetic_marker_production_rate'],
             is_sugar_production_on=data['is_sugar_production_on'],
             is_genetic_marker_production_on=data['is_genetic_marker_production_on'],
+            is_secondary_resource_production_on=data['is_secondary_resource_production_on'],
             sunlight=data['sunlight'],
             water=data['water'],
             sugar=data['sugar'],
@@ -107,6 +110,7 @@ class Plant:
             'genetic_marker_production_rate': self.genetic_marker_production_rate,
             'is_sugar_production_on': self.is_sugar_production_on,
             'is_genetic_marker_production_on': self.is_genetic_marker_production_on,
+            'is_secondary_resource_production_on': self.is_secondary_resource_production_on,
             'sunlight': self.sunlight,
             'water': self.water,
             'sugar': self.sugar,
@@ -136,6 +140,13 @@ class Plant:
             return False, 0
         self.sugar -= SUGAR_THRESHOLD
         return True, 1
+    
+    def produce_secondary_resource(self):
+        if self.sugar <= SECONDARY_SUGAR_THRESHOLD:
+            return False  # Not enough sugar to produce secondary resource
+        self.sugar -= SECONDARY_SUGAR_THRESHOLD  # Deduct the required sugar
+        return True  # Successfully produced secondary resource
+
 
     def update_maturity_level(self):
         self.maturity_level = int(math.sqrt(self.roots + self.leaves))
@@ -189,4 +200,8 @@ class Plant:
         if self.is_genetic_marker_production_on:
             can_produce, amount = self.produce_genetic_markers()
 
-        return can_produce, amount, water_absorbed
+        is_producing_secondary_resource = False
+        if self.is_secondary_resource_production_on:
+            is_producing_secondary_resource = self.produce_secondary_resource()
+
+        return can_produce, amount, water_absorbed, is_producing_secondary_resource

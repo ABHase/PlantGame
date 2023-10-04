@@ -11,6 +11,7 @@ class PlantModel(db.Model):
     genetic_marker_production_rate = db.Column(db.Float, nullable=False)
     is_sugar_production_on = db.Column(db.Boolean, default=False)
     is_genetic_marker_production_on = db.Column(db.Boolean, default=False)
+    is_secondary_resource_production_on = db.Column(db.Boolean, default=False)
     
     # Resources as individual columns
     sunlight = db.Column(db.Float, default=0)
@@ -38,6 +39,7 @@ class PlantModel(db.Model):
             'genetic_marker_production_rate': self.genetic_marker_production_rate,
             'is_sugar_production_on': self.is_sugar_production_on,
             'is_genetic_marker_production_on': self.is_genetic_marker_production_on,
+            'is_secondary_resource_production_on': self.is_secondary_resource_production_on,
             'sunlight': self.sunlight,
             'water': self.water,
             'sugar': self.sugar,
@@ -61,6 +63,7 @@ class PlantModel(db.Model):
                       'genetic_marker_production_rate', 
                       'is_sugar_production_on', 
                       'is_genetic_marker_production_on', 
+                      'is_secondary_resource_production_on',
                       'sunlight', 
                       'water', 
                       'sugar', 

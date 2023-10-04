@@ -47,29 +47,38 @@
         width: calc(12.5% - 10px);  /* Takes up half the width of the container minus a little for margin */
         margin: 5px;
         border: 1px solid olive;  /* To visualize each plant */
-    }
-    #time-info, #genetic-marker-info {
-        width: 12.5%;  /* Set the width */
-        margin-right: 20px;  /* Add right margin */
-        float: left;  /* Float it to the left */
-    }
+        }
+        #time-info, #genetic-marker-info {
+            width: 12.5%;  /* Set the width */
+            margin-right: 20px;  /* Add right margin */
+            float: left;  /* Float it to the left */
+        }
 
-    #progress-bar-container {
-        width: 100%;  /* Adjust to fit within the #genetic-marker-info div */
-        background-color: #ccc;
-    }
+        #progress-bar-container {
+            width: 100%;  /* Adjust to fit within the #genetic-marker-info div */
+            background-color: #ccc;
+        }
 
-    #progress-bar {
-        width: 0;
-        height: 30px;
-        background-color: #4CAF50;
-    }
+        #progress-bar {
+            width: 0;
+            height: 30px;
+            background-color: #4CAF50;
+        }
 
-    .clearfix::after {
-        content: "";
-        display: table;
-        clear: both;
-    }
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        /* Set the background color for all table rows */
+        #genetic-marker-table tr {
+        background-color: #f2f2f2;
+        }
+
+        /* Set the background color for even table rows */
+        #genetic-marker-table tr:nth-child(even) {
+            background-color: #e6e6e6;
+        }
 
     </style>
 </head>
@@ -108,6 +117,22 @@
                 <tr>
                     <td>Seeds:</td>
                     <td><span id="seeds"></span></td>
+                </tr>
+                <tr>
+                    <td>Silica:</td>
+                    <td><span id="silica"></span></td>
+                </tr>
+                <tr>
+                    <td>Tannins:</td>
+                    <td><span id="tannins"></span></td>
+                </tr>
+                <tr>
+                    <td>Calcium:</td>
+                    <td><span id="calcium"></span></td>
+                </tr>
+                <tr>
+                    <td>Fulvic Acid:</td>
+                    <td><span id="fulvic"></span></td>
                 </tr>
                 <tr>
                     <td>Genetic Markers:</td>

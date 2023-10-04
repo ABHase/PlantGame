@@ -82,6 +82,10 @@ class GlobalState(db.Model):
     genetic_marker_threshold = db.Column(db.Integer)
     genetic_markers = db.Column(db.Integer)
     seeds = db.Column(db.Integer)
+    silica = db.Column(db.Integer, default=0)
+    tannins = db.Column(db.Integer, default=0)
+    calcium = db.Column(db.Integer, default=0)
+    fulvic = db.Column(db.Integer, default=0)
 
     def to_dict(self):
         return {
@@ -89,17 +93,23 @@ class GlobalState(db.Model):
             'genetic_marker_progress': self.genetic_marker_progress,
             'genetic_marker_threshold': self.genetic_marker_threshold,
             'genetic_markers': self.genetic_markers,
-            'seeds': self.seeds
+            'seeds': self.seeds,
+            'silica': self.silica,
+            'tannins': self.tannins,
+            'calcium': self.calcium,
+            'fulvic': self.fulvic
         }
     
     @classmethod
     def from_dict(cls, data):
         return cls(
             id=data.get('id', None),
-            day=data['day'],
-            hour=data['hour'],
-            is_day=data['is_day'],
-            season=data['season'],
-            update_counter=data['update_counter'],
-            year=data['year']
+            genetic_marker_progress=data['genetic_marker_progress'],
+            genetic_marker_threshold=data['genetic_marker_threshold'],
+            genetic_markers=data['genetic_markers'],
+            seeds=data['seeds'],
+            silica=data['silica'],
+            tannins=data['tannins'],
+            calcium=data['calcium'],
+            fulvic=data['fulvic']
         )

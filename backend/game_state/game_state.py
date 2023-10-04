@@ -10,6 +10,7 @@ GameState Class (game_state.py)
         add_plant_to_biome(plant, biome): Add a plant to a biome.
         update(): Update the game state (called in the main game loop).
 """ 
+from models.biome_model import BiomeModel
 from user_auth.models import PlantTimeModel
 from constants import INITIAL_GENETIC_MARKER_THRESHOLD
 from plants.plant import Plant
@@ -23,12 +24,16 @@ from user_auth.user_auth import fetch_biomes_from_db, fetch_plant_time_from_db, 
 
 
 class GameState(EventEmitter):
-    def __init__(self, genetic_markers, seeds=5, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
+    def __init__(self, genetic_markers, seeds=5, silica = 0, tannins = 0, calcium = 0, fulvic = 0, genetic_marker_progress=0, genetic_marker_threshold=INITIAL_GENETIC_MARKER_THRESHOLD):
         super().__init__()
         self.genetic_markers = genetic_markers
         self.genetic_marker_progress = genetic_marker_progress
         self.genetic_marker_threshold = genetic_marker_threshold
-        self.seeds = seeds  
+        self.seeds = seeds
+        self.silica = silica
+        self.tannins = tannins
+        self.calcium = calcium
+        self.fulvic = fulvic
 
     def update(self, user_id=None):
         # Fetch and update PlantTime
@@ -64,10 +69,18 @@ class GameState(EventEmitter):
             
             # Update each plant
             for plant in plants:
-                can_produce, amount, water_absorbed = plant.update(plant_time.is_day, biome.ground_water_level, biome.current_weather)
+                can_produce, amount, water_absorbed, is_producing_secondary_resource = plant.update(plant_time.is_day, biome.ground_water_level, biome.current_weather)
                 biome.ground_water_level -= water_absorbed
                 if biome.ground_water_level < 0:
                     biome.ground_water_level = 0
+
+                if is_producing_secondary_resource:
+                    # Fetch the biome name from the database
+                    existing_biome_model = BiomeModel.query.filter_by(id=plant.biome_id).first()
+                    if existing_biome_model:
+                        print(f"Existing biome model: {existing_biome_model}")
+                        biome_name = existing_biome_model.name
+                        self.update_secondary_resources(biome_name)  # Pass the biome name
                 
                 # Handle genetic markers, etc.
             
@@ -96,13 +109,29 @@ class GameState(EventEmitter):
             self.genetic_marker_progress -= self.genetic_marker_threshold
             self.genetic_marker_threshold += self.genetic_marker_threshold  # Increase the threshold
 
+    def update_secondary_resources(self, biome_name):
+        print(f"Updating secondary resources for biome {biome_name}")
+        if biome_name == 'Desert':  # Replace with actual biome names
+            self.silica += 1
+        elif biome_name == 'Tropical Forest':
+            self.tannins += 1
+        elif biome_name == 'Mountain':
+            self.calcium += 1
+        elif biome_name == 'Swamp':
+            self.fulvic += 1
+        
+
             
     def to_dict(self):
         return {
             'genetic_markers': self.genetic_markers,
             'genetic_marker_progress': self.genetic_marker_progress,
             'genetic_marker_threshold': self.genetic_marker_threshold,
-            'seeds': self.seeds
+            'seeds': self.seeds,
+            'silica': self.silica,
+            'tannins': self.tannins,
+            'calcium': self.calcium,
+            'fulvic': self.fulvic
         }
 
     @classmethod
@@ -110,8 +139,13 @@ class GameState(EventEmitter):
         return cls(
             data.get('genetic_markers', 0),
             data.get('seeds', 0),
+            data.get('silica', 0),
+            data.get('tannins', 0),
+            data.get('calcium', 0),
+            data.get('fulvic', 0),
             data.get('genetic_marker_progress', 0),
             data.get('genetic_marker_threshold', 0)
+            
         )
 
     def __getstate__(self):

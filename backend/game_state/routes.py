@@ -189,8 +189,12 @@ def initialize_new_global_state(user_id):
         user_id=user_id,
         genetic_marker_progress=0,
         genetic_marker_threshold=10,
-        genetic_markers=5,
-        seeds=5
+        genetic_markers=50,
+        seeds=5,
+        silica=0,
+        tannins=0,
+        calcium=0,
+        fulvic=0
     )
     print(f"New GlobalState: {new_global_state}")
     return new_global_state
@@ -308,6 +312,24 @@ def toggle_genetic_marker():
     user_actions_queue.append(action)
 
     return jsonify({"status": "Toggle genetic marker action queued"})
+
+#Toggle Secondary Resource Route and Function
+@game_state_bp.route('/toggle_secondary_resource', methods=['POST'])
+@login_required
+def toggle_secondary_resource():
+    user_id = current_user.id
+    plantId = request.json.get('plantId')
+    isChecked = request.json.get('isChecked')
+
+    action = {
+        "type": "toggle_secondary_resource",
+        "plant_id": plantId,
+        "isChecked": isChecked
+    }
+
+    user_actions_queue.append(action)
+
+    return jsonify({"status": "Toggle secondary resource action queued"})
 
 @game_state_bp.route('/purchase_seed', methods=['POST'])
 @login_required

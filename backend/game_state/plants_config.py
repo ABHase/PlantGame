@@ -6,6 +6,7 @@ INITIAL_PLANT_CONFIG = {
     'genetic_marker_production_rate': 1,
     'is_sugar_production_on': False,
     'is_genetic_marker_production_on': False,
+    'is_secondary_resource_production_on': False,
     'sunlight': 0,
     'water': 0,
     'sugar': 0,
