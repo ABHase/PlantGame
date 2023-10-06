@@ -47,14 +47,20 @@ def handle_connect():
         disconnect(old_socket)
     active_sockets[user_id] = request.sid
 
-def action_processor_task(app):
+def action_processor_task(app, user_id, socket_id):
     with app.app_context():
         while True:
+            # Check if the socket is still connected
+            if not socketio.server.connected(socket_id):
+                print(f"User {user_id} disconnected. Stopping action processor task.")
+                return  # This will end the action processor task
+
             if user_actions_queue:
                 for action in list(user_actions_queue):
                     dispatch_action(action)
                     user_actions_queue.remove(action)
             sleep(0.1)  # small sleep to prevent busy-waiting, adjust as needed
+
 
 
 def background_task(app, user_id, socket_id):
@@ -93,14 +99,18 @@ def background_task(app, user_id, socket_id):
 
 @game_state_bp.route('/init_game', methods=['POST'])
 def init_game():
+    logging.info("Initializing game...")
     user_id = current_user.id if current_user.is_authenticated else None
+    logging.info(f"User ID: {user_id}")
     socket_id = request.sid  # fetch the current socket id
-    print(f"User {user_id} connected. Socket ID: {socket_id}")
+    logging.info(f"User {user_id} connected. Socket ID: {socket_id}")
     if user_id:
+        logging.info(f"User {user_id} authenticated. Initializing game...")
         if user_id not in running_tasks:
+            logging.info(f"User {user_id} not in running_tasks. Initializing game...")
             running_tasks[user_id] = {
                 "game_task": socketio.start_background_task(target=background_task, app=current_app._get_current_object(), user_id=user_id, socket_id=socket_id),  # added socket_id
-                "action_task": socketio.start_background_task(target=action_processor_task, app=current_app._get_current_object())
+                "action_task": socketio.start_background_task(target=action_processor_task, app=current_app._get_current_object(), user_id=user_id, socket_id=socket_id)
             }
 
     print("Initializing game state...")
