@@ -19,12 +19,7 @@ Methods:
 
 """
 import math
-import uuid
-from user_auth.user_auth import save_single_plant_to_db
-from game_resource import GameResource
-from constants import SECONDARY_SUGAR_THRESHOLD, SUGAR_THRESHOLD
-from plants.plant_parts_config import PLANT_PARTS_CONFIG
-from plants.part_cost_config import PARTS_COST_CONFIG
+from ..constants import SECONDARY_SUGAR_THRESHOLD, SUGAR_THRESHOLD
 
 
 class Plant:

@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, current_app
 from flask_login import login_user, logout_user, login_required
-from app import db  # Importing db directly from app
+from ..app import db  # Importing db directly from app
 from .models import User  # Make sure to import User appropriately
 from flask import json, jsonify
+from .user_auth import initialize_user_game
 
 user_auth_bp = Blueprint('user_auth', __name__)
 
@@ -25,6 +26,10 @@ def register():
         db.session.add(user)
         db.session.commit()
         login_user(user)
+
+        # Initialize game components for the user
+        initialize_user_game(user.id)
+
         return jsonify({"status": "success", "message": "Successfully registered"})
 
     return render_template('register.html')

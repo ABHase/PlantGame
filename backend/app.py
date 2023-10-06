@@ -1,14 +1,14 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
-from socket_config import socketio  # Import socketio
-from extensions import db  # Import db from extensions.py
+from .socket_config import socketio  # Import socketio
+from .extensions import db  # Import db from extensions.py
 
 # Initialize extensions
 login_manager = LoginManager()
 
 @login_manager.user_loader
 def load_user(user_id):
-    from user_auth.models import User  # Import the User model here to avoid circular imports
+    from .user_auth.models import User  # Import the User model here to avoid circular imports
     return db.session.get(User, int(user_id))
 
 def create_app():
@@ -25,12 +25,12 @@ def create_app():
     app.secret_key = 'supersecretkey'
     
     with app.app_context():
-        from user_auth.models import User  # Import the User model here
-        from user_auth.models import UpgradeModel  # Import the UpgradeModel model here
-        from models.biome_model import BiomeModel
-        from models.plant_model import PlantModel
-        from user_auth.models import PlantTimeModel
-        from user_auth.models import GlobalState
+        from .user_auth.models import User  # Import the User model here
+        from .user_auth.models import UpgradeModel  # Import the UpgradeModel model here
+        from .models.biome_model import BiomeModel
+        from .models.plant_model import PlantModel
+        from .user_auth.models import PlantTimeModel
+        from .user_auth.models import GlobalState
         print("Creating all db tables...")
         db.create_all()
 
@@ -46,8 +46,8 @@ def create_app():
             print("Admin user already exists.")
 
     print("Registering blueprints...")
-    from game_state.routes import game_state_bp
-    from user_auth.routes import user_auth_bp
+    from .game_state.routes import game_state_bp
+    from .user_auth.routes import user_auth_bp
     
     app.register_blueprint(game_state_bp, url_prefix='/game_state')
     app.register_blueprint(user_auth_bp, url_prefix='/user_auth')

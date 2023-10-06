@@ -10,17 +10,15 @@ GameState Class (game_state.py)
         add_plant_to_biome(plant, biome): Add a plant to a biome.
         update(): Update the game state (called in the main game loop).
 """ 
-from models.biome_model import BiomeModel
-from user_auth.models import PlantTimeModel
-from constants import INITIAL_GENETIC_MARKER_THRESHOLD
-from plants.plant import Plant
-from biomes.biome import Biome
-from biomes.biomes_config import BIOMES
-from plant_time import PlantTime
-from game_resource import GameResource
-from events.event_emitter import EventEmitter
-from .initial_resources_config import INITIAL_RESOURCES
-from user_auth.user_auth import fetch_biomes_from_db, fetch_plant_time_from_db, save_plant_time_to_db, save_biomes_to_db, save_plants_to_db, fetch_plants_from_db, fetch_plants_from_db_by_biome_id_and_user, fetch_global_state_from_db, save_global_state_to_db
+from ..models.biome_model import BiomeModel
+from ..user_auth.models import PlantTimeModel
+from ..constants import INITIAL_GENETIC_MARKER_THRESHOLD
+from ..plants.plant import Plant
+from ..biomes.biome import Biome
+from ..biomes.biomes_config import BIOMES
+from ..plant_time import PlantTime
+from ..events.event_emitter import EventEmitter
+from ..user_auth.user_auth import fetch_biomes_from_db, fetch_plant_time_from_db, save_plant_time_to_db, save_biomes_to_db, save_plants_to_db, fetch_plants_from_db, fetch_plants_from_db_by_biome_id_and_user, fetch_global_state_from_db, save_global_state_to_db
 
 
 class GameState(EventEmitter):

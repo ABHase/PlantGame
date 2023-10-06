@@ -1,7 +1,7 @@
-from plants.part_cost_config import PARTS_COST_CONFIG
-from models.plant_model import PlantModel
-from plants.plant import Plant
-from user_auth.user_auth import fetch_upgrade_by_effect_and_user, save_single_plant_to_db
+from ..plants.part_cost_config import PARTS_COST_CONFIG
+from ..models.plant_model import PlantModel
+from ..plants.plant import Plant
+from ..user_auth.user_auth import fetch_upgrade_by_effect_and_user, save_single_plant_to_db
 
 def handle_buy_plant_part(action):
     plant_id = action["plant_id"]

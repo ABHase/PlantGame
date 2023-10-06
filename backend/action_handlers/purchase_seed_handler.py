@@ -1,5 +1,5 @@
-from models.plant_model import PlantModel
-from user_auth.user_auth import fetch_global_state_from_db, save_global_state_to_db, save_single_plant_to_db
+from ..models.plant_model import PlantModel
+from ..user_auth.user_auth import fetch_global_state_from_db, save_global_state_to_db, save_single_plant_to_db
 
 def handle_purchase_seed(action):
     plant_id = action["plant_id"]

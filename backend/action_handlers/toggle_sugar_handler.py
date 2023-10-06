@@ -1,5 +1,5 @@
-from models.plant_model import PlantModel
-from user_auth.user_auth import save_single_plant_to_db  # Import the function to save a plant to the database
+from ..models.plant_model import PlantModel
+from ..user_auth.user_auth import save_single_plant_to_db  # Import the function to save a plant to the database
 
 def handle_toggle_sugar(action):
     plant_id = action["plant_id"]  # Assuming you have plant_id in the action

@@ -1,8 +1,8 @@
 import uuid
-from game_state.plants_config import INITIAL_PLANT_CONFIG
-from models.plant_model import PlantModel
-from models.biome_model import BiomeModel
-from user_auth.user_auth import fetch_global_state_from_db, save_global_state_to_db, save_new_plant_to_db
+from ..game_state.plants_config import INITIAL_PLANT_CONFIG
+from ..models.plant_model import PlantModel
+from ..models.biome_model import BiomeModel
+from ..user_auth.user_auth import fetch_global_state_from_db, save_global_state_to_db, save_new_plant_to_db
 from sqlalchemy import func  # Import this if you haven't already
 
 def handle_plant_seed_in_biome(action):

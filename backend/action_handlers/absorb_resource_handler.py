@@ -1,6 +1,6 @@
-from models.plant_model import PlantModel
-from models.biome_model import BiomeModel
-from user_auth.user_auth import save_single_plant_to_db, save_single_biome_to_db  # Import the functions to save to the database
+from ..models.plant_model import PlantModel
+from ..models.biome_model import BiomeModel
+from ..user_auth.user_auth import save_single_plant_to_db, save_single_biome_to_db  # Import the functions to save to the database
 
 def handle_absorb_resource(action):
     plant_id = action["plant_id"]

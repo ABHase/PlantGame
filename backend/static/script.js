@@ -7,6 +7,8 @@ let partsCostConfig = {};
 let unlockedUpgrades = [];
 let biomePlantCounts = {};  // Global variable to hold plant counts for each biome
 let biomeIdToNameMap = {};  // Global variable to hold the mappinglet biomeIdToNameMap = {};  // Global variable to hold the mapping
+let plantsData = [];  // This will hold the current list of plants
+
 
 
 
@@ -71,9 +73,6 @@ window.onload = function() {
 
     // Listen for plant_list updates from the server
     socket.on('plants_list', function(data) {
-        // Update your client-side plant_list here
-        updatePlantListUI(data);
-
         // Reset the plant counts
         biomePlantCounts = {};
 
@@ -84,6 +83,8 @@ window.onload = function() {
             }
             biomePlantCounts[plant.biome_id]++;
         });
+        plantsData = data;  // Update the global plantsData variable
+        updatePlantListUI();
     });
 
 
@@ -256,8 +257,8 @@ function updateBiomeListUI(biomeList) {
 }
 
 // Function to update the plant list UI
-function updatePlantListUI(plantList) {
-    plantList.forEach((plant) => {
+function updatePlantListUI() {
+    plantsData.forEach((plant) => {
         const plantContainer = document.getElementById(`plant-container-${plant.biome_id}`);
         if (!plantContainer) return;  // Skip if the container doesn't exist
 

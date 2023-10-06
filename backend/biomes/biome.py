@@ -13,9 +13,9 @@ Biome Class (biome.py)
         update(): Update the biome's state (called in the main game loop).
 """
 import random
-from user_auth.user_auth import save_single_biome_to_db
-from biomes.biomes_config import BIOMES
-from plants.plant import Plant
+from ..user_auth.user_auth import save_single_biome_to_db
+from ..biomes.biomes_config import BIOMES
+from ..plants.plant import Plant
 
 class Biome:
     def __init__(self, id, user_id, name, capacity, ground_water_level, current_weather, current_pest, snowpack, resource_modifiers, rain_intensity, snow_intensity):
