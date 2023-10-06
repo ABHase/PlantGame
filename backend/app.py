@@ -36,17 +36,6 @@ def create_app():
         print("Creating all db tables...")
         db.create_all()
 
-        # Check if admin user already exists
-        existing_admin = User.query.filter_by(username='admin').first()
-        if existing_admin is None:
-            # Add an admin user
-            admin = User(username='admin', password='admin')
-            db.session.add(admin)
-            db.session.commit()
-            print("Admin user added.")
-        else:
-            print("Admin user already exists.")
-
     print("Registering blueprints...")
     from .game_state.routes import game_state_bp
     from .user_auth.routes import user_auth_bp
