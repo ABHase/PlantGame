@@ -37,10 +37,18 @@ running_tasks = {}
 user_actions_queue = []
 
 active_sockets = {}
+users_connected = {}
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    user_id = request.args.get('userId')
+    users_connected[user_id] = False
+
 
 @socketio.on('connect')
 def handle_connect():
     user_id = request.args.get('userId')
+    users_connected[user_id] = True
     if user_id in active_sockets:
         # Handle reconnection scenario
         old_socket = active_sockets[user_id]
@@ -53,7 +61,7 @@ def action_processor_task(app, user_id, socket_id):
         while True:
             try:
                 # Check if the socket is still connected
-                if socket_id not in socketio.server.manager.rooms['/'].keys():
+                if not users_connected.get(user_id, False):
                     print(f"User {user_id} disconnected. Stopping action processor task.")
                     return  # This will end the action processor task
 
@@ -72,7 +80,7 @@ def background_task(app, user_id, socket_id):
         while True:
             try:
                 # Check if the socket is still connected
-                if socket_id not in socketio.server.manager.rooms['/'].keys():
+                if not users_connected.get(user_id, False):
                     print(f"User {user_id} disconnected. Stopping background task.")
                     return  # This will end the background task
 
