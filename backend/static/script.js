@@ -23,16 +23,20 @@ window.onload = function() {
         transports: ['websocket'],
         query: { userId: currentUserId }
     });
-    
+
     // Fetch initial game state
     fetch('/game_state/init_game', {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sid: socket.id })  // send the socket ID to the server
     })
     .then(response => response.json())
     .then(data => {
         console.log(data);  // Should print {"status": "Game initialized"}
     });
-
+    
     // Fetch the parts cost config
     fetch('/game_state/part_costs')
     .then(response => response.json())

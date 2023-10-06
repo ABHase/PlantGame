@@ -100,10 +100,11 @@ def background_task(app, user_id, socket_id):
 @game_state_bp.route('/init_game', methods=['POST'])
 def init_game():
     try:
+        data = request.get_json()
+        socket_id = data['sid']  # Get the socket ID from the request data
         logging.info("Initializing game...")
         user_id = current_user.id if current_user.is_authenticated else None
         logging.info(f"User ID: {user_id}")
-        socket_id = request.sid  # fetch the current socket id
         logging.info(f"User {user_id} connected. Socket ID: {socket_id}")
         if user_id:
             logging.info(f"User {user_id} authenticated. Initializing game...")
