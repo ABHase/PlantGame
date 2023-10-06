@@ -2,6 +2,8 @@ from flask import Flask, render_template
 from flask_login import LoginManager
 from .socket_config import socketio  # Import socketio
 from .extensions import db  # Import db from extensions.py
+from .config import config
+import os
 
 # Initialize extensions
 login_manager = LoginManager()
@@ -14,7 +16,8 @@ def load_user(user_id):
 def create_app():
     print("Creating app...")
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+    config_name = os.environ.get('FLASK_CONFIG') or 'default'
+    app.config.from_object(config[config_name])
     
     print("Initializing db...")
     db.init_app(app)  # Bind it to the Flask app here
@@ -22,7 +25,6 @@ def create_app():
     print("Initializing login manager...")
     login_manager.init_app(app)
     login_manager.login_view = 'login'
-    app.secret_key = 'supersecretkey'
     
     with app.app_context():
         from .user_auth.models import User  # Import the User model here
@@ -68,4 +70,4 @@ def create_app():
 
 if __name__ == '__main__':
         app = create_app()
-        socketio.run(app, debug=True, use_reloader=False)  # Disable reloader to prevent running the app twice
+        socketio.run(app, debug=app.config['DEBUG'], use_reloader=False)
