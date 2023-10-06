@@ -95,7 +95,13 @@ window.onload = function() {
         updatePlantListUI();
     });
 
+    window.addEventListener('beforeunload', function() {
+        socket.close();
+    });
+
 };
+
+
 
 function updateUpgradesUI(upgradesList) {
     const upgradesContainer = document.getElementById('upgrades-container');
