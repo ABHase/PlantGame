@@ -57,9 +57,14 @@ def action_processor_task(app):
             sleep(0.1)  # small sleep to prevent busy-waiting, adjust as needed
 
 
-def background_task(app, user_id):
+def background_task(app, user_id, socket_id):
     with app.app_context():
         while True:
+            # Check if the socket is still connected
+            if not socketio.server.connected(socket_id):
+                print(f"User {user_id} disconnected. Stopping background task.")
+                return  # This will end the background task
+
             # 1. Fetching the Game State
             upgrades_list = fetch_upgrades_from_db(user_id)
             biomes_list = fetch_biomes_from_db(user_id)
@@ -77,22 +82,23 @@ def background_task(app, user_id):
             game_state.update(user_id)
 
             # 3. Emitting to Client
-            socketio.emit('game_state', game_state.to_dict())
-            socketio.emit('global_state', global_state.to_dict())
-            socketio.emit('plant_time', plant_time.to_dict())
-            socketio.emit('upgrades_list', [upgrade.to_dict() for upgrade in upgrades_list])
-            socketio.emit('biomes_list', [biome.to_dict() for biome in biomes_list])
-            socketio.emit('plants_list', [plant.to_dict() for plant in plants_list])
+            socketio.emit('game_state', game_state.to_dict(), room=socket_id)
+            socketio.emit('global_state', global_state.to_dict(), room=socket_id)
+            socketio.emit('plant_time', plant_time.to_dict(), room=socket_id)
+            socketio.emit('upgrades_list', [upgrade.to_dict() for upgrade in upgrades_list], room=socket_id)
+            socketio.emit('biomes_list', [biome.to_dict() for biome in biomes_list], room=socket_id)
+            socketio.emit('plants_list', [plant.to_dict() for plant in plants_list], room=socket_id)
 
             sleep(1)
 
 @game_state_bp.route('/init_game', methods=['POST'])
 def init_game():
     user_id = current_user.id if current_user.is_authenticated else None
+    socket_id = request.sid  # fetch the current socket id
     if user_id:
         if user_id not in running_tasks:
             running_tasks[user_id] = {
-                "game_task": socketio.start_background_task(target=background_task, app=current_app._get_current_object(), user_id=user_id),
+                "game_task": socketio.start_background_task(target=background_task, app=current_app._get_current_object(), user_id=user_id, socket_id=socket_id),  # added socket_id
                 "action_task": socketio.start_background_task(target=action_processor_task, app=current_app._get_current_object())
             }
 
