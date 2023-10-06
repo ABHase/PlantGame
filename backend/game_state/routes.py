@@ -9,7 +9,7 @@ from ..biomes.biome import Biome
 from ..plants.plant import Plant
 from ..upgrades.upgrades_config import UPGRADES
 from ..game_state import GameState  # Import GameState
-from ..socket_config import socketio
+from ..socket_config import socketio, disconnect
 from flask_login import current_user, login_required
 from ..user_auth.user_auth import (
     fetch_game_state_from_db, save_game_state_to_db,
@@ -35,6 +35,17 @@ logging.basicConfig(filename='app.log',level=logging.INFO)
 game_state_bp = Blueprint('game_state', __name__)
 running_tasks = {}
 user_actions_queue = []
+
+active_sockets = {}
+
+@socketio.on('connect')
+def handle_connect():
+    user_id = request.args.get('userId')
+    if user_id in active_sockets:
+        # Handle reconnection scenario
+        old_socket = active_sockets[user_id]
+        disconnect(old_socket)
+    active_sockets[user_id] = request.sid
 
 def action_processor_task(app):
     with app.app_context():

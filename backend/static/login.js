@@ -16,7 +16,13 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(response => response.json())
         .then(data => {
             if (data.status === "success") {
-                // Redirect to game or dashboard page
+                // Establish a Socket.IO connection with the user_id
+                socket = io.connect(socketURL, {
+                    transports: ['websocket'],
+                    query: { userId: data.user_id }
+                });
+
+                // Then, redirect to game or dashboard page
                 window.location.href = "/game";
             } else {
                 // Show error message
