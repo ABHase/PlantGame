@@ -99,30 +99,34 @@ def background_task(app, user_id, socket_id):
 
 @game_state_bp.route('/init_game', methods=['POST'])
 def init_game():
-    logging.info("Initializing game...")
-    user_id = current_user.id if current_user.is_authenticated else None
-    logging.info(f"User ID: {user_id}")
-    socket_id = request.sid  # fetch the current socket id
-    logging.info(f"User {user_id} connected. Socket ID: {socket_id}")
-    if user_id:
-        logging.info(f"User {user_id} authenticated. Initializing game...")
-        if user_id not in running_tasks:
-            logging.info(f"User {user_id} not in running_tasks. Initializing game...")
-            running_tasks[user_id] = {
-                "game_task": socketio.start_background_task(target=background_task, app=current_app._get_current_object(), user_id=user_id, socket_id=socket_id),  # added socket_id
-                "action_task": socketio.start_background_task(target=action_processor_task, app=current_app._get_current_object(), user_id=user_id, socket_id=socket_id)
-            }
+    try:
+        logging.info("Initializing game...")
+        user_id = current_user.id if current_user.is_authenticated else None
+        logging.info(f"User ID: {user_id}")
+        socket_id = request.sid  # fetch the current socket id
+        logging.info(f"User {user_id} connected. Socket ID: {socket_id}")
+        if user_id:
+            logging.info(f"User {user_id} authenticated. Initializing game...")
+            if user_id not in running_tasks:
+                logging.info(f"User {user_id} not in running_tasks. Initializing game...")
+                running_tasks[user_id] = {
+                    "game_task": socketio.start_background_task(target=background_task, app=current_app._get_current_object(), user_id=user_id, socket_id=socket_id),  # added socket_id
+                    "action_task": socketio.start_background_task(target=action_processor_task, app=current_app._get_current_object(), user_id=user_id, socket_id=socket_id)
+                }
 
-    print("Initializing game state...")
+        print("Initializing game state...")
 
-    print(f"Is user authenticated? {current_user.is_authenticated}")  # Debugging line
+        print(f"Is user authenticated? {current_user.is_authenticated}")  # Debugging line
 
-    if current_user.is_authenticated:
-        saved_global_state = fetch_global_state_from_db(current_user.id)
-        if saved_global_state:
-            return jsonify({"status": "Game state loaded from database"})
+        if current_user.is_authenticated:
+            saved_global_state = fetch_global_state_from_db(current_user.id)
+            if saved_global_state:
+                return jsonify({"status": "Game state loaded from database"})
 
-    return jsonify({"status": "Game initialized"})
+        return jsonify({"status": "Game initialized"})
+    except Exception as e:
+        logging.error(f"Error initializing game: {str(e)}")
+        return jsonify({"error": "Error initializing game", "details": str(e)}), 500
 
 
 

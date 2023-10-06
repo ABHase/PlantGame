@@ -16,8 +16,6 @@ if (APP_ENV === 'production') {
     socketURL = 'http://localhost:5000/';  // or whatever your local port is
 }
 
-
-
 // Initialize the game when the page loads
 window.onload = function() {
     // Establish a Socket.IO connection
@@ -25,6 +23,7 @@ window.onload = function() {
         transports: ['websocket'],
         query: { userId: currentUserId }
     });
+    
     // Fetch initial game state
     fetch('/game_state/init_game', {
         method: 'POST'
