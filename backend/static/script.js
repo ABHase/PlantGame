@@ -23,6 +23,7 @@ window.onload = function() {
         transports: ['websocket'],
         query: { userId: currentUserId }
     });
+    console.log("Socket ID after connection:", socket.id); // Debugging line
 
     // Fetch initial game state
     fetch('/game_state/init_game', {
@@ -36,7 +37,7 @@ window.onload = function() {
     .then(data => {
         console.log(data);  // Should print {"status": "Game initialized"}
     });
-    
+
     // Fetch the parts cost config
     fetch('/game_state/part_costs')
     .then(response => response.json())
