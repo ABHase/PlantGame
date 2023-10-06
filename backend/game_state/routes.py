@@ -95,6 +95,7 @@ def background_task(app, user_id, socket_id):
 def init_game():
     user_id = current_user.id if current_user.is_authenticated else None
     socket_id = request.sid  # fetch the current socket id
+    print(f"User {user_id} connected. Socket ID: {socket_id}")
     if user_id:
         if user_id not in running_tasks:
             running_tasks[user_id] = {
