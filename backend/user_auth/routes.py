@@ -14,28 +14,18 @@ user_auth_bp = Blueprint('user_auth', __name__)
 @user_auth_bp.route("/register", methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
-        
-        # Input validation
-        if not username or not password:
-            return jsonify({"status": "fail", "message": "Both username and password are required."})
-        
-        # Check if the username is already taken
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            return jsonify({"status": "fail", "message": "Username is already taken."})
+        # ... [rest of the code above remains unchanged]
 
         # Hash the password and create the new user
-        logging.info("Before hashing password")
         hashed_password = generate_password_hash(password, method='scrypt')
+        logging.info(f"Hashed password: {hashed_password}")
         user = User(username=username, password=hashed_password)
-        logging.info("After hashing password, before adding user to db")
 
         try:
+            logging.info("Attempting to add user to the database...")
             db.session.add(user)
             db.session.commit()
+            logging.info("User added and committed to the database.")
             login_user(user)
         except Exception as e:
             logging.error("Error while adding user to database: %s", e)
