@@ -62,7 +62,8 @@ def create_app():
     @app.route('/game')
     def game():
         env = 'development' if app.config['DEBUG'] else 'production'
-        return render_template('game.html')
+        return render_template('game.html', env=env)
+
 
     print("Initializing socketio...")
     socketio.init_app(app)
