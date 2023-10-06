@@ -3,6 +3,10 @@
 <head>
     <title>Register</title>
     <script src="{{ url_for('static', filename='register.js') }}"></script>
+    <script>
+        var APP_ENV = "{{ env }}";
+    </script>
+    
 </head>
 <body>
     <form id="register-form">

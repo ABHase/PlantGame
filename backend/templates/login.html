@@ -3,6 +3,10 @@
 <head>
     <title>Login</title>
     <script src="{{ url_for('static', filename='login.js') }}"></script>
+    <script>
+        var APP_ENV = "{{ env }}";
+    </script>
+    
 </head>
 <body>
     <form id="login-form">

@@ -56,10 +56,12 @@ def create_app():
 
     @app.route('/')
     def index():
+        env = 'development' if app.config['DEBUG'] else 'production'
         return render_template('index.html')
 
     @app.route('/game')
     def game():
+        env = 'development' if app.config['DEBUG'] else 'production'
         return render_template('game.html')
 
     print("Initializing socketio...")

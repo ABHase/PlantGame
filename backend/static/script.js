@@ -8,14 +8,21 @@ let unlockedUpgrades = [];
 let biomePlantCounts = {};  // Global variable to hold plant counts for each biome
 let biomeIdToNameMap = {};  // Global variable to hold the mappinglet biomeIdToNameMap = {};  // Global variable to hold the mapping
 let plantsData = [];  // This will hold the current list of plants
-
+let socketURL;
+if (APP_ENV === 'production') {
+    socketURL = 'wss://idleplantgame-67d196ad0035.herokuapp.com/';
+} else {
+    socketURL = 'http://localhost:5000/';  // or whatever your local port is
+}
 
 
 
 // Initialize the game when the page loads
 window.onload = function() {
     // Establish a Socket.IO connection
-    socket = io.connect();
+    socket = io.connect(socketURL, {
+        transports: ['websocket']
+    });
 
     // Fetch initial game state
     fetch('/game_state/init_game', {
