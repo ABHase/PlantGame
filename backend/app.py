@@ -68,6 +68,7 @@ def create_app():
     print("App created.")
     return app
 
+app = create_app()
+
 if __name__ == '__main__':
-        app = create_app()
-        socketio.run(app, debug=app.config['DEBUG'], use_reloader=False)
+    socketio.run(app, debug=app.config['DEBUG'], use_reloader=False)
