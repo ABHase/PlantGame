@@ -5,6 +5,9 @@ from .models import User  # Make sure to import User appropriately
 from flask import json, jsonify
 from .user_auth import initialize_user_game
 from werkzeug.security import check_password_hash, generate_password_hash
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 user_auth_bp = Blueprint('user_auth', __name__)
 
@@ -25,12 +28,19 @@ def register():
             return jsonify({"status": "fail", "message": "Username is already taken."})
 
         # Hash the password and create the new user
+        logging.info("Before hashing password")
         hashed_password = generate_password_hash(password, method='scrypt')
         user = User(username=username, password=hashed_password)
+        logging.info("After hashing password, before adding user to db")
 
-        db.session.add(user)
-        db.session.commit()
-        login_user(user)
+        try:
+            db.session.add(user)
+            db.session.commit()
+            login_user(user)
+        except Exception as e:
+            logging.error("Error while adding user to database: %s", e)
+            db.session.rollback()
+            return jsonify({"status": "fail", "message": "Internal Server Error"})
 
         # Initialize game components for the user
         initialize_user_game(user.id)
