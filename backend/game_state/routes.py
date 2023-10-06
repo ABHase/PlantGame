@@ -53,7 +53,7 @@ def action_processor_task(app, user_id, socket_id):
         while True:
             try:
                 # Check if the socket is still connected
-                if not socketio.server.connected(socket_id):
+                if socket_id not in socketio.server.manager.rooms['/'].keys():
                     print(f"User {user_id} disconnected. Stopping action processor task.")
                     return  # This will end the action processor task
 
@@ -72,7 +72,7 @@ def background_task(app, user_id, socket_id):
         while True:
             try:
                 # Check if the socket is still connected
-                if not socketio.server.connected(socket_id):
+                if socket_id not in socketio.server.manager.rooms['/'].keys():
                     print(f"User {user_id} disconnected. Stopping background task.")
                     return  # This will end the background task
 
