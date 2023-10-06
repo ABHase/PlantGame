@@ -23,19 +23,22 @@ window.onload = function() {
         transports: ['websocket'],
         query: { userId: currentUserId }
     });
-    console.log("Socket ID after connection:", socket.id); // Debugging line
-
-    // Fetch initial game state
-    fetch('/game_state/init_game', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ sid: socket.id })  // send the socket ID to the server
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);  // Should print {"status": "Game initialized"}
+    
+    socket.on('connect', function() {
+        console.log("Socket is connected with ID:", socket.id); // This should now print a valid ID
+        
+        // Now that we're connected, send the initial game state request
+        fetch('/game_state/init_game', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ sid: socket.id })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        });
     });
 
     // Fetch the parts cost config
