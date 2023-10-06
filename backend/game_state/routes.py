@@ -49,53 +49,61 @@ def handle_connect():
 
 def action_processor_task(app, user_id, socket_id):
     with app.app_context():
+        print(f"Starting action processor task for user: {user_id} with socket_id: {socket_id}")
         while True:
-            # Check if the socket is still connected
-            if not socketio.server.connected(socket_id):
-                print(f"User {user_id} disconnected. Stopping action processor task.")
-                return  # This will end the action processor task
+            try:
+                # Check if the socket is still connected
+                if not socketio.server.connected(socket_id):
+                    print(f"User {user_id} disconnected. Stopping action processor task.")
+                    return  # This will end the action processor task
 
-            if user_actions_queue:
-                for action in list(user_actions_queue):
-                    dispatch_action(action)
-                    user_actions_queue.remove(action)
-            sleep(0.1)  # small sleep to prevent busy-waiting, adjust as needed
-
+                if user_actions_queue:
+                    for action in list(user_actions_queue):
+                        dispatch_action(action)
+                        user_actions_queue.remove(action)
+                sleep(0.1)  # small sleep to prevent busy-waiting, adjust as needed
+            except Exception as e:
+                print(f"Error in action_processor_task for user {user_id}: {str(e)}")
 
 
 def background_task(app, user_id, socket_id):
     with app.app_context():
+        print(f"Starting background task for user: {user_id} with socket_id: {socket_id}")
         while True:
-            # Check if the socket is still connected
-            if not socketio.server.connected(socket_id):
-                print(f"User {user_id} disconnected. Stopping background task.")
-                return  # This will end the background task
+            try:
+                # Check if the socket is still connected
+                if not socketio.server.connected(socket_id):
+                    print(f"User {user_id} disconnected. Stopping background task.")
+                    return  # This will end the background task
 
-            # 1. Fetching the Game State
-            upgrades_list = fetch_upgrades_from_db(user_id)
-            biomes_list = fetch_biomes_from_db(user_id)
-            plants_list = fetch_plants_from_db(user_id)
-            plant_time = fetch_plant_time_from_db(user_id)
-            global_state = fetch_global_state_from_db(user_id)
+                # 1. Fetching the Game State
+                upgrades_list = fetch_upgrades_from_db(user_id)
+                biomes_list = fetch_biomes_from_db(user_id)
+                plants_list = fetch_plants_from_db(user_id)
+                plant_time = fetch_plant_time_from_db(user_id)
+                global_state = fetch_global_state_from_db(user_id)
 
-            if global_state is None:
-                print("GlobalState is empty. Cannot initialize GameState.")
-                continue
+                if global_state is None:
+                    print("GlobalState is empty. Cannot initialize GameState.")
+                    continue
 
-            game_state = GameState.from_dict(global_state.to_dict())
+                game_state = GameState.from_dict(global_state.to_dict())
 
-            # 2. Updating the Game State
-            game_state.update(user_id)
+                # 2. Updating the Game State
+                game_state.update(user_id)
 
-            # 3. Emitting to Client
-            socketio.emit('game_state', game_state.to_dict(), room=socket_id)
-            socketio.emit('global_state', global_state.to_dict(), room=socket_id)
-            socketio.emit('plant_time', plant_time.to_dict(), room=socket_id)
-            socketio.emit('upgrades_list', [upgrade.to_dict() for upgrade in upgrades_list], room=socket_id)
-            socketio.emit('biomes_list', [biome.to_dict() for biome in biomes_list], room=socket_id)
-            socketio.emit('plants_list', [plant.to_dict() for plant in plants_list], room=socket_id)
+                # 3. Emitting to Client
+                socketio.emit('game_state', game_state.to_dict(), room=socket_id)
+                socketio.emit('global_state', global_state.to_dict(), room=socket_id)
+                socketio.emit('plant_time', plant_time.to_dict(), room=socket_id)
+                socketio.emit('upgrades_list', [upgrade.to_dict() for upgrade in upgrades_list], room=socket_id)
+                socketio.emit('biomes_list', [biome.to_dict() for biome in biomes_list], room=socket_id)
+                socketio.emit('plants_list', [plant.to_dict() for plant in plants_list], room=socket_id)
 
-            sleep(1)
+                sleep(1)
+            except Exception as e:
+                print(f"Error in background_task for user {user_id}: {str(e)}")
+
 
 @game_state_bp.route('/init_game', methods=['POST'])
 def init_game():
