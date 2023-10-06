@@ -36,13 +36,18 @@ game_state_bp = Blueprint('game_state', __name__)
 running_tasks = {}
 user_actions_queue = []
 
+socket_to_user_mapping = {}
+
 active_sockets = {}
 users_connected = {}
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    user_id = request.args.get('userId')
-    users_connected[user_id] = False
+    socket_id = request.sid
+    user_id = socket_to_user_mapping.get(socket_id)
+    if user_id:
+        users_connected[user_id] = False
+
 
 
 @socketio.on('connect')
@@ -118,6 +123,7 @@ def init_game():
     try:
         data = request.get_json()
         socket_id = data['sid']  # Get the socket ID from the request data
+        socket_to_user_mapping[socket_id] = user_id
         logging.info("Initializing game...")
         user_id = current_user.id if current_user.is_authenticated else None
         logging.info(f"User ID: {user_id}")
