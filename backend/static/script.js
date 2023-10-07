@@ -2,6 +2,7 @@ let socket;
 let gameState = {};  // Define gameState as a global variable
 let isDay = null;
 let biomeGroundWaterLevels = {}; // At the top of your script
+let currentlyDisplayedBiomeId = null;
 const plantContainerVisibility = {};
 let partsCostConfig = {};
 let unlockedUpgrades = [];
@@ -290,6 +291,20 @@ function updateBiomeListUI(biomeList) {
             plantContainerVisibility[plantContainerId] = plantContainer.style.display;
         });
     });
+        // After you've created and appended all the biomes, check if a biome was previously being displayed
+        if (currentlyDisplayedBiomeId) {
+            // Hide all biomes
+            const allBiomes = document.querySelectorAll('.biome');
+            allBiomes.forEach(biome => {
+                biome.style.display = 'none';
+            });
+
+            // Show the previously displayed biome
+            const targetBiome = document.getElementById(currentlyDisplayedBiomeId);
+            if (targetBiome) {
+                targetBiome.style.display = 'block';
+            }
+    }
 }
 
 // Function to update the plant list UI
@@ -579,4 +594,7 @@ function showSpecificBiome(biomeId) {
     if (targetBiome) {
         targetBiome.style.display = 'block';
     }
+
+    // Update the currentlyDisplayedBiomeId
+    currentlyDisplayedBiomeId = biomeId;
 }
