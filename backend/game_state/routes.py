@@ -43,10 +43,11 @@ users_connected = {}
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    socket_id = request.sid
-    user_id = socket_to_user_mapping.get(socket_id)
+    # Find the user associated with this socket
+    user_id = socket_to_user_mapping.get(request.sid)
     if user_id:
-        users_connected[user_id] = False
+        del socket_to_user_mapping[request.sid]  # Remove this socket from our mapping
+
 
 
 
