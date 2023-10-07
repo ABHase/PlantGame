@@ -327,105 +327,108 @@ function updatePlantListUI() {
             plantContainer.appendChild(plantDiv);
         }
 
+        const table = plantDiv.querySelector('table') || document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
 
-        plantDiv.className = 'plant';
-        plantDiv.id = `plant-${plant.id}`;
+        // For sunlight row
+        updateRow(table, `sunlight-row-${plant.id}`, [
+            { content: isDay ? `<button onclick="absorbResource('${plant.id}', 'sunlight', 10)">Absorb</button>` : `<button disabled>It's night...</button>`, type: 'td' },
+            { content: 'Sunlight:', type: 'td' },
+            { content: `<span id="sunlight-${plant.id}">${plant.sunlight}</span>`, type: 'td' }
+        ]);
 
-        const checkboxId = `sugar-toggle-${plant.id}`;
-        const geneticMarkerCheckboxId = `genetic-marker-toggle-${plant.id}`;
+        // For water row
+        updateRow(table, `water-row-${plant.id}`, [
+            { content: groundWaterLevel >= 10 ? `<button onclick="absorbResource('${plant.id}', 'water', 10)">Absorb</button>` : `<button disabled>No water...</button>`, type: 'td' },
+            { content: 'Water:', type: 'td' },
+            { content: `<span id="water-${plant.id}">${plant.water}</span>`, type: 'td' }
+        ]);
 
-        const absorbSunlightButtonHTML = isDay ? 
-            `<button onclick="absorbResource('${plant.id}', 'sunlight', 10)">Absorb</button>` : 
-            `<button disabled>It's night...</button>`;
+                // For water progress bar row
+        updateRow(table, `water-progress-row-${plant.id}`, [
+            {
+                content: `
+                <div class="water-progress-bar" id="water-storage-bar-${plant.id}">
+                    <div class="water-progress-bar-fill" id="water-storage-fill-${plant.id}" style="width:${waterProgressPercentage}%"></div>
+                </div>
+                `,
+                type: 'td', attributes: { colspan: "3" }
+            }
+        ]);
 
-        // Assuming you have a way to get the ground_water_level for the biome
-        const groundWaterLevel = biomeGroundWaterLevels[plant.biome_id] || 0;
-        
-        const absorbWaterButtonHTML = groundWaterLevel >= 10 ? 
-            `<button onclick="absorbResource('${plant.id}', 'water', 10)">Absorb</button>` : 
-            `<button disabled>No water...</button>`;
-
-        const maxWaterCapacity = plant.vacuoles * 100;
-        const currentWaterAmount = plant.water;
-        const waterProgressPercentage = (currentWaterAmount / maxWaterCapacity) * 100;
-        const biomeName = biomeIdToNameMap[plant.biome_id] || 'Unknown';  // Fetch the biome name, default to 'Unknown' if not found
-
-        let secondaryResource = 'Resource';  // Default value
-        if (biomeName === 'Desert') {
-            secondaryResource = 'Silica';
-        } else if (biomeName === 'Tropical Forest') {
-            secondaryResource = 'Tannins';
-        } else if (biomeName === 'Mountain') {
-            secondaryResource = 'Calcium';
-        } else if (biomeName === 'Swamp') {
-            secondaryResource = 'Fulvic';
-        }
-
-        let plantPartsRows = '';
-        const plantParts = ['roots', 'leaves', 'vacuoles', 'resin', 'taproot', 'pheromones', 'thorns'];
+        // For each plant part row
         plantParts.forEach((partType) => {
             const cost = partsCostConfig[partType] || 'N/A';  // Fetch the cost from the config, default to 'N/A' if not found
             const isDisabled = plant.sugar < cost ? 'disabled' : '';
             if (unlockedUpgrades.includes(partType)) {
-                plantPartsRows += `
-                    <tr style="border: 1px solid black;">
-                        <td><button ${isDisabled} onclick="buyPlantPart('${plant.id}', '${partType}')">Grow (${cost})</button></td>
-                        <td>${capitalizeFirstLetter(partType)}:</td>
-                        <td><span id="${partType}-${plant.id}">${plant[partType] || 0}</span></td>
-                    </tr>`;
+                updateRow(table, `${partType}-row-${plant.id}`, [
+                    { content: `<button ${isDisabled} onclick="buyPlantPart('${plant.id}', '${partType}')">Grow (${cost})</button>`, type: 'td' },
+                    { content: `${capitalizeFirstLetter(partType)}:`, type: 'td' },
+                    { content: `<span id="${partType}-${plant.id}">${plant[partType] || 0}</span>`, type: 'td' }
+                ]);
             }
-        });        
+        });
 
-        const shouldSkipRow = (biomeName === 'Beginner\'s Garden');  // Replace this condition with your actual criteria
+        // For sugar row
+        updateRow(table, `sugar-row-${plant.id}`, [
+            {
+                content: `<input type="checkbox" id="${'sugarCheckbox' + plant.id}" ${plant.is_sugar_production_on ? 'checked' : ''} onchange="toggleSugar('${plant.id}', this.checked)">`,
+                type: 'td'
+            },
+            { content: 'Sugar:', type: 'td' },
+            { content: `<span id="sugar-${plant.id}">${formatNumber(plant.sugar)}</span>`, type: 'td' }
+        ]);
 
-        const secondaryResourceRow = shouldSkipRow ? '' : `
-            <tr style="border: 1px solid black;">
-                <td><input type="checkbox" id="${'secondaryResourceCheckbox' + plant.id}" ${plant.is_secondary_resource_production_on ? 'checked' : ''} onchange="toggleSecondaryResource('${plant.id}', this.checked)"></td>
-                <td>${secondaryResource}</td>
-                <td></td>
-            </tr>
-        `;
+        // For genetic marker row
+        updateRow(table, `genetic-marker-row-${plant.id}`, [
+            {
+                content: `<input type="checkbox" id="${'geneticMarkerCheckbox' + plant.id}" ${plant.is_genetic_marker_production_on ? 'checked' : ''} onchange="toggleGeneticMarker('${plant.id}', this.checked)">`,
+                type: 'td'
+            },
+            { content: 'DNA', type: 'td' },
+            { content: '', type: 'td' }
+        ]);
+
+        // For secondary resource row
+        if (!shouldSkipRow) {
+            updateRow(table, `secondary-resource-row-${plant.id}`, [
+                {
+                    content: `<input type="checkbox" id="${'secondaryResourceCheckbox' + plant.id}" ${plant.is_secondary_resource_production_on ? 'checked' : ''} onchange="toggleSecondaryResource('${plant.id}', this.checked)">`,
+                    type: 'td'
+                },
+                { content: secondaryResource, type: 'td' },
+                { content: '', type: 'td' }
+            ]);
+        }
+
+        const button = plantDiv.querySelector('button') || document.createElement('button');
+        button.onclick = function() {
+            purchaseSeed(plant.id);
+        };
+        button.innerText = 'Purchase Seed';
+        plantDiv.appendChild(button);
 
 
-        plantDiv.innerHTML = `
-            <table style="width: 100%; border-collapse: collapse;">
-                <tr style="border: 1px solid black;">
-                    <td>${absorbSunlightButtonHTML}</td>
-                    <td>Sunlight:</td>
-                    <td><span id="sunlight-${plant.id}">${plant.sunlight}</span></td>
-                </tr>
-                <tr style="border: 1px solid black;">
-                    <td>${absorbWaterButtonHTML}</td>
-                    <td>Water:</td>
-                    <td><span id="water-${plant.id}">${plant.water}</span></td>
-                </tr>
-                <tr style="border: 1px solid black;">
-                    <td colspan="3">
-                        <div class="water-progress-bar" id="water-storage-bar-${plant.id}">
-                            <div class="water-progress-bar-fill" id="water-storage-fill-${plant.id}" style="width:${waterProgressPercentage}%"></div>
-                        </div>
-                    </td>
-                </tr>
-                ${plantPartsRows}
-                <tr style="border: 1px solid black;">
-                <td><input type="checkbox" id="${'sugarCheckbox' + plant.id}" ${plant.is_sugar_production_on ? 'checked' : ''} onchange="toggleSugar('${plant.id}', this.checked)"></td>
-                    <td>Sugar:</td>
-                    <td><span id="sugar-${plant.id}">${formatNumber(plant.sugar)}</span></td>
-                </tr>
-                <tr style="border: 1px solid black;">
-                <td><input type="checkbox" id="${'geneticMarkerCheckbox' + plant.id}" ${plant.is_genetic_marker_production_on ? 'checked' : ''} onchange="toggleGeneticMarker('${plant.id}', this.checked)"></td>
-                    <td>DNA</td>
-                    <td></td>
-                </tr>
-                ${secondaryResourceRow} 
-                </tr>
-            </table>
-            <button onclick="purchaseSeed('${plant.id}')">Purchase Seed</button>
-        `;
-
-        plantContainer.appendChild(plantDiv);
+        plantDiv.appendChild(table);
     });
 }
+
+function updateRow(parent, rowId, cells) {
+    let row = parent.querySelector(`#${rowId}`);
+    if (!row) {
+        row = document.createElement('tr');
+        row.id = rowId;
+        parent.appendChild(row);
+    }
+    row.innerHTML = ''; // Clear existing cells
+    cells.forEach(cell => {
+        const tdOrTh = document.createElement(cell.type);
+        tdOrTh.innerHTML = cell.content;
+        row.appendChild(tdOrTh);
+    });
+}
+
 
 function unlockUpgrade(upgradeId) {  // Add cost as a parameter
     fetch('/game_state/unlock_upgrade', {
