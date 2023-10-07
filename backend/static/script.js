@@ -10,6 +10,7 @@ let biomePlantCounts = {};  // Global variable to hold plant counts for each bio
 let biomeIdToNameMap = {};  // Global variable to hold the mappinglet biomeIdToNameMap = {};  // Global variable to hold the mapping
 let plantsData = [];  // This will hold the current list of plants
 let currentUserId = null;
+let plantTime = null;  // Store plant_time data here
 let socketURL;
 if (APP_ENV === 'production') {
     socketURL = 'wss://idleplantgame-67d196ad0035.herokuapp.com/';
@@ -85,7 +86,9 @@ window.onload = function() {
         // Update your client-side plant_time here
         updatePlantTimeUI(data);
         isDay = data.is_day;
+        plantTime = data;  // Store the entire plant_time data
     });
+
 
     // Listen for biome_list updates from the server
     socket.on('biomes_list', function(data) {
