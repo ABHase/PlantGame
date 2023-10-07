@@ -545,13 +545,18 @@ function purchaseSeed(plantId) {
 }
 
 function showSection(sectionId) {
-    // Get all game sections except the top-bar-section
-    const sections = document.querySelectorAll('.game-section:not(#top-bar-section)');
-    
+    // Hide all sections except the one we want to toggle
+    const sections = document.querySelectorAll('.content-section');
+    let isTargetVisible = false;
     sections.forEach(section => {
-        section.style.display = 'none'; // hide each section
+        if (section.id === sectionId && section.style.display === 'block') {
+            isTargetVisible = true;
+        }
+        section.style.display = 'none';
     });
 
-    // Show only the section with the provided sectionId
-    document.getElementById(sectionId).style.display = 'block'; 
+    // If target was already visible, it's now hidden due to above code. Otherwise, show it.
+    if (!isTargetVisible) {
+        document.getElementById(sectionId).style.display = 'block';
+    }
 }
