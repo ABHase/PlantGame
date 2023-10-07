@@ -111,6 +111,10 @@ window.onload = function() {
         socket.close();
     });
 
+    // Initially show the upgrades section (or biomes-section if preferred)
+    showSection('upgrades-section');
+
+
 };
 
 
@@ -196,7 +200,7 @@ function updateBiomeListUI(biomeList) {
         const biomeButton = document.createElement('button');
         biomeButton.innerText = biome.name;
         biomeButton.onclick = function() {
-            showSection(`biome-${biome.id}`);
+            showSection('biomes-section');
         };
         biomeButtonsDiv.appendChild(biomeButton);
     });
@@ -545,18 +549,12 @@ function purchaseSeed(plantId) {
 }
 
 function showSection(sectionId) {
-    // Hide all sections except the one we want to toggle
+    // Hide all sections
     const sections = document.querySelectorAll('.content-section');
-    let isTargetVisible = false;
     sections.forEach(section => {
-        if (section.id === sectionId && section.style.display === 'block') {
-            isTargetVisible = true;
-        }
         section.style.display = 'none';
     });
 
-    // If target was already visible, it's now hidden due to above code. Otherwise, show it.
-    if (!isTargetVisible) {
-        document.getElementById(sectionId).style.display = 'block';
-    }
+    // Show the target section
+    document.getElementById(sectionId).style.display = 'block';
 }
