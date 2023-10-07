@@ -204,16 +204,24 @@ function updateGlobalStateUI(globalStateData) {
     progressBar.style.width = `${progressPercentage}%`;
 }
 
-// Function to update the biome list UI
 function updateBiomeListUI(biomeList) {
     const biomeContainer = document.getElementById('biome-container');
-    biomeContainer.innerHTML = '';  // Clear existing biomes
-    // First, create biome buttons
-    const biomeButtonsDiv = document.getElementById('biome-buttons');
-    biomeButtonsDiv.innerHTML = '';  // Clear existing buttons
+    
+    // Remove biomes that no longer exist
+    const existingBiomeDivs = Array.from(biomeContainer.children);
+    existingBiomeDivs.forEach(existingBiomeDiv => {
+        const existingBiomeId = existingBiomeDiv.id.replace('biome-', '');
+        if (!biomeList.some(biome => `biome-${biome.id}` === existingBiomeId)) {
+            biomeContainer.removeChild(existingBiomeDiv);
+        }
+    });
 
     // Sort biomeList based on BIOME_ORDER
     biomeList.sort((a, b) => BIOME_ORDER.indexOf(a.name) - BIOME_ORDER.indexOf(b.name));
+
+    // First, create biome buttons
+    const biomeButtonsDiv = document.getElementById('biome-buttons');
+    biomeButtonsDiv.innerHTML = '';  // Clear existing buttons
 
     biomeList.forEach(biome => {
         const { isDayForBiome } = getBiomeSpecificTime(plantTime, biome.name);
@@ -236,8 +244,6 @@ function updateBiomeListUI(biomeList) {
             biomeDiv.id = `biome-${biome.id}`;
             biomeContainer.appendChild(biomeDiv);
         }
-        biomeDiv.className = 'biome';
-        biomeDiv.id = `biome-${biome.id}`;  // Assuming each biome has a unique id
 
         const { isDayForBiome, effectiveHour } = getBiomeSpecificTime(plantTime, biome.name);
         const { weatherIcon, pestIcon } = getIconsForBiome(biome, isDayForBiome);
@@ -290,9 +296,6 @@ function updateBiomeListUI(biomeList) {
         if (plantContainerVisibility.hasOwnProperty(plantContainerId)) {
             plantContainer.style.display = plantContainerVisibility[plantContainerId];
         }
-
-        biomeDiv.appendChild(plantContainer);
-        biomeContainer.appendChild(biomeDiv);
 
         // Add event listener for toggling plant container visibility
         document.getElementById(`biome-header-${biomeIndex}`).addEventListener('click', function() {
