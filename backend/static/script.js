@@ -11,6 +11,7 @@ let biomeIdToNameMap = {};  // Global variable to hold the mappinglet biomeIdToN
 let plantsData = [];  // This will hold the current list of plants
 let currentUserId = null;
 let plantTime = null;  // Store plant_time data here
+let sunriseSunsetTimes = {};  // Store sunrise and sunset times here
 let socketURL;
 if (APP_ENV === 'production') {
     socketURL = 'wss://idleplantgame-67d196ad0035.herokuapp.com/';
@@ -60,6 +61,13 @@ window.onload = function() {
     .then(data => {
         biomeTimezoneOffsets = data;
     });
+
+    // Fetch the sunrise and sunset times
+    fetch('/sunrise_sunset_times')
+    .then(response => response.json())
+    .then(data => {
+        sunriseSunsetTimes = data;
+    })
 
     // Listen for game_state updates from the server
     socket.on('game_state', function(data) {
@@ -618,4 +626,8 @@ function getIconsForBiome(biome, isDayForBiome) {
     }[currentPest] || '';
 
     return { weatherIcon, pestIcon };
+}
+
+function getSunriseSunset(season) {
+    return sunriseSunsetTimes[season] || { sunrise: 6, sunset: 18 }; // Default values if season doesn't match
 }
