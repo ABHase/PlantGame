@@ -327,6 +327,26 @@ function updatePlantListUI() {
             plantContainer.appendChild(plantDiv);
         }
 
+        const groundWaterLevel = biomeGroundWaterLevels[plant.biome_id] || 0;
+        const maxWaterCapacity = plant.vacuoles * 100;
+        const currentWaterAmount = plant.water;
+        const waterProgressPercentage = (currentWaterAmount / maxWaterCapacity) * 100;
+        const biomeName = biomeIdToNameMap[plant.biome_id] || 'Unknown';
+
+        let secondaryResource = 'Resource';
+        if (biomeName === 'Desert') {
+            secondaryResource = 'Silica';
+        } else if (biomeName === 'Tropical Forest') {
+            secondaryResource = 'Tannins';
+        } else if (biomeName === 'Mountain') {
+            secondaryResource = 'Calcium';
+        } else if (biomeName === 'Swamp') {
+            secondaryResource = 'Fulvic';
+        }
+
+        const shouldSkipRow = (biomeName === 'Beginner\'s Garden');
+
+
         const table = plantDiv.querySelector('table') || document.createElement('table');
         table.style.width = '100%';
         table.style.borderCollapse = 'collapse';
