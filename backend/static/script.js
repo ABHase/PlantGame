@@ -155,6 +155,7 @@ function updatePlantTimeUI(plantTimeData) {
 
 // Function to update the global state-related UI elements
 function updateGlobalStateUI(globalStateData) {
+    console.log("Updating UI with data:", globalStateData);
     const geneticMarkersSpan = document.getElementById('genetic-markers');
     const geneticMarkerProgressSpan = document.getElementById('genetic-marker-progress');
     const geneticMarkerThresholdSpan = document.getElementById('genetic-marker-threshold');
