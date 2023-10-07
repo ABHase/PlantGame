@@ -599,7 +599,11 @@ function showSpecificBiome(biomeId) {
 
 function getBiomeSpecificTime(plantTime, biomeName) {
     const offset = biomeTimezoneOffsets[biomeName] || 0;
-    const effectiveHour = (plantTime.hour + offset) % 24;
+    let effectiveHour = (plantTime.hour + offset) % 24;
+    
+    if (effectiveHour < 0) {
+        effectiveHour += 24;
+    }
 
     // Assuming you have similar logic in frontend for sunrise and sunset
     const { sunrise, sunset } = getSunriseSunset(plantTime.season);
@@ -607,6 +611,7 @@ function getBiomeSpecificTime(plantTime, biomeName) {
 
     return { isDayForBiome, effectiveHour };
 }
+
 
 function getIconsForBiome(biome, isDayForBiome) {
     const weather = biome.current_weather;
