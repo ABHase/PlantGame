@@ -123,10 +123,12 @@ def init_game():
     try:
         data = request.get_json()
         socket_id = data['sid']  # Get the socket ID from the request data
-        socket_to_user_mapping[socket_id] = user_id
-        logging.info("Initializing game...")
+
         user_id = current_user.id if current_user.is_authenticated else None
-        logging.info(f"User ID: {user_id}")
+        socket_to_user_mapping[socket_id] = user_id
+
+        logging.info("Initializing game...")
+
         logging.info(f"User {user_id} connected. Socket ID: {socket_id}")
         if user_id:
             logging.info(f"User {user_id} authenticated. Initializing game...")
