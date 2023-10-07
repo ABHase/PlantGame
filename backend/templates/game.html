@@ -41,6 +41,19 @@
             background-color: #4CAF50;
         }
 
+        #progress-bar-container {
+            position: relative;
+        }
+
+        #progress-bar-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 
@@ -51,6 +64,9 @@
         <div>Genetic Markers: <span id="genetic-markers"></span></div>
         <div id="progress-bar-container">
             <div id="progress-bar"></div>
+            <div id="progress-bar-text">
+                <span id="genetic-marker-progress"></span>/<span id="genetic-marker-threshold"></span>
+            </div>
         </div>
         <div>Silica: <span id="silica"></span></div>
         <div>Tannins: <span id="tannins"></span></div>

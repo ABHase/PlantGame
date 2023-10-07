@@ -170,7 +170,6 @@ function updateGlobalStateUI(globalStateData) {
     geneticMarkersSpan.textContent = globalStateData.genetic_markers;
     geneticMarkerProgressSpan.textContent = globalStateData.genetic_marker_progress;
     geneticMarkerThresholdSpan.textContent = globalStateData.genetic_marker_threshold;
-    console.log("Seeds data:", globalStateData.seeds);
     seedsSpan.textContent = globalStateData.seeds;
     // Update the UI elements for other global state variables silica, tannins, calcium, fulvic
     silicaSpan.textContent = globalStateData.silica;
