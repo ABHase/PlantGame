@@ -89,7 +89,7 @@ class GameState(EventEmitter):
                 # Handle genetic markers, etc.
             
             # Update the biome
-            results = biome.update(is_day=is_day_for_biome, new_day=new_day, new_hour=new_hour, current_season=plant_time.season, effective_hour=effective_hour)
+            results = biome.update(is_day=is_day_for_biome, new_day=new_day, new_hour=new_hour, current_season=plant_time.season)
             
             for can_produce, amount in results:
                 if can_produce:
