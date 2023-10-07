@@ -66,7 +66,7 @@ def action_processor_task(app, user_id, socket_id):
         while True:
             try:
                 # Check if the socket is still connected
-                if not users_connected.get(user_id, False):
+                if socket_id not in socket_to_user_mapping:
                     print(f"User {user_id} disconnected. Stopping action processor task.")
                     return  # This will end the action processor task
 
@@ -83,13 +83,13 @@ def background_task(app, user_id, socket_id):
     with app.app_context():
         print(f"Starting background task for user: {user_id} with socket_id: {socket_id}")
         socketio.emit('debug_message', {'message': 'Background task started'}, room=socket_id)
-        #emit debug message to client with users_connected.get(user_id)
-        socketio.emit('debug_message', {'message': f'User connected: {users_connected.get(user_id)}'}, room=socket_id)
+        #emit debug message with socket_to_user_mapping
+        socketio.emit('debug_message', {'message': f"Socket to user mapping: {socket_to_user_mapping}"}, room=socket_id)
 
         while True:
             try:
                 # Check if the socket is still connected
-                if not users_connected.get(user_id, False):
+                if socket_id not in socket_to_user_mapping:
                     print(f"User {user_id} disconnected. Stopping background task.")
                     return  # This will end the background task
 
