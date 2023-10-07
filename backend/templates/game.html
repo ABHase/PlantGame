@@ -54,26 +54,71 @@
             font-weight: bold;
         }
 
+        #upgrade-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: #e5e5e5;
+            border-bottom: 2px solid #bbb;
+        }
+
+        #upgrade-bar > button {
+            margin: 0 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #upgrade-bar > button:hover {
+            background-color: #45a049;
+        }
+
+
     </style>
 </head>
 
 <body>
 
-    <div id="top-bar">
-        <div>Seeds: <span id="seeds"></span></div>
-        <div>Genetic Markers: <span id="genetic-markers"></span></div>
-        <div id="progress-bar-container">
-            <div id="progress-bar"></div>
-            <div id="progress-bar-text">
-                <span id="genetic-marker-progress"></span>/<span id="genetic-marker-threshold"></span>
+        <!-- Top Bar Section -->
+    <div class="game-section" id="top-bar-section">
+        <div id="top-bar">
+            <div>Seeds: <span id="seeds"></span></div>
+            <div>Genetic Markers: <span id="genetic-markers"></span></div>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+                <div id="progress-bar-text">
+                    <span id="genetic-marker-progress"></span>/<span id="genetic-marker-threshold"></span>
+                </div>
+            </div>
+            <div>Silica: <span id="silica"></span></div>
+            <div>Tannins: <span id="tannins"></span></div>
+            <div>Calcium: <span id="calcium"></span></div>
+            <div>Fulvic Acid: <span id="fulvic"></span></div>
+            <div>Year: <span id="year"></span> Season: <span id="season"></span> Day: <span id="day"></span></div>
+        </div>
+
+        <div id="upgrade-bar">
+            <button onclick="showSection('upgrades-container')">Upgrades</button>
+            <div id="biome-buttons">
+                <!-- Biome buttons will be dynamically populated here -->
             </div>
         </div>
-        <div>Silica: <span id="silica"></span></div>
-        <div>Tannins: <span id="tannins"></span></div>
-        <div>Calcium: <span id="calcium"></span></div>
-        <div>Fulvic Acid: <span id="fulvic"></span></div>
-        <div>Year: <span id="year"></span> Season: <span id="season"></span> Day: <span id="day"></span></div>
     </div>
+
+    <!-- Biomes Section -->
+    <div class="game-section" id="biomes-section">
+        <!-- Your biomes content here -->
+    </div>
+
+    <!-- Upgrades Section -->
+    <div class="game-section" id="upgrades-section">
+        <!-- Your upgrades content here -->
+    </div>
+            
 
 </body>
 

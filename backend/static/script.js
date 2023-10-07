@@ -188,6 +188,19 @@ function updateBiomeListUI(biomeList) {
     const biomeContainer = document.getElementById('biome-container');
     biomeContainer.innerHTML = '';  // Clear existing biomes
 
+    
+    // First, create biome buttons
+    const biomeButtonsDiv = document.getElementById('biome-buttons');
+    biomeButtonsDiv.innerHTML = '';  // Clear existing buttons
+    biomeList.forEach(biome => {
+        const biomeButton = document.createElement('button');
+        biomeButton.innerText = biome.name;
+        biomeButton.onclick = function() {
+            showSection(`biome-${biome.id}`);
+        };
+        biomeButtonsDiv.appendChild(biomeButton);
+    });
+
     biomeList.forEach((biome, biomeIndex) => {
         const biomeDiv = document.createElement('div');
         biomeDiv.className = 'biome';
@@ -532,9 +545,13 @@ function purchaseSeed(plantId) {
 }
 
 function showSection(sectionId) {
-    const sections = document.querySelectorAll('.game-section');
+    // Get all game sections except the top-bar-section
+    const sections = document.querySelectorAll('.game-section:not(#top-bar-section)');
+    
     sections.forEach(section => {
-        section.style.display = 'none'; // hide all sections
+        section.style.display = 'none'; // hide each section
     });
-    document.getElementById(sectionId).style.display = 'block'; // show the selected section
+
+    // Show only the section with the provided sectionId
+    document.getElementById(sectionId).style.display = 'block'; 
 }
