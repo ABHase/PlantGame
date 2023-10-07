@@ -332,6 +332,7 @@ function updatePlantListUI() {
         const currentWaterAmount = plant.water;
         const waterProgressPercentage = (currentWaterAmount / maxWaterCapacity) * 100;
         const biomeName = biomeIdToNameMap[plant.biome_id] || 'Unknown';
+        const plantParts = ['roots', 'leaves', 'vacuoles', 'resin', 'taproot', 'pheromones', 'thorns'];
 
         let secondaryResource = 'Resource';
         if (biomeName === 'Desert') {
