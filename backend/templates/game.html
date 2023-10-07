@@ -12,6 +12,13 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <style>
         /* Optional: Add this CSS for the progress bar */
+
+        .navigation {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
         #progress-bar-container {
             width: 100%;
             background-color: #ccc;
@@ -87,10 +94,18 @@
 </head>
 
 <body>
+    <div class="navigation">
+        <button onclick="showSection('genoVault')">GenoVault</button>
+        <button onclick="showSection('upgrades')">Upgrades</button>
+        <button onclick="showSection('biome')">Biomes</button>
+    </div>
+
     <div class="header-section">
+
         <div id="time-info">
             <h2>Time</h2>
             <table id="time-table">
+
                 <tr>
                     <td>Year:</td>
                     <td><span id="year"></span></td>
@@ -111,12 +126,14 @@
                     <td>Phase:</td>
                     <td><span id="time-of-day"></span></td>
                 </tr>
+
             </table>
         </div>    
-    
-        <div id="genetic-marker-info">
+
+        <div id="genoVault" class="game-section">
             <h2>GenoVault</h2>
             <table id="genetic-marker-table">
+
                 <tr>
                     <td>Seeds:</td>
                     <td><span id="seeds"></span></td>
@@ -145,19 +162,30 @@
                     <td>Progress:</td>
                     <td><span id="genetic-marker-progress"></span>/<span id="genetic-marker-threshold"></span></td>
                 </tr>
+
             </table>
-            <!-- Optional: Progress bar -->
+
             <div id="progress-bar-container">
                 <div id="progress-bar"></div>
             </div>
+
         </div>
-        <h2>Upgrades</h2>
-        <div id="upgrades-container">
-            <!-- Upgrades will be dynamically added here -->
+
+        <div id="upgrades" class="game-section" style="display: none;">
+            <h2>Upgrades</h2>
+            <div id="upgrades-container">
+                <!-- Upgrades will be dynamically added here -->
+            </div>
         </div>
-        <div id="biome-container">
-            <!-- Biomes and plants will be dynamically added here -->
+
+        <div id="biome" class="game-section" style="display: none;">
+            <h2>Biomes</h2>
+            <div id="biome-container">
+                <!-- Biomes and plants will be dynamically added here -->
+            </div>
         </div>
-    </div>
+
+    </div> <!-- This closes the .header-section div -->
 </body>
+
 </html>

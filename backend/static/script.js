@@ -529,3 +529,11 @@ function purchaseSeed(plantId) {
         console.log(data);
     });
 }
+
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('.game-section');
+    sections.forEach(section => {
+        section.style.display = 'none'; // hide all sections
+    });
+    document.getElementById(sectionId).style.display = 'block'; // show the selected section
+}
