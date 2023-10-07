@@ -204,49 +204,27 @@ function updateBiomeListUI(biomeList) {
     // First, create biome buttons
     const biomeButtonsDiv = document.getElementById('biome-buttons');
     biomeButtonsDiv.innerHTML = '';  // Clear existing buttons
+
     biomeList.forEach(biome => {
+        const { isDayForBiome } = getBiomeSpecificTime(plantTime, biome.name);
+        const { weatherIcon, pestIcon } = getIconsForBiome(biome, isDayForBiome);
+
         const biomeButton = document.createElement('button');
-        biomeButton.innerText = biome.name;
+        biomeButton.innerHTML = `${biome.name} ${weatherIcon} ${pestIcon}`;  // Set HTML content to display icons
         biomeButton.onclick = function() {
             showSpecificBiome(`biome-${biome.id}`);
         };
         biomeButtonsDiv.appendChild(biomeButton);
     });
 
+
     biomeList.forEach((biome, biomeIndex) => {
         const biomeDiv = document.createElement('div');
         biomeDiv.className = 'biome';
         biomeDiv.id = `biome-${biome.id}`;  // Assuming each biome has a unique id
 
-        const weather = biome.current_weather;
-        const { isDayForBiome, effectiveHour } = getBiomeSpecificTime(plant_time, biome.name);
-
-
-        const currentPest = biome.current_pest;
-
-        let weatherIcon = '';
-
-        if (isDayForBiome) {
-                weatherIcon = {
-                    'Sunny': '<i class="fas fa-sun"></i>',
-                    'Rainy': '<i class="fas fa-cloud-rain"></i>',
-                    'Snowy': '<i class="fas fa-snowflake"></i>',
-                    'Cloudy': '<i class="fas fa-cloud"></i>'
-                }[weather];
-            } else {
-                weatherIcon = weather === 'Sunny' ? '<i class="fas fa-moon"></i>' : 
-                            weather === 'Rainy' ? '<i class="fas fa-cloud-moon-rain"></i>' : 
-                            weather === 'Snowy' ? '<i class="fas fa-cloud-moon"></i>' : 
-                            weather === 'Cloudy' ? '<i class="fas fa-cloud-moon"></i>' : '';
-            }
-
-        let pestIcon = currentPest ? {
-            'Aphids': '🐛',
-            'Deer': '🦌',
-            'Boar': '🐗',
-            'None': ''
-        }[currentPest] : '';
-
+        const { isDayForBiome, effectiveHour } = getBiomeSpecificTime(plantTime, biome.name);
+        const { weatherIcon, pestIcon } = getIconsForBiome(biome, isDayForBiome);
 
         const plantCount = biomePlantCounts[biome.id] || 0;
 
@@ -620,4 +598,24 @@ function getBiomeSpecificTime(plantTime, biomeName) {
     const isDayForBiome = sunrise <= effectiveHour && effectiveHour < sunset;
 
     return { isDayForBiome, effectiveHour };
+}
+
+function getIconsForBiome(biome, isDayForBiome) {
+    const weather = biome.current_weather;
+    let weatherIcon = {
+        'Sunny': isDayForBiome ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>',
+        'Rainy': isDayForBiome ? '<i class="fas fa-cloud-rain"></i>' : '<i class="fas fa-cloud-moon-rain"></i>',
+        'Snowy': isDayForBiome ? '<i class="fas fa-snowflake"></i>' : '<i class="fas fa-cloud-moon"></i>',
+        'Cloudy': isDayForBiome ? '<i class="fas fa-cloud"></i>' : '<i class="fas fa-cloud-moon"></i>'
+    }[weather] || '';  // Default to empty string if weather doesn't match
+
+    const currentPest = biome.current_pest;
+    let pestIcon = {
+        'Aphids': '🐛',
+        'Deer': '🦌',
+        'Boar': '🐗',
+        'None': ''
+    }[currentPest] || '';
+
+    return { weatherIcon, pestIcon };
 }
