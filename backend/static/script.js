@@ -290,20 +290,6 @@ function updateBiomeListUI(biomeList) {
             plantContainer.className = 'plant-container';
             biomeDiv.appendChild(plantContainer);
         }
-
-
-        // Restore the visibility state if it exists
-        if (plantContainerVisibility.hasOwnProperty(plantContainerId)) {
-            plantContainer.style.display = plantContainerVisibility[plantContainerId];
-        }
-
-        // Add event listener for toggling plant container visibility
-        document.getElementById(`biome-header-${biomeIndex}`).addEventListener('click', function() {
-            const plantContainer = document.getElementById(plantContainerId);
-            plantContainer.style.display = (plantContainer.style.display === 'none' || plantContainer.style.display === '') ? 'flex' : 'none';
-            // Update the visibility state
-            plantContainerVisibility[plantContainerId] = plantContainer.style.display;
-        });
     });
         // After you've created and appended all the biomes, check if a biome was previously being displayed
         if (currentlyDisplayedBiomeId) {
@@ -320,10 +306,6 @@ function updateBiomeListUI(biomeList) {
             }
     }
 }
-
-
-
-
 
 // Function to update the plant list UI
 function updatePlantListUI() {
