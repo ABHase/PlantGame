@@ -143,13 +143,13 @@ function updatePlantTimeUI(plantTimeData) {
     const yearSpan = document.getElementById('year');
     const seasonSpan = document.getElementById('season');
     const daySpan = document.getElementById('day');
-    const hourSpan = document.getElementById('hour');
+    //const hourSpan = document.getElementById('hour');
     const timeOfDaySpan = document.getElementById('time-of-day');
 
     yearSpan.textContent = plantTimeData.year;
     seasonSpan.textContent = plantTimeData.season;
     daySpan.textContent = plantTimeData.day;
-    hourSpan.textContent = plantTimeData.hour;
+    //hourSpan.textContent = plantTimeData.hour;
     timeOfDaySpan.textContent = plantTimeData.is_day ? 'Day' : 'Night';
 }
 
