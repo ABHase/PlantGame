@@ -12,6 +12,7 @@ let plantsData = [];  // This will hold the current list of plants
 let currentUserId = null;
 let plantTime = null;  // Store plant_time data here
 let sunriseSunsetTimes = {};  // Store sunrise and sunset times here
+const BIOME_ORDER = ["Beginner's Garden", "Desert", "Tropical Forest", "Mountain", "Swamp"];
 let socketURL;
 if (APP_ENV === 'production') {
     socketURL = 'wss://idleplantgame-67d196ad0035.herokuapp.com/';
@@ -212,6 +213,9 @@ function updateBiomeListUI(biomeList) {
     // First, create biome buttons
     const biomeButtonsDiv = document.getElementById('biome-buttons');
     biomeButtonsDiv.innerHTML = '';  // Clear existing buttons
+
+    // Sort biomeList based on BIOME_ORDER
+    biomeList.sort((a, b) => BIOME_ORDER.indexOf(a.name) - BIOME_ORDER.indexOf(b.name));
 
     biomeList.forEach(biome => {
         const { isDayForBiome } = getBiomeSpecificTime(plantTime, biome.name);
