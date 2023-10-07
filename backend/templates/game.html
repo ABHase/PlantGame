@@ -77,6 +77,18 @@
             background-color: #45a049;
         }
 
+        .plant-container {
+            display: flex;
+            flex-direction: row;  /* Explicitly set */
+            flex-wrap: wrap;
+            border: 1px solid black;
+        }
+
+                .plant {
+            width: calc(12.5% - 10px);  /* Takes up half the width of the container minus a little for margin */
+            margin: 5px;
+            border: 1px solid olive;  /* To visualize each plant */
+        }
 
     </style>
 </head>
