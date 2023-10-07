@@ -82,6 +82,7 @@ def action_processor_task(app, user_id, socket_id):
 def background_task(app, user_id, socket_id):
     with app.app_context():
         print(f"Starting background task for user: {user_id} with socket_id: {socket_id}")
+        socketio.emit('debug_message', {'message': 'Background task started'}, room=socket_id)
         while True:
             try:
                 # Check if the socket is still connected

@@ -48,6 +48,11 @@ window.onload = function() {
         partsCostConfig = data;  // Update the global partsCostConfig variable
     });
 
+    socket.on('debug_message', function(data) {
+        console.log(data.message);
+    });
+    
+
     // Listen for game_state updates from the server
     socket.on('game_state', function(data) {
         // Update your client-side game state here
