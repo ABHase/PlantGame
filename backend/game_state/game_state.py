@@ -10,6 +10,7 @@ GameState Class (game_state.py)
         add_plant_to_biome(plant, biome): Add a plant to a biome.
         update(): Update the game state (called in the main game loop).
 """ 
+from .BIOME_TIMEZONE_OFFSETS import BIOME_TIMEZONE_OFFSETS
 from ..models.biome_model import BiomeModel
 from ..user_auth.models import PlantTimeModel
 from ..constants import INITIAL_GENETIC_MARKER_THRESHOLD
@@ -58,16 +59,21 @@ class GameState(EventEmitter):
         biomes = [Biome.from_dict(model.to_dict()) for model in biome_models]
         
         for biome in biomes:
+            # Determine the time and is_day status for the biome based on its timezone offset.
+            timezone_offset = BIOME_TIMEZONE_OFFSETS.get(biome.name, 0)
+            effective_hour = plant_time.get_biome_hour(timezone_offset)
+            is_day_for_biome = plant_time.is_day_for_biome(timezone_offset)
+
             # Fetch PlantModels for this biome from the database
             plant_models = fetch_plants_from_db_by_biome_id_and_user(biome.id, user_id)
             # Convert PlantModels to Plant objects
             plants = [Plant.from_dict(model.to_dict()) for model in plant_models]
             # Populate the plants attribute of the biome
             biome.plants = plants
-            
-            # Update each plant
+
+            # Update each plant with the correct biome-specific is_day value
             for plant in plants:
-                can_produce, amount, water_absorbed, is_producing_secondary_resource = plant.update(plant_time.is_day, biome.ground_water_level, biome.current_weather)
+                can_produce, amount, water_absorbed, is_producing_secondary_resource = plant.update(is_day_for_biome, biome.ground_water_level, biome.current_weather)
                 biome.ground_water_level -= water_absorbed
                 if biome.ground_water_level < 0:
                     biome.ground_water_level = 0
@@ -83,7 +89,7 @@ class GameState(EventEmitter):
                 # Handle genetic markers, etc.
             
             # Update the biome
-            results = biome.update(plant_time.is_day, new_day, new_hour, plant_time.season)
+            results = biome.update(is_day=is_day_for_biome, new_day=new_day, new_hour=new_hour, current_season=plant_time.season, effective_hour=effective_hour)
             
             for can_produce, amount in results:
                 if can_produce:

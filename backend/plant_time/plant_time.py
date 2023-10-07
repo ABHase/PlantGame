@@ -53,6 +53,17 @@ class PlantTime:
         else:
             print(f"Unexpected season value: {self.season}")
             return 6, 18  # Default values
+        
+    def get_biome_hour(self, offset):
+        biome_hour = (self.hour + offset) % 24
+        if biome_hour < 0:  # Handle negative case
+            biome_hour += 24
+        return biome_hour
+    
+    def is_day_for_biome(self, offset):
+        biome_hour = self.get_biome_hour(offset)
+        sunrise, sunset = self.get_sunrise_sunset()  # Use your existing method to get sunrise and sunset
+        return sunrise <= biome_hour < sunset
 
 
     @classmethod

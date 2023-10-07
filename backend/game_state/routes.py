@@ -28,6 +28,7 @@ import logging
 from ..models.biome_model import BiomeModel
 from ..models.plant_model import PlantModel
 from .plants_config import INITIAL_PLANT_CONFIG
+from .BIOME_TIMEZONE_OFFSETS import BIOME_TIMEZONE_OFFSETS
 
 logging.basicConfig(filename='app.log',level=logging.INFO)
 
@@ -306,3 +307,7 @@ def unlock_upgrade():
 @game_state_bp.route('/part_costs', methods=['GET'])
 def get_part_costs():
     return jsonify(PARTS_COST_CONFIG)
+
+@game_state_bp.route('/biome_timezone_offsets', methods=['GET'])
+def get_biome_timezone_offsets():
+    return jsonify(BIOME_TIMEZONE_OFFSETS)

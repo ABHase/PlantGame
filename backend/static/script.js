@@ -52,7 +52,13 @@ window.onload = function() {
     socket.on('debug_message', function(data) {
         console.log(data.message);
     });
-    
+
+    // Fetch the biome timezone offsets
+    fetch('/game_state/biome_timezone_offsets')
+    .then(response => response.json())
+    .then(data => {
+        biomeTimezoneOffsets = data;
+    });
 
     // Listen for game_state updates from the server
     socket.on('game_state', function(data) {
@@ -210,11 +216,14 @@ function updateBiomeListUI(biomeList) {
         biomeDiv.id = `biome-${biome.id}`;  // Assuming each biome has a unique id
 
         const weather = biome.current_weather;
+        const { isDayForBiome, effectiveHour } = getBiomeSpecificTime(plant_time, biome.name);
+
+
         const currentPest = biome.current_pest;
 
         let weatherIcon = '';
 
-        if (isDay) {
+        if (isDayForBiome) {
                 weatherIcon = {
                     'Sunny': '<i class="fas fa-sun"></i>',
                     'Rainy': '<i class="fas fa-cloud-rain"></i>',
@@ -240,7 +249,7 @@ function updateBiomeListUI(biomeList) {
 
         biomeDiv.innerHTML = `
             <h2 id="biome-header-${biomeIndex}">
-                ${biome.name} ${weatherIcon} ${pestIcon}
+                ${biome.name} ${effectiveHour}:00 ${weatherIcon} ${pestIcon}
             </h2>
             <table>
                 <tr>
@@ -597,4 +606,15 @@ function showSpecificBiome(biomeId) {
 
     // Update the currentlyDisplayedBiomeId
     currentlyDisplayedBiomeId = biomeId;
+}
+
+function getBiomeSpecificTime(plantTime, biomeName) {
+    const offset = biomeTimezoneOffsets[biomeName] || 0;
+    const effectiveHour = (plantTime.hour + offset) % 24;
+
+    // Assuming you have similar logic in frontend for sunrise and sunset
+    const { sunrise, sunset } = getSunriseSunset(plantTime.season);
+    const isDayForBiome = sunrise <= effectiveHour && effectiveHour < sunset;
+
+    return { isDayForBiome, effectiveHour };
 }
