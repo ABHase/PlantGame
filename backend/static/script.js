@@ -117,8 +117,6 @@ window.onload = function() {
 
 };
 
-
-
 function updateUpgradesUI(upgradesList) {
     const upgradesContainer = document.getElementById('upgrades-container');
     upgradesContainer.innerHTML = '';  // Clear existing upgrades
@@ -200,7 +198,7 @@ function updateBiomeListUI(biomeList) {
         const biomeButton = document.createElement('button');
         biomeButton.innerText = biome.name;
         biomeButton.onclick = function() {
-            showSection('biomes-section');
+            showSpecificBiome(`biome-${biome.id}`);
         };
         biomeButtonsDiv.appendChild(biomeButton);
     });
@@ -557,4 +555,28 @@ function showSection(sectionId) {
 
     // Show the target section
     document.getElementById(sectionId).style.display = 'block';
+}
+
+function showSpecificBiome(biomeId) {
+    // First, hide all content sections
+    const sections = document.querySelectorAll('.content-section');
+    sections.forEach(section => {
+        section.style.display = 'none';
+    });
+
+    // Now, show the biomes-section
+    const biomesSection = document.getElementById('biomes-section');
+    biomesSection.style.display = 'block';
+
+    // Hide all biomes within biomes-section
+    const allBiomes = document.querySelectorAll('.biome');
+    allBiomes.forEach(biome => {
+        biome.style.display = 'none';
+    });
+
+    // Show the specific biome
+    const targetBiome = document.getElementById(biomeId);
+    if (targetBiome) {
+        targetBiome.style.display = 'block';
+    }
 }
