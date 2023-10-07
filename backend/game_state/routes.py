@@ -48,8 +48,9 @@ def handle_disconnect():
     if user_id:
         del socket_to_user_mapping[request.sid]  # Remove this socket from our mapping
 
-
-
+        # Check if the user's tasks are in the running_tasks dictionary and delete them
+        if user_id in running_tasks:
+            del running_tasks[user_id]
 
 @socketio.on('connect')
 def handle_connect():
