@@ -275,11 +275,16 @@ function updateBiomeListUI(biomeList) {
             <button onclick="plantSeedInBiome('${biome.id}')">Plant Seed in Biome</button>
         `;
 
-        // Add an empty container for plants
-        const plantContainer = document.createElement('div');
         const plantContainerId = `plant-container-${biome.id}`;
-        plantContainer.id = plantContainerId;
-        plantContainer.className = 'plant-container';
+        let plantContainer = document.getElementById(plantContainerId);
+
+        if (!plantContainer) {
+            plantContainer = document.createElement('div');
+            plantContainer.id = plantContainerId;
+            plantContainer.className = 'plant-container';
+            biomeDiv.appendChild(plantContainer);
+        }
+
 
         // Restore the visibility state if it exists
         if (plantContainerVisibility.hasOwnProperty(plantContainerId)) {
