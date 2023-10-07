@@ -208,8 +208,6 @@ function updateGlobalStateUI(globalStateData) {
 function updateBiomeListUI(biomeList) {
     const biomeContainer = document.getElementById('biome-container');
     biomeContainer.innerHTML = '';  // Clear existing biomes
-
-    
     // First, create biome buttons
     const biomeButtonsDiv = document.getElementById('biome-buttons');
     biomeButtonsDiv.innerHTML = '';  // Clear existing buttons
@@ -231,7 +229,13 @@ function updateBiomeListUI(biomeList) {
 
 
     biomeList.forEach((biome, biomeIndex) => {
-        const biomeDiv = document.createElement('div');
+        let biomeDiv = document.querySelector(`#biome-${biome.id}`);
+        if (!biomeDiv) {
+            biomeDiv = document.createElement('div');
+            biomeDiv.className = 'biome';
+            biomeDiv.id = `biome-${biome.id}`;
+            biomeContainer.appendChild(biomeDiv);
+        }
         biomeDiv.className = 'biome';
         biomeDiv.id = `biome-${biome.id}`;  // Assuming each biome has a unique id
 
@@ -315,7 +319,15 @@ function updatePlantListUI() {
         const plantContainer = document.getElementById(`plant-container-${plant.biome_id}`);
         if (!plantContainer) return;  // Skip if the container doesn't exist
 
-        const plantDiv = document.createElement('div');
+        let plantDiv = document.querySelector(`#plant-${plant.id}`);
+        if (!plantDiv) {
+            plantDiv = document.createElement('div');
+            plantDiv.className = 'plant';
+            plantDiv.id = `plant-${plant.id}`;
+            plantContainer.appendChild(plantDiv);
+        }
+
+
         plantDiv.className = 'plant';
         plantDiv.id = `plant-${plant.id}`;
 
