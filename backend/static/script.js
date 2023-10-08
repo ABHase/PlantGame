@@ -205,6 +205,9 @@ function updateUpgradesUI(upgradesList) {
 
 
 function displayUpgradeDetails(upgradeName) {
+    
+    allUpgradesList.sort((a, b) => a.id - b.id); // Sort based on `id`
+
     const descriptionContainer = document.getElementById('upgrade-description-container');
     const adjustedUpgradeName = `Unlock ${upgradeName}`;
     const upgradeDetail = allUpgradesList.find(upgrade => upgrade.name === adjustedUpgradeName);
@@ -214,12 +217,12 @@ function displayUpgradeDetails(upgradeName) {
     
     let upgradeContent = `<h2>${upgradeName}</h2>`;
     upgradeContent += `<p>${descriptionText}</p>`;
-    upgradeContent += `<table>`;
-    upgradeContent += `<tr><td>Cost:</td><td>${upgradeDetail.cost}</td></tr>`;
+    upgradeContent += `<table style="width: auto;">`; // Added inline style to control table width
+    upgradeContent += `<tr><td>Cost: ${upgradeDetail.cost}</td></tr>`;  // Combined label and value
     if (upgradeDetail.secondary_cost) {
-        upgradeContent += `<tr><td>Secondary Cost:</td><td>${upgradeDetail.secondary_cost} ${upgradeDetail.secondary_resource}</td></tr>`;
+        upgradeContent += `<tr><td>Secondary Cost: ${upgradeDetail.secondary_cost} ${upgradeDetail.secondary_resource}</td></tr>`;  // Combined label and value
     }
-    upgradeContent += `<tr><td>Cost Modifier:</td><td>${(upgradeDetail.cost_modifier * 100).toFixed(2)}%</td></tr>`;
+    upgradeContent += `<tr><td>Cost Modifier: ${(upgradeDetail.cost_modifier * 100).toFixed(2)}%</td></tr>`;  // Combined label and value
     upgradeContent += `</table>`;
     if (!upgradeDetail.unlocked) {
         upgradeContent += `<button onclick="unlockUpgrade(${upgradeDetail.id})">Unlock ${upgradeName}</button>`;
