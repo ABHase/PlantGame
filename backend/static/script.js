@@ -65,14 +65,14 @@ window.onload = function() {
     });
 
     // Fetch the sunrise and sunset times
-    fetch('/sunrise_sunset_times')
+    fetch('/game_state/sunrise_sunset_times')
     .then(response => response.json())
     .then(data => {
         sunriseSunsetTimes = data;
     })
 
     //Fetch the upgrade descriptions
-    fetch('/upgrade_descriptions')
+    fetch('/game_state/upgrade_descriptions')
     .then(response => response.json())
     .then(data => {
         console.log(data);
