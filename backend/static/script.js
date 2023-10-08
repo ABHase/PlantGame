@@ -205,18 +205,28 @@ function updateUpgradesUI(upgradesList) {
 function displayUpgradeDetails(upgradeName) {
     const descriptionContainer = document.getElementById('upgrade-description-container');
 
-    console.log("Passed upgradeName:", upgradeName);
-
-    // Adjust the name for comparison
+    // Find the upgrade detail
     const adjustedUpgradeName = `Unlock ${upgradeName}`;
-
-    const upgradeDetail = upgradeDescriptions.find(upgrade => {
-        return upgrade.name === adjustedUpgradeName;
-    });
-
+    const upgradeDetail = upgradeDescriptions.find(upgrade => upgrade.name === adjustedUpgradeName);
     const descriptionText = (upgradeDetail && upgradeDetail.description) ? upgradeDetail.description : "Description not available.";
-    descriptionContainer.innerHTML = `<strong>${upgradeName}</strong>: ${descriptionText}`;
+
+    let upgradeContent = `<h2>${upgradeName}</h2>`;
+    upgradeContent += `<p>${descriptionText}</p>`;
+    upgradeContent += `<table>`;
+    upgradeContent += `<tr><td>Cost:</td><td>${upgradeDetail.cost}</td></tr>`;
+    if (upgradeDetail.secondary_cost) {
+        upgradeContent += `<tr><td>Secondary Cost:</td><td>${upgradeDetail.secondary_cost} ${upgradeDetail.secondary_resource}</td></tr>`;
+    }
+    upgradeContent += `</table>`;
+    if (!upgradeDetail.unlocked) {
+        upgradeContent += `<button onclick="unlockUpgrade(${upgradeDetail.id})">Unlock ${upgradeName}</button>`;
+    } else {
+        upgradeContent += `<button disabled>Already Unlocked</button>`;
+    }
+
+    descriptionContainer.innerHTML = upgradeContent;
 }
+
 
 
 
