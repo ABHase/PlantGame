@@ -75,9 +75,9 @@ window.onload = function() {
     fetch('/game_state/upgrade_descriptions')
     .then(response => response.json())
     .then(data => {
-        console.log(data);
         upgradeDescriptions = Object.values(data); 
         displayUpgradeDetails('Beginner\'s Garden');  // display initial description
+        console.log(upgradeDescriptions);
 
     })
 
