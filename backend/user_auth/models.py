@@ -18,6 +18,7 @@ class UpgradeModel(db.Model):
     secondary_cost = db.Column(db.Integer, nullable=True)  # Use nullable=True since it's optional
     secondary_resource = db.Column(db.String(50), nullable=True)  # Use nullable=True since it's optional
     cost_modifier = db.Column(db.Float, default=0.0)  # Default to 0 means no change
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     # ... other fields ...
     def to_dict(self):
         return {
@@ -30,7 +31,8 @@ class UpgradeModel(db.Model):
             'effect': self.effect,
             'secondary_cost': self.secondary_cost,
             'secondary_resource': self.secondary_resource,
-            'cost_modifier': self.cost_modifier
+            'cost_modifier': self.cost_modifier,
+            'created_at': self.created_at
             # ... other fields ...
         }
     @classmethod
@@ -43,7 +45,8 @@ class UpgradeModel(db.Model):
             unlocked=data['unlocked'],
             secondary_cost=data['secondary_cost'],
             secondary_resource=data['secondary_resource'],
-            cost_modifier=data['cost_modifier']
+            cost_modifier=data['cost_modifier'],
+            created_at=data['created_at']
             # ... any other fields ...
         )
 

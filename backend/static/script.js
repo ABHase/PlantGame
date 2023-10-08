@@ -149,6 +149,10 @@ window.onload = function() {
 
 function updateUpgradesUI(upgradesList) {
     allUpgradesList = upgradesList;  // Store the list for later use
+
+    // Sort the list by the created_at timestamp
+    allUpgradesList.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
     const upgradesContainer = document.getElementById('upgrades-container');
     upgradesContainer.innerHTML = '';  // Clear existing upgrades
 
@@ -205,9 +209,6 @@ function updateUpgradesUI(upgradesList) {
 
 
 function displayUpgradeDetails(upgradeName) {
-    
-    allUpgradesList.sort((a, b) => a.id - b.id); // Sort based on `id`
-
     const descriptionContainer = document.getElementById('upgrade-description-container');
     const adjustedUpgradeName = `Unlock ${upgradeName}`;
     const upgradeDetail = allUpgradesList.find(upgrade => upgrade.name === adjustedUpgradeName);
