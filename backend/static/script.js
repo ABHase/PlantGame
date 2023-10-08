@@ -280,7 +280,7 @@ function updateGlobalStateUI(globalStateData) {
 
     // Update the Global Cost Modifier display
     let globalCostModifierDisplay = document.getElementById('global-cost-modifier-display');
-    let modifierValue = (data.cost_modifier + 1) * 100;  // Adding 1 because your base is 1.0 (100%)
+    let modifierValue = (globalStateData.cost_modifier + 1) * 100;  // Adding 1 because your base is 1.0 (100%)
     globalCostModifierDisplay.innerHTML = `Global Cost Modifier: ${modifierValue.toFixed(2)}%`;
 }
 
