@@ -75,6 +75,7 @@ window.onload = function() {
     fetch('/upgrade_descriptions')
     .then(response => response.json())
     .then(data => {
+        console.log(data);
         upgradeDescriptions = data;
         displayUpgradeDetails('Beginner\'s Garden');  // display initial description
 
