@@ -204,8 +204,19 @@ function updateUpgradesUI(upgradesList) {
 
 function displayUpgradeDetails(upgradeName) {
     const descriptionContainer = document.getElementById('upgrade-description-container');
+
+    // Log the upgradeName to ensure it's being passed correctly
+    console.log("Passed upgradeName:", upgradeName);
+
     // Find the upgrade in the upgradeDescriptions using its name
-    const upgradeDetail = upgradeDescriptions.find(upgrade => upgrade.name === upgradeName);
+    const upgradeDetail = upgradeDescriptions.find(upgrade => {
+        const match = upgrade.name === upgradeName;
+        // Log if we've found a match
+        if (match) {
+            console.log("Found matching upgrade:", upgrade);
+        }
+        return match;
+    });
 
     // If the upgrade is found and has a description, use it, otherwise fall back to a default description.
     const descriptionText = (upgradeDetail && upgradeDetail.description) ? upgradeDetail.description : "Description not available.";
@@ -213,6 +224,7 @@ function displayUpgradeDetails(upgradeName) {
     // Display the description. You can enhance this with more HTML structure if needed.
     descriptionContainer.innerHTML = `<strong>${upgradeName}</strong>: ${descriptionText}`;
 }
+
 
 
 
@@ -235,7 +247,6 @@ function updatePlantTimeUI(plantTimeData) {
 
 // Function to update the global state-related UI elements
 function updateGlobalStateUI(globalStateData) {
-    console.log("Updating UI with data:", globalStateData);
     const geneticMarkersSpan = document.getElementById('genetic-markers');
     const geneticMarkerProgressSpan = document.getElementById('genetic-marker-progress');
     const geneticMarkerThresholdSpan = document.getElementById('genetic-marker-threshold');
