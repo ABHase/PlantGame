@@ -158,19 +158,37 @@ function updateUpgradesUI(upgradesList) {
         const biomeCell = row.insertCell();
         
         let biomeDisplayName = biome.name.replace('Unlock ', '');
-        biomeCell.innerHTML = `<button onclick="displayUpgradeDetails('${biomeDisplayName}')">${biomeDisplayName}</button>`;
+
+        // Create the biome button element
+        const biomeButton = document.createElement('button');
+        biomeButton.innerText = biomeDisplayName;
+        biomeButton.dataset.upgradeName = biomeDisplayName;
+        biomeButton.addEventListener('click', function() {
+            displayUpgradeDetails(this.dataset.upgradeName);
+        });
+        biomeCell.appendChild(biomeButton);
 
         const associatedResource = biomeToSecondaryResource[biomeDisplayName] || (biomeDisplayName === "Beginner's Garden" ? null : undefined);
         const associatedUpgrades = otherUpgrades.filter(upgrade => upgrade.secondary_resource === associatedResource);
+
         associatedUpgrades.forEach(upgrade => {
             const upgradeCell = row.insertCell();
             let upgradeDisplayName = upgrade.name.replace('Unlock ', '');
-            upgradeCell.innerHTML = `<button onclick="displayUpgradeDetails('${upgradeDisplayName}')">${upgradeDisplayName}</button>`;
+            
+            // Create the upgrade button element
+            const upgradeButton = document.createElement('button');
+            upgradeButton.innerText = upgradeDisplayName;
+            upgradeButton.dataset.upgradeName = upgradeDisplayName;
+            upgradeButton.addEventListener('click', function() {
+                displayUpgradeDetails(this.dataset.upgradeName);
+            });
+            upgradeCell.appendChild(upgradeButton);
         });
     });
 
     upgradesContainer.appendChild(table);
 }
+
 
 
 function displayUpgradeDetails(upgradeName) {
