@@ -342,7 +342,13 @@ function updatePlantListUI() {
         const shouldSkipRow = (biomeName === 'Beginner\'s Garden');
 
 
-        const table = plantDiv.querySelector('table') || document.createElement('table');
+        const table = plantDiv.querySelector('table');
+        if (!table) {
+            table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            plantDiv.appendChild(table);
+        }
         table.style.width = '100%';
         table.style.borderCollapse = 'collapse';
 
@@ -423,8 +429,6 @@ function updatePlantListUI() {
         };
         button.innerText = 'Purchase Seed';
         plantDiv.appendChild(button);
-
-
         plantDiv.appendChild(table);
     });
 }
