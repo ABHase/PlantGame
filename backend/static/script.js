@@ -145,42 +145,30 @@ function updateUpgradesUI(upgradesList) {
     const biomes = upgradesList.filter(upgrade => upgrade.type === 'biome');
     const otherUpgrades = upgradesList.filter(upgrade => upgrade.type !== 'biome');
 
-    // Explicit association between biome names and secondary resources
-    const biomeToSecondaryResource = {
-        'Unlock Desert': 'silica',
-        'Unlock Tropical Forest': 'tannins',
-        'Unlock Mountain': 'calcium',
-        'Unlock Swamp': 'fulvic'
-    };
-
     biomes.forEach(biome => {
         const row = table.insertRow();
         const biomeCell = row.insertCell();
-
-        // Formatting the display name for unlocked items
+        
         let biomeDisplayName = biome.name.replace('Unlock ', '');
-
-        biomeCell.innerHTML = biome.unlocked ? `${biomeDisplayName}` :
-                              `<button onclick="unlockUpgrade(${biome.id})">${biome.name} (${biome.cost} GM)</button>`;
-
-        // Get upgrades associated with this biome based on the secondary_resource using the biomeToSecondaryResource dictionary
-        const associatedResource = biomeToSecondaryResource[biome.name];
-        const associatedUpgrades = otherUpgrades.filter(upgrade => {
-            return upgrade.secondary_resource === associatedResource || 
-                   (!upgrade.secondary_resource && biome.name === "Unlock Beginner's Garden");
-        });
-
-        associatedUpgrades.forEach(upgrade => {
+        biomeCell.innerHTML = `<button onclick="displayUpgradeDetails('${biomeDisplayName}')">${biomeDisplayName}</button>`;
+        
+        otherUpgrades.forEach(upgrade => {
             const upgradeCell = row.insertCell();
-            const secondaryCostStr = upgrade.secondary_cost ? ` - ${upgrade.secondary_cost} ${upgrade.secondary_resource}` : '';
-            let upgradeDisplayName = upgrade.unlocked ? upgrade.name.replace('Unlock ', '').replace(biomeDisplayName, '') : upgrade.name;
-            upgradeCell.innerHTML = upgrade.unlocked ? `${upgradeDisplayName}` :
-                                    `<button onclick="unlockUpgrade(${upgrade.id})">${upgradeDisplayName} (${upgrade.cost} GM${secondaryCostStr})</button>`;
+            let upgradeDisplayName = upgrade.name.replace('Unlock ', '');
+            upgradeCell.innerHTML = `<button onclick="displayUpgradeDetails('${upgradeDisplayName}')">${upgradeDisplayName}</button>`;
         });
     });
 
     upgradesContainer.appendChild(table);
 }
+
+function displayUpgradeDetails(upgradeName) {
+    // This function will update the upgrade-description-container with the details of the selected upgrade
+    const descriptionContainer = document.getElementById('upgrade-description-container');
+    // For now, we'll just display the upgrade name as a placeholder. Later, you'll fetch and display the detailed description.
+    descriptionContainer.innerHTML = upgradeName;
+}
+
 
 
 
