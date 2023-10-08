@@ -207,23 +207,14 @@ function displayUpgradeDetails(upgradeName) {
 
     console.log("Passed upgradeName:", upgradeName);
 
-    // Find the upgrade in the upgradeDescriptions using its name
+    // Adjust the name for comparison
+    const adjustedUpgradeName = `Unlock ${upgradeName}`;
+
     const upgradeDetail = upgradeDescriptions.find(upgrade => {
-        const match = upgrade.name === upgradeName;
-
-        // Log the exact strings being compared
-        console.log("Comparing:", `"${upgrade.name}"`, "and", `"${upgradeName}"`);
-
-        // If we've found a match
-        if (match) {
-            console.log("Found matching upgrade:", upgrade);
-        }
-
-        return match;
+        return upgrade.name === adjustedUpgradeName;
     });
 
     const descriptionText = (upgradeDetail && upgradeDetail.description) ? upgradeDetail.description : "Description not available.";
-
     descriptionContainer.innerHTML = `<strong>${upgradeName}</strong>: ${descriptionText}`;
 }
 
