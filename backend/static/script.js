@@ -211,7 +211,9 @@ function updateUpgradesUI(upgradesList) {
 function displayUpgradeDetails(upgradeName) {
     const descriptionContainer = document.getElementById('upgrade-description-container');
     const adjustedUpgradeName = `Unlock ${upgradeName}`;
+    console.log("Looking for upgrade with name:", adjustedUpgradeName);
     const upgradeDetail = allUpgradesList.find(upgrade => upgrade.name === adjustedUpgradeName);
+    console.log("Found Upgrade Detail:", upgradeDetail);
     
     const description = upgradeDescriptions.find(upgrade => upgrade.name === adjustedUpgradeName);
     const descriptionText = (description && description.description) ? description.description : "Description not available.";
