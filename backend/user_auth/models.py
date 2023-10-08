@@ -1,5 +1,7 @@
 from ..extensions import db  # Import db from extensions.py
 from flask_login import UserMixin
+import datetime
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,7 +34,7 @@ class UpgradeModel(db.Model):
             'secondary_cost': self.secondary_cost,
             'secondary_resource': self.secondary_resource,
             'cost_modifier': self.cost_modifier,
-            'created_at': self.created_at
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
             # ... other fields ...
         }
     @classmethod
@@ -46,7 +48,7 @@ class UpgradeModel(db.Model):
             secondary_cost=data['secondary_cost'],
             secondary_resource=data['secondary_resource'],
             cost_modifier=data['cost_modifier'],
-            created_at=data['created_at']
+            created_at=datetime.datetime.strptime(data['created_at'], '%Y-%m-%d %H:%M:%S')
             # ... any other fields ...
         )
 
