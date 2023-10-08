@@ -149,6 +149,7 @@ window.onload = function() {
 
 function updateUpgradesUI(upgradesList) {
     allUpgradesList = upgradesList;  // Store the list for later use
+    console.log("All Upgrades List:", allUpgradesList);
 
     // Sort the list by the created_at timestamp
     allUpgradesList.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
