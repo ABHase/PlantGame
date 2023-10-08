@@ -145,14 +145,24 @@ function updateUpgradesUI(upgradesList) {
     const biomes = upgradesList.filter(upgrade => upgrade.type === 'biome');
     const otherUpgrades = upgradesList.filter(upgrade => upgrade.type !== 'biome');
 
+    // Explicit association between biome names and secondary resources
+    const biomeToSecondaryResource = {
+        'Desert': 'silica',
+        'Tropical Forest': 'tannins',
+        'Mountain': 'calcium',
+        'Swamp': 'fulvic'
+    };
+
     biomes.forEach(biome => {
         const row = table.insertRow();
         const biomeCell = row.insertCell();
         
         let biomeDisplayName = biome.name.replace('Unlock ', '');
         biomeCell.innerHTML = `<button onclick="displayUpgradeDetails('${biomeDisplayName}')">${biomeDisplayName}</button>`;
-        
-        otherUpgrades.forEach(upgrade => {
+
+        const associatedResource = biomeToSecondaryResource[biomeDisplayName] || (biomeDisplayName === "Beginner's Garden" ? null : undefined);
+        const associatedUpgrades = otherUpgrades.filter(upgrade => upgrade.secondary_resource === associatedResource);
+        associatedUpgrades.forEach(upgrade => {
             const upgradeCell = row.insertCell();
             let upgradeDisplayName = upgrade.name.replace('Unlock ', '');
             upgradeCell.innerHTML = `<button onclick="displayUpgradeDetails('${upgradeDisplayName}')">${upgradeDisplayName}</button>`;
@@ -161,6 +171,7 @@ function updateUpgradesUI(upgradesList) {
 
     upgradesContainer.appendChild(table);
 }
+
 
 function displayUpgradeDetails(upgradeName) {
     // This function will update the upgrade-description-container with the details of the selected upgrade
