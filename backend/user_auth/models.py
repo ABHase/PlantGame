@@ -17,6 +17,7 @@ class UpgradeModel(db.Model):
     effect = db.Column(db.String(50), nullable=True)
     secondary_cost = db.Column(db.Integer, nullable=True)  # Use nullable=True since it's optional
     secondary_resource = db.Column(db.String(50), nullable=True)  # Use nullable=True since it's optional
+    cost_modifier = db.Column(db.Float, default=0.0)  # Default to 0 means no change
     # ... other fields ...
     def to_dict(self):
         return {
@@ -29,6 +30,7 @@ class UpgradeModel(db.Model):
             'effect': self.effect,
             'secondary_cost': self.secondary_cost,
             'secondary_resource': self.secondary_resource,
+            'cost_modifier': self.cost_modifier
             # ... other fields ...
         }
     @classmethod
@@ -41,6 +43,7 @@ class UpgradeModel(db.Model):
             unlocked=data['unlocked'],
             secondary_cost=data['secondary_cost'],
             secondary_resource=data['secondary_resource'],
+            cost_modifier=data['cost_modifier']
             # ... any other fields ...
         )
 
@@ -92,6 +95,7 @@ class GlobalState(db.Model):
     tannins = db.Column(db.Integer, default=0)
     calcium = db.Column(db.Integer, default=0)
     fulvic = db.Column(db.Integer, default=0)
+    cost_modifier = db.Column(db.Float, default=0.0)  # Default to 0 means no change
 
     def to_dict(self):
         return {
@@ -103,7 +107,8 @@ class GlobalState(db.Model):
             'silica': self.silica,
             'tannins': self.tannins,
             'calcium': self.calcium,
-            'fulvic': self.fulvic
+            'fulvic': self.fulvic,
+            'cost_modifier': self.cost_modifier
         }
     
     @classmethod
@@ -117,5 +122,6 @@ class GlobalState(db.Model):
             silica=data['silica'],
             tannins=data['tannins'],
             calcium=data['calcium'],
-            fulvic=data['fulvic']
+            fulvic=data['fulvic'],
+            cost_modifier=data.get('cost_modifier', 0.0)
         )

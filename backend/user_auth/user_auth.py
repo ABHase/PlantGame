@@ -221,7 +221,8 @@ def initialize_new_upgrades(user_id):
             unlocked=upgrade['unlocked'],
             effect=upgrade['effect'],
             secondary_cost=upgrade.get('secondary_cost', 0),  # Using .get() with default in case it's not present in some upgrades
-            secondary_resource=upgrade.get('secondary_resource')  # Using .get() with default None
+            secondary_resource=upgrade.get('secondary_resource'),  # Using .get() with default None
+            cost_modifier=upgrade.get('cost_modifier', 0.0)  # Using .get() with default 0.0
         )
         print(f"New upgrade: {new_upgrade}")
         new_upgrades.append(new_upgrade)
@@ -287,7 +288,8 @@ def initialize_new_global_state(user_id):
         silica=0,
         tannins=0,
         calcium=0,
-        fulvic=0
+        fulvic=0,
+        cost_modifier=0.0
     )
     print(f"New GlobalState: {new_global_state}")
     return new_global_state

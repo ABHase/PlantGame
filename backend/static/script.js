@@ -6,6 +6,7 @@ let currentlyDisplayedBiomeId = null;
 const plantContainerVisibility = {};
 let partsCostConfig = {};
 let upgradeDescriptions = {};
+let allUpgradesList = [];  // Defined globally to store upgrades data
 let unlockedUpgrades = [];
 let biomePlantCounts = {};  // Global variable to hold plant counts for each biome
 let biomeIdToNameMap = {};  // Global variable to hold the mappinglet biomeIdToNameMap = {};  // Global variable to hold the mapping
@@ -147,6 +148,7 @@ window.onload = function() {
 };
 
 function updateUpgradesUI(upgradesList) {
+    allUpgradesList = upgradesList;  // Store the list for later use
     const upgradesContainer = document.getElementById('upgrades-container');
     upgradesContainer.innerHTML = '';  // Clear existing upgrades
 
@@ -204,12 +206,12 @@ function updateUpgradesUI(upgradesList) {
 
 function displayUpgradeDetails(upgradeName) {
     const descriptionContainer = document.getElementById('upgrade-description-container');
-
-    // Find the upgrade detail
     const adjustedUpgradeName = `Unlock ${upgradeName}`;
-    const upgradeDetail = upgradeDescriptions.find(upgrade => upgrade.name === adjustedUpgradeName);
-    const descriptionText = (upgradeDetail && upgradeDetail.description) ? upgradeDetail.description : "Description not available.";
-
+    const upgradeDetail = allUpgradesList.find(upgrade => upgrade.name === adjustedUpgradeName);
+    
+    const description = upgradeDescriptions.find(upgrade => upgrade.name === adjustedUpgradeName);
+    const descriptionText = (description && description.description) ? description.description : "Description not available.";
+    
     let upgradeContent = `<h2>${upgradeName}</h2>`;
     upgradeContent += `<p>${descriptionText}</p>`;
     upgradeContent += `<table>`;
@@ -217,6 +219,7 @@ function displayUpgradeDetails(upgradeName) {
     if (upgradeDetail.secondary_cost) {
         upgradeContent += `<tr><td>Secondary Cost:</td><td>${upgradeDetail.secondary_cost} ${upgradeDetail.secondary_resource}</td></tr>`;
     }
+    upgradeContent += `<tr><td>Cost Modifier:</td><td>${(upgradeDetail.cost_modifier * 100).toFixed(2)}%</td></tr>`;
     upgradeContent += `</table>`;
     if (!upgradeDetail.unlocked) {
         upgradeContent += `<button onclick="unlockUpgrade(${upgradeDetail.id})">Unlock ${upgradeName}</button>`;
@@ -226,7 +229,6 @@ function displayUpgradeDetails(upgradeName) {
 
     descriptionContainer.innerHTML = upgradeContent;
 }
-
 
 
 
@@ -275,6 +277,11 @@ function updateGlobalStateUI(globalStateData) {
     const progressBar = document.getElementById('progress-bar');
     const progressPercentage = (globalStateData.genetic_marker_progress / globalStateData.genetic_marker_threshold) * 100;
     progressBar.style.width = `${progressPercentage}%`;
+
+    // Update the Global Cost Modifier display
+    let globalCostModifierDisplay = document.getElementById('global-cost-modifier-display');
+    let modifierValue = (data.cost_modifier + 1) * 100;  // Adding 1 because your base is 1.0 (100%)
+    globalCostModifierDisplay.innerHTML = `Global Cost Modifier: ${modifierValue.toFixed(2)}%`;
 }
 
 function updateBiomeListUI(biomeList) {

@@ -8,7 +8,8 @@ UPGRADES = [
         'secondary_resource': None,
         'type': 'biome',
         'unlocked': True,
-        'effect': "Beginner's Garden"  # The name of the biome to unlock
+        'effect': "Beginner's Garden",
+        'cost_modifier': 0.00
     },
     {
         'name': 'Unlock Desert',
@@ -17,7 +18,8 @@ UPGRADES = [
         'secondary_resource': None,
         'type': 'biome',
         'unlocked': False,
-        'effect': 'Desert'  # The name of the biome to unlock
+        'effect': 'Desert',
+        'cost_modifier': 0.00
     },
     {
         'name': 'Unlock Tropical Forest',
@@ -26,7 +28,8 @@ UPGRADES = [
         'secondary_resource': None,
         'type': 'biome',
         'unlocked': False,
-        'effect': 'Tropical Forest'  # The name of the biome to unlock
+        'effect': 'Tropical Forest',
+        'cost_modifier': 0.00
     },
     {
         'name': 'Unlock Mountain',
@@ -35,7 +38,8 @@ UPGRADES = [
         'secondary_resource': None,
         'type': 'biome',
         'unlocked': False,
-        'effect': 'Mountain'  # The name of the biome to unlock
+        'effect': 'Mountain',
+        'cost_modifier': 0.00
     },
     {
         'name': 'Unlock Swamp',
@@ -44,7 +48,8 @@ UPGRADES = [
         'secondary_resource': None,
         'type': 'biome',
         'unlocked': False,
-        'effect': 'Swamp'  # The name of the biome to unlock
+        'effect': 'Swamp',
+        'cost_modifier': 0.00
     },
     {
         'name': 'Unlock Resin',
@@ -53,7 +58,8 @@ UPGRADES = [
         'secondary_resource': None,
         'type': 'plant_part',
         'unlocked': False,
-        'effect': 'resin'  # The name of the plant part to unlock
+        'effect': 'resin',
+        'cost_modifier': 0.00
     },
     {
         'name': 'Unlock Taproot',
@@ -62,7 +68,8 @@ UPGRADES = [
         'secondary_resource': None,
         'type': 'plant_part',
         'unlocked': False,
-        'effect': 'taproot'  # The name of the plant part to unlock
+        'effect': 'taproot',
+        'cost_modifier': 0.00
     },
     {
     'name': 'Unlock Pheromones',
@@ -71,7 +78,8 @@ UPGRADES = [
     'secondary_resource': None,
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'pheromones'  # The name of the plant part to unlock
+    'effect': 'pheromones',
+    'cost_modifier': 0.00
     },
     {
     'name': 'Unlock Thorns',
@@ -80,7 +88,8 @@ UPGRADES = [
     'secondary_resource': None,
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'thorns'  # The name of the plant part to unlock
+    'effect': 'thorns',
+    'cost_modifier': 0.00
     },
     {
     'name': 'Unlock Leaves',
@@ -89,7 +98,8 @@ UPGRADES = [
     'secondary_resource': None,
     'type': 'plant_part',
     'unlocked': True,
-    'effect': 'leaves'  # The name of the plant part to unlock
+    'effect': 'leaves',
+    'cost_modifier': 0.00
     },
     {
     'name': 'Unlock Roots',
@@ -98,7 +108,8 @@ UPGRADES = [
     'secondary_resource': None,
     'type': 'plant_part',
     'unlocked': True,
-    'effect': 'roots'  # The name of the plant part to unlock
+    'effect': 'roots',
+    'cost_modifier': 0.00
     },
     {'name': 'Unlock Vacuoles',
     'cost': 0,
@@ -106,7 +117,8 @@ UPGRADES = [
     'secondary_resource': None,
     'type': 'plant_part',
     'unlocked': True,
-    'effect': 'vacuoles'  # The name of the plant part to unlock
+    'effect': 'vacuoles',
+    'cost_modifier': 0.00
     },
     {'name': 'Unlock Desert Placeholder 1',
     'cost': 0,
@@ -114,7 +126,8 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert1'  # The name of the plant part to unlock
+    'effect': 'placeholderdesert1',
+    'cost_modifier': 0.05
     },
     {'name': 'Unlock Desert Placeholder 2',
     'cost': 0,
@@ -122,7 +135,8 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert2'  # The name of the plant part to unlock
+    'effect': 'placeholderdesert2',   
+    'cost_modifier': 0.10
     },
     {'name': 'Unlock Desert Placeholder 3',
     'cost': 0,
@@ -130,7 +144,8 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert3'  # The name of the plant part to unlock
+    'effect': 'placeholderdesert3',   
+    'cost_modifier': 0.15 
     },
     {'name': 'Unlock Desert Placeholder 4',
     'cost': 0,
@@ -138,7 +153,8 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert4'  # The name of the plant part to unlock
+    'effect': 'placeholderdesert4',   
+    'cost_modifier': 0.20
     },
     {'name': 'Unlock Desert Placeholder 5',
     'cost': 0,
@@ -146,7 +162,8 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert5'  # The name of the plant part to unlock
+    'effect': 'placeholderdesert5',   
+    'cost_modifier': 0.25
     },
     {'name': 'Unlock Desert Placeholder 6',
     'cost': 0,
@@ -154,7 +171,8 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert6'  # The name of the plant part to unlock
+    'effect': 'placeholderdesert6',   
+    'cost_modifier': 0.30
     },
     {'name': 'Unlock Desert Placeholder 7',
     'cost': 0,
@@ -162,7 +180,8 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert7'  # The name of the plant part to unlock
+    'effect': 'placeholderdesert7',   
+    'cost_modifier': 0.35
     },
     {'name': 'Unlock Desert Placeholder 8',
     'cost': 0,
@@ -170,7 +189,8 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert8'  # The name of the plant part to unlock
+    'effect': 'placeholderdesert8',   
+    'cost_modifier': 0.40
     },
     {'name': 'Unlock Desert Placeholder 9',
     'cost': 0,
@@ -178,7 +198,8 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert9'  # The name of the plant part to unlock
+    'effect': 'placeholderdesert9',   
+    'cost_modifier': 0.45
     },
     {'name': 'Unlock Desert Placeholder 10',
     'cost': 0,
@@ -186,7 +207,7 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert10'  # The name of the plant part to unlock
+    'effect': 'placeholderdesert10'   
     },
     {'name': 'Unlock Tropical Forest Placeholder 1',
     'cost': 0,
@@ -194,7 +215,8 @@ UPGRADES = [
     'secondary_resource': 'tannins',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdertropicalforest1'  # The name of the plant part to unlock
+    'effect': 'placeholdertropicalforest1',   
+    'cost_modifier': 0.05
     },
     {'name': 'Unlock Tropical Forest Placeholder 2',
     'cost': 0,
@@ -202,7 +224,8 @@ UPGRADES = [
     'secondary_resource': 'tannins',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdertropicalforest2'  # The name of the plant part to unlock
+    'effect': 'placeholdertropicalforest2',
+    'cost_modifier': 0.10 
     },
     {'name': 'Unlock Tropical Forest Placeholder 3',
     'cost': 0,
@@ -210,7 +233,7 @@ UPGRADES = [
     'secondary_resource': 'tannins',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdertropicalforest3'  # The name of the plant part to unlock
+    'effect': 'placeholdertropicalforest3'   
     },
     {'name': 'Unlock Tropical Forest Placeholder 4',
     'cost': 0,
@@ -218,7 +241,8 @@ UPGRADES = [
     'secondary_resource': 'tannins',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdertropicalforest4'  # The name of the plant part to unlock
+    'effect': 'placeholdertropicalforest4',
+    'cost_modifier': 0.20
     },
     {'name': 'Unlock Tropical Forest Placeholder 5',
     'cost': 0,
@@ -226,7 +250,8 @@ UPGRADES = [
     'secondary_resource': 'tannins',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdertropicalforest5'  # The name of the plant part to unlock
+    'effect': 'placeholdertropicalforest5',
+    'cost_modifier': 0.25
     },
     {'name': 'Unlock Tropical Forest Placeholder 6',
     'cost': 0,
@@ -234,7 +259,8 @@ UPGRADES = [
     'secondary_resource': 'tannins',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdertropicalforest6'  # The name of the plant part to unlock
+    'effect': 'placeholdertropicalforest6',
+    'cost_modifier': 0.30
     },
     {'name': 'Unlock Tropical Forest Placeholder 7',
     'cost': 0,
@@ -242,7 +268,8 @@ UPGRADES = [
     'secondary_resource': 'tannins',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdertropicalforest7'  # The name of the plant part to unlock
+    'effect': 'placeholdertropicalforest7',
+    'cost_modifier': 0.35
     },
     {'name': 'Unlock Tropical Forest Placeholder 8',
     'cost': 0,
@@ -250,7 +277,8 @@ UPGRADES = [
     'secondary_resource': 'tannins',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdertropicalforest8'  # The name of the plant part to unlock
+    'effect': 'placeholdertropicalforest8',
+    'cost_modifier': 0.40
     },
     {'name': 'Unlock Tropical Forest Placeholder 9',
     'cost': 0,
@@ -258,7 +286,8 @@ UPGRADES = [
     'secondary_resource': 'tannins',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdertropicalforest9'  # The name of the plant part to unlock
+    'effect': 'placeholdertropicalforest9',
+    'cost_modifier': 0.45
     },
     {'name': 'Unlock Tropical Forest Placeholder 10',
     'cost': 0,
@@ -266,7 +295,8 @@ UPGRADES = [
     'secondary_resource': 'tannins',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdertropicalforest10'  # The name of the plant part to unlock
+    'effect': 'placeholdertropicalforest10',
+    'cost_modifier': 0.50
     },
     {'name': 'Unlock Mountain Placeholder 1',
     'cost': 0,
@@ -274,7 +304,8 @@ UPGRADES = [
     'secondary_resource': 'calcium',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdermountain1'  # The name of the plant part to unlock
+    'effect': 'placeholdermountain1',
+    'cost_modifier': 0.05
     },
     {'name': 'Unlock Mountain Placeholder 2',
     'cost': 0,
@@ -282,7 +313,8 @@ UPGRADES = [
     'secondary_resource': 'calcium',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdermountain2'  # The name of the plant part to unlock
+    'effect': 'placeholdermountain2',
+    'cost_modifier': 0.10
     },
     {'name': 'Unlock Mountain Placeholder 3',
     'cost': 0,
@@ -290,7 +322,8 @@ UPGRADES = [
     'secondary_resource': 'calcium',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdermountain3'  # The name of the plant part to unlock
+    'effect': 'placeholdermountain3',
+    'cost_modifier': 0.15
     },
     {'name': 'Unlock Mountain Placeholder 4',
     'cost': 0,
@@ -298,7 +331,8 @@ UPGRADES = [
     'secondary_resource': 'calcium',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdermountain4'  # The name of the plant part to unlock
+    'effect': 'placeholdermountain4',
+    'cost_modifier': 0.20  
     },
     {'name': 'Unlock Mountain Placeholder 5',
     'cost': 0,
@@ -306,7 +340,8 @@ UPGRADES = [
     'secondary_resource': 'calcium',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdermountain5'  # The name of the plant part to unlock
+    'effect': 'placeholdermountain5',
+    'cost_modifier': 0.25   
     },
     {'name': 'Unlock Mountain Placeholder 6',
     'cost': 0,
@@ -314,7 +349,8 @@ UPGRADES = [
     'secondary_resource': 'calcium',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdermountain1'  # The name of the plant part to unlock
+    'effect': 'placeholdermountain1',
+    'cost_modifier': 0.30 
     },
     {'name': 'Unlock Mountain Placeholder 7',
     'cost': 0,
@@ -322,7 +358,8 @@ UPGRADES = [
     'secondary_resource': 'calcium',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdermountain7'  # The name of the plant part to unlock
+    'effect': 'placeholdermountain7',
+    'cost_modifier': 0.35 
     },
     {'name': 'Unlock Mountain Placeholder 8',
     'cost': 0,
@@ -330,7 +367,8 @@ UPGRADES = [
     'secondary_resource': 'calcium',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdermountain8'  # The name of the plant part to unlock
+    'effect': 'placeholdermountain8',
+    'cost_modifier': 0.40   
     },
     {'name': 'Unlock Mountain Placeholder 9',
     'cost': 0,
@@ -338,7 +376,8 @@ UPGRADES = [
     'secondary_resource': 'calcium',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdermountain9'  # The name of the plant part to unlock
+    'effect': 'placeholdermountain9',
+    'cost_modifier': 0.45   
     },
     {'name': 'Unlock Mountain Placeholder 10',
     'cost': 0,
@@ -346,7 +385,8 @@ UPGRADES = [
     'secondary_resource': 'calcium',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholdermountain10'  # The name of the plant part to unlock
+    'effect': 'placeholdermountain10',
+    'cost_modifier': 0.50   
     },
     {'name': 'Unlock Swamp Placeholder 1',
     'cost': 0,
@@ -354,7 +394,8 @@ UPGRADES = [
     'secondary_resource': 'fulvic',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderswamp1'  # The name of the plant part to unlock
+    'effect': 'placeholderswamp1',
+    'cost_modifier': 0.05
     },
     {'name': 'Unlock Swamp Placeholder 2',
     'cost': 0,
@@ -362,7 +403,8 @@ UPGRADES = [
     'secondary_resource': 'fulvic',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderswamp2'  # The name of the plant part to unlock
+    'effect': 'placeholderswamp2',
+    'cost_modifier': 0.10
     },
     {'name': 'Unlock Swamp Placeholder 3',
     'cost': 0,
@@ -370,7 +412,8 @@ UPGRADES = [
     'secondary_resource': 'fulvic',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderswamp3'  # The name of the plant part to unlock
+    'effect': 'placeholderswamp3',
+    'cost_modifier': 0.15   
     },
     {'name': 'Unlock Swamp Placeholder 4',
     'cost': 0,
@@ -378,7 +421,8 @@ UPGRADES = [
     'secondary_resource': 'fulvic',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderswamp4'  # The name of the plant part to unlock
+    'effect': 'placeholderswamp4',
+    'cost_modifier': 0.20   
     },
     {'name': 'Unlock Swamp Placeholder 5',
     'cost': 0,
@@ -386,7 +430,8 @@ UPGRADES = [
     'secondary_resource': 'fulvic',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderswamp5'  # The name of the plant part to unlock
+    'effect': 'placeholderswamp5',
+    'cost_modifier': 0.25   
     },
     {'name': 'Unlock Swamp Placeholder 6',
     'cost': 0,
@@ -394,7 +439,8 @@ UPGRADES = [
     'secondary_resource': 'fulvic',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderswamp6'  # The name of the plant part to unlock
+    'effect': 'placeholderswamp6',
+    'cost_modifier': 0.30   
     },
     {'name': 'Unlock Swamp Placeholder 7',
     'cost': 0,
@@ -402,7 +448,8 @@ UPGRADES = [
     'secondary_resource': 'fulvic',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderswamp7'  # The name of the plant part to unlock
+    'effect': 'placeholderswamp7',
+    'cost_modifier': 0.35   
     },
     {'name': 'Unlock Swamp Placeholder 8',
     'cost': 0,
@@ -410,7 +457,8 @@ UPGRADES = [
     'secondary_resource': 'fulvic',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderswamp8'  # The name of the plant part to unlock
+    'effect': 'placeholderswamp8',
+    'cost_modifier': 0.40   
     },
     {'name': 'Unlock Swamp Placeholder 9',
     'cost': 0,
@@ -418,7 +466,8 @@ UPGRADES = [
     'secondary_resource': 'fulvic',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderswamp9'  # The name of the plant part to unlock
+    'effect': 'placeholderswamp9',
+    'cost_modifier': 0.45   
     },
     {'name': 'Unlock Swamp Placeholder 10',
     'cost': 0,
@@ -426,6 +475,7 @@ UPGRADES = [
     'secondary_resource': 'fulvic',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderswamp10'  # The name of the plant part to unlock
+    'effect': 'placeholderswamp10',
+    'cost_modifier': 0.50   
     },
 ]
