@@ -313,8 +313,13 @@ function updatePlantListUI() {
         const plantContainer = document.getElementById(`plant-container-${plant.biome_id}`);
         if (!plantContainer) return;  // Skip if the container doesn't exist
 
-        const plantDiv = getOrCreateElement(plantContainer, `#plant-${plant.id}`, 'div');
-        plantDiv.className = 'plant';
+        let plantDiv = document.querySelector(`#plant-${plant.id}`);
+        if (!plantDiv) {
+            plantDiv = document.createElement('div');
+            plantDiv.className = 'plant';
+            plantDiv.id = `plant-${plant.id}`;
+            plantContainer.appendChild(plantDiv);
+        }
 
         const groundWaterLevel = biomeGroundWaterLevels[plant.biome_id] || 0;
         const maxWaterCapacity = plant.vacuoles * 100;
@@ -337,7 +342,8 @@ function updatePlantListUI() {
         const shouldSkipRow = (biomeName === 'Beginner\'s Garden');
 
 
-        const table = getOrCreateElement(plantDiv, 'table', 'table');
+        const table = plantDiv.querySelector('table') || document.createElement('table');
+
         table.style.width = '100%';
         table.style.borderCollapse = 'collapse';
 
@@ -412,14 +418,13 @@ function updatePlantListUI() {
             ]);
         }
 
-        const button = getOrCreateElement(plantDiv, 'button', 'button');
+        const button = plantDiv.querySelector('button') || document.createElement('button');
         button.onclick = function() {
             purchaseSeed(plant.id);
         };
-        const newButtonText = 'Purchase Seed';
-        if (button.innerText !== newButtonText) {
-            button.innerText = newButtonText;
-        }
+        button.innerText = 'Purchase Seed';
+        plantDiv.appendChild(button);
+        plantDiv.appendChild(table);
     });
 }
 
