@@ -342,13 +342,8 @@ function updatePlantListUI() {
         const shouldSkipRow = (biomeName === 'Beginner\'s Garden');
 
 
-        let table = plantDiv.querySelector('table');
-        if (!table) {
-            table = document.createElement('table');
-            table.style.width = '100%';
-            table.style.borderCollapse = 'collapse';
-            plantDiv.appendChild(table);
-        }
+        const table = plantDiv.querySelector('table') || document.createElement('table');
+
         table.style.width = '100%';
         table.style.borderCollapse = 'collapse';
 
@@ -440,13 +435,28 @@ function updateRow(parent, rowId, cells) {
         row.id = rowId;
         parent.appendChild(row);
     }
-    row.innerHTML = ''; // Clear existing cells
-    cells.forEach(cell => {
-        const tdOrTh = document.createElement(cell.type);
-        tdOrTh.innerHTML = cell.content;
-        row.appendChild(tdOrTh);
+
+    // Ensure that there are enough cells in the row
+    while (row.children.length < cells.length) {
+        row.appendChild(document.createElement('td'));
+    }
+    
+    // Update each cell's content if it has changed
+    cells.forEach((cell, index) => {
+        const existingCell = row.children[index];
+        
+        if (existingCell.innerHTML !== cell.content) {
+            existingCell.innerHTML = cell.content;
+        }
+        
+        if (cell.attributes) {
+            for (const attr in cell.attributes) {
+                existingCell.setAttribute(attr, cell.attributes[attr]);
+            }
+        }
     });
 }
+
 
 
 function unlockUpgrade(upgradeId) {  // Add cost as a parameter
