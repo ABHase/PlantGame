@@ -342,7 +342,7 @@ function updatePlantListUI() {
         const shouldSkipRow = (biomeName === 'Beginner\'s Garden');
 
 
-        const table = plantDiv.querySelector('table');
+        let table = plantDiv.querySelector('table');
         if (!table) {
             table = document.createElement('table');
             table.style.width = '100%';
