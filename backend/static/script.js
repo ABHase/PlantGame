@@ -76,7 +76,7 @@ window.onload = function() {
     .then(response => response.json())
     .then(data => {
         console.log(data);
-        upgradeDescriptions = data;
+        upgradeDescriptions = Object.values(data); 
         displayUpgradeDetails('Beginner\'s Garden');  // display initial description
 
     })
