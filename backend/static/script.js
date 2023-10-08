@@ -205,23 +205,25 @@ function updateUpgradesUI(upgradesList) {
 function displayUpgradeDetails(upgradeName) {
     const descriptionContainer = document.getElementById('upgrade-description-container');
 
-    // Log the upgradeName to ensure it's being passed correctly
     console.log("Passed upgradeName:", upgradeName);
 
     // Find the upgrade in the upgradeDescriptions using its name
     const upgradeDetail = upgradeDescriptions.find(upgrade => {
         const match = upgrade.name === upgradeName;
-        // Log if we've found a match
+
+        // Log the exact strings being compared
+        console.log("Comparing:", `"${upgrade.name}"`, "and", `"${upgradeName}"`);
+
+        // If we've found a match
         if (match) {
             console.log("Found matching upgrade:", upgrade);
         }
+
         return match;
     });
 
-    // If the upgrade is found and has a description, use it, otherwise fall back to a default description.
     const descriptionText = (upgradeDetail && upgradeDetail.description) ? upgradeDetail.description : "Description not available.";
 
-    // Display the description. You can enhance this with more HTML structure if needed.
     descriptionContainer.innerHTML = `<strong>${upgradeName}</strong>: ${descriptionText}`;
 }
 
