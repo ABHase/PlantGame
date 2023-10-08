@@ -5,6 +5,7 @@ let biomeGroundWaterLevels = {}; // At the top of your script
 let currentlyDisplayedBiomeId = null;
 const plantContainerVisibility = {};
 let partsCostConfig = {};
+let upgradeDescriptions = {};
 let unlockedUpgrades = [];
 let biomePlantCounts = {};  // Global variable to hold plant counts for each biome
 let biomeIdToNameMap = {};  // Global variable to hold the mappinglet biomeIdToNameMap = {};  // Global variable to hold the mapping
@@ -68,6 +69,15 @@ window.onload = function() {
     .then(response => response.json())
     .then(data => {
         sunriseSunsetTimes = data;
+    })
+
+    //Fetch the upgrade descriptions
+    fetch('/upgrade_descriptions')
+    .then(response => response.json())
+    .then(data => {
+        upgradeDescriptions = data;
+        displayUpgradeDetails('Beginner\'s Garden');  // display initial description
+
     })
 
     // Listen for game_state updates from the server
@@ -192,11 +202,17 @@ function updateUpgradesUI(upgradesList) {
 
 
 function displayUpgradeDetails(upgradeName) {
-    // This function will update the upgrade-description-container with the details of the selected upgrade
     const descriptionContainer = document.getElementById('upgrade-description-container');
-    // For now, we'll just display the upgrade name as a placeholder. Later, you'll fetch and display the detailed description.
-    descriptionContainer.innerHTML = upgradeName;
+    // Find the upgrade in the upgradeDescriptions using its name
+    const upgradeDetail = upgradeDescriptions.find(upgrade => upgrade.name === upgradeName);
+
+    // If the upgrade is found and has a description, use it, otherwise fall back to a default description.
+    const descriptionText = (upgradeDetail && upgradeDetail.description) ? upgradeDetail.description : "Description not available.";
+
+    // Display the description. You can enhance this with more HTML structure if needed.
+    descriptionContainer.innerHTML = `<strong>${upgradeName}</strong>: ${descriptionText}`;
 }
+
 
 
 

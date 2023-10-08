@@ -30,6 +30,7 @@ from ..models.plant_model import PlantModel
 from .plants_config import INITIAL_PLANT_CONFIG
 from .BIOME_TIMEZONE_OFFSETS import BIOME_TIMEZONE_OFFSETS
 from .sunrise_sunset_config import SUNRISE_SUNSET_TIMES
+from ..upgrades.upgrades_description import UPGRADE_DESCRIPTIONS
 
 logging.basicConfig(filename='app.log',level=logging.INFO)
 
@@ -316,3 +317,7 @@ def get_biome_timezone_offsets():
 @game_state_bp.route('/sunrise_sunset_times')
 def get_sunrise_sunset_times():
     return jsonify(SUNRISE_SUNSET_TIMES)
+
+@game_state_bp.route('/upgrade_descriptions')
+def get_upgrade_descriptions():
+    return jsonify(UPGRADE_DESCRIPTIONS)
