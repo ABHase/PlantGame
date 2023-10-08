@@ -340,6 +340,9 @@ function updatePlantListUI() {
             secondaryResource = 'Fulvic';
         }
 
+        // Determine if it's day or night for the biome of the current plant
+        const { isDayForBiome } = getBiomeSpecificTime(plantTime, biomeIdToNameMap[plant.biome_id]);
+
         const shouldSkipRow = (biomeName === 'Beginner\'s Garden');
 
 
@@ -350,7 +353,7 @@ function updatePlantListUI() {
 
         // For sunlight row
         updateRow(table, `sunlight-row-${plant.id}`, [
-            { content: isDay ? `<button onclick="absorbResource('${plant.id}', 'sunlight', 10)">Absorb</button>` : `<button disabled>It's night...</button>`, type: 'td' },
+            { content: isDayForBiome ? `<button onclick="absorbResource('${plant.id}', 'sunlight', 10)">Absorb</button>` : `<button disabled>It's night...</button>`, type: 'td' },
             { content: 'Sunlight:', type: 'td' },
             { content: `<span id="sunlight-${plant.id}">${plant.sunlight}</span>`, type: 'td' }
         ]);
