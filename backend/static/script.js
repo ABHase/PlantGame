@@ -206,20 +206,19 @@ function updateUpgradesUI(upgradesList) {
     upgradesContainer.appendChild(table);
 }
 
-
-
 function displayUpgradeDetails(upgradeName) {
+    const adjustedUpgradeName = `Unlock ${upgradeName}`;
+    const upgradeDetail = allUpgradesList.find(upgrade => upgrade.name === adjustedUpgradeName);
+
     if (!upgradeDetail) {
         console.error(`No upgrade detail found for name: ${adjustedUpgradeName}`);
         return;  // Exit the function early if no upgrade detail is found
     }
-    
-    const descriptionContainer = document.getElementById('upgrade-description-container');
-    const adjustedUpgradeName = `Unlock ${upgradeName}`;
+
     console.log("Looking for upgrade with name:", adjustedUpgradeName);
-    const upgradeDetail = allUpgradesList.find(upgrade => upgrade.name === adjustedUpgradeName);
     console.log("Found Upgrade Detail:", upgradeDetail);
     
+    const descriptionContainer = document.getElementById('upgrade-description-container');
     const description = upgradeDescriptions.find(upgrade => upgrade.name === adjustedUpgradeName);
     const descriptionText = (description && description.description) ? description.description : "Description not available.";
     
@@ -240,11 +239,6 @@ function displayUpgradeDetails(upgradeName) {
 
     descriptionContainer.innerHTML = upgradeContent;
 }
-
-
-
-
-
 
 // Function to update the time-related UI elements
 function updatePlantTimeUI(plantTimeData) {
