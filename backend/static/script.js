@@ -77,9 +77,6 @@ window.onload = function() {
     .then(response => response.json())
     .then(data => {
         upgradeDescriptions = Object.values(data); 
-        displayUpgradeDetails('Beginner\'s Garden');  // display initial description
-        console.log(upgradeDescriptions);
-
     })
 
     // Listen for game_state updates from the server
@@ -94,6 +91,8 @@ window.onload = function() {
         // Update your client-side upgrades list here
         updateUpgradesUI(data, gameState);
         unlockedUpgrades = data.filter(upgrade => upgrade.unlocked && upgrade.type === 'plant_part').map(upgrade => upgrade.effect);
+        displayUpgradeDetails('Beginner\'s Garden');  // display initial description
+
     });
 
     // Listen for global_state updates from the server
@@ -210,6 +209,11 @@ function updateUpgradesUI(upgradesList) {
 
 
 function displayUpgradeDetails(upgradeName) {
+    if (!upgradeDetail) {
+        console.error(`No upgrade detail found for name: ${adjustedUpgradeName}`);
+        return;  // Exit the function early if no upgrade detail is found
+    }
+    
     const descriptionContainer = document.getElementById('upgrade-description-container');
     const adjustedUpgradeName = `Unlock ${upgradeName}`;
     console.log("Looking for upgrade with name:", adjustedUpgradeName);
