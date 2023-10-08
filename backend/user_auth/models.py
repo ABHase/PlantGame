@@ -15,6 +15,8 @@ class UpgradeModel(db.Model):
     type = db.Column(db.String(20), nullable=False)
     unlocked = db.Column(db.Boolean, default=False)
     effect = db.Column(db.String(50), nullable=True)
+    secondary_cost = db.Column(db.Integer, nullable=True)  # Use nullable=True since it's optional
+    secondary_resource = db.Column(db.String(50), nullable=True)  # Use nullable=True since it's optional
     # ... other fields ...
     def to_dict(self):
         return {
@@ -24,7 +26,9 @@ class UpgradeModel(db.Model):
             'cost': self.cost,
             'type': self.type,
             'unlocked': self.unlocked,
-            'effect': self.effect
+            'effect': self.effect,
+            'secondary_cost': self.secondary_cost,
+            'secondary_resource': self.secondary_resource,
             # ... other fields ...
         }
     @classmethod
@@ -35,6 +39,8 @@ class UpgradeModel(db.Model):
             type=data['type'],
             effect=data['effect'],
             unlocked=data['unlocked'],
+            secondary_cost=data['secondary_cost'],
+            secondary_resource=data['secondary_resource'],
             # ... any other fields ...
         )
 

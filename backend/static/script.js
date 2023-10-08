@@ -140,23 +140,41 @@ function updateUpgradesUI(upgradesList) {
     upgradesContainer.innerHTML = '';  // Clear existing upgrades
 
     const table = document.createElement('table');
-    upgradesList.forEach((upgrade, index) => {
-        if (upgrade.unlocked) {
-            return;  // Skip this iteration if the upgrade is already unlocked
-        }
 
+    // Separate the biomes and other upgrades
+    const biomes = upgradesList.filter(upgrade => upgrade.type === 'biome');
+    const otherUpgrades = upgradesList.filter(upgrade => upgrade.type !== 'biome');
+
+    // Explicit association between biome names and secondary resources
+    const biomeToSecondaryResource = {
+        'Unlock Desert': 'silica',
+        'Unlock Tropical Forest': 'tannins',
+        'Unlock Mountain': 'calcium',
+        'Unlock Swamp': 'fulvic'
+    };
+
+    biomes.forEach(biome => {
         const row = table.insertRow();
-        const cell1 = row.insertCell(0);
+        const biomeCell = row.insertCell();
 
-        const isUnlocked = upgrade.unlocked ? 'Unlocked' : 'Locked';
-        const canUnlock = !upgrade.unlocked && gameState.genetic_markers >= upgrade.cost;
+        biomeCell.innerHTML = biome.unlocked ? `${biome.name}` :
+                              `<button onclick="unlockUpgrade(${biome.id})">${biome.name} (${biome.cost} GM)</button>`;
 
-        cell1.innerHTML = `${upgrade.name} (${isUnlocked}) <br>` + 
-                          (canUnlock ? `<button onclick="unlockUpgrade(${upgrade.id})">Unlock (${upgrade.cost} GM)</button>` : '');
+        // Get upgrades associated with this biome based on the secondary_resource using the biomeToSecondaryResource dictionary
+        const associatedResource = biomeToSecondaryResource[biome.name];
+        const associatedUpgrades = otherUpgrades.filter(upgrade => upgrade.secondary_resource === associatedResource);
+
+        associatedUpgrades.forEach(upgrade => {
+            const upgradeCell = row.insertCell();
+            const secondaryCostStr = upgrade.secondary_cost ? ` - ${upgrade.secondary_cost} ${upgrade.secondary_resource}` : '';
+            upgradeCell.innerHTML = upgrade.unlocked ? `${upgrade.effect}` :
+                                    `<button onclick="unlockUpgrade(${upgrade.id})">${upgrade.name} (${upgrade.cost} GM${secondaryCostStr})</button>`;
+        });
     });
 
     upgradesContainer.appendChild(table);
 }
+
 
 // Function to update the time-related UI elements
 function updatePlantTimeUI(plantTimeData) {

@@ -219,7 +219,9 @@ def initialize_new_upgrades(user_id):
             cost=upgrade['cost'],
             type=upgrade['type'],
             unlocked=upgrade['unlocked'],
-            effect=upgrade['effect']
+            effect=upgrade['effect'],
+            secondary_cost=upgrade.get('secondary_cost', 0),  # Using .get() with default in case it's not present in some upgrades
+            secondary_resource=upgrade.get('secondary_resource')  # Using .get() with default None
         )
         print(f"New upgrade: {new_upgrade}")
         new_upgrades.append(new_upgrade)
