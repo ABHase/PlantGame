@@ -313,13 +313,8 @@ function updatePlantListUI() {
         const plantContainer = document.getElementById(`plant-container-${plant.biome_id}`);
         if (!plantContainer) return;  // Skip if the container doesn't exist
 
-        let plantDiv = document.querySelector(`#plant-${plant.id}`);
-        if (!plantDiv) {
-            plantDiv = document.createElement('div');
-            plantDiv.className = 'plant';
-            plantDiv.id = `plant-${plant.id}`;
-            plantContainer.appendChild(plantDiv);
-        }
+        const plantDiv = getOrCreateElement(plantContainer, `#plant-${plant.id}`, 'div');
+        plantDiv.className = 'plant';
 
         const groundWaterLevel = biomeGroundWaterLevels[plant.biome_id] || 0;
         const maxWaterCapacity = plant.vacuoles * 100;
@@ -342,8 +337,7 @@ function updatePlantListUI() {
         const shouldSkipRow = (biomeName === 'Beginner\'s Garden');
 
 
-        const table = plantDiv.querySelector('table') || document.createElement('table');
-
+        const table = getOrCreateElement(plantDiv, 'table', 'table');
         table.style.width = '100%';
         table.style.borderCollapse = 'collapse';
 
@@ -418,13 +412,14 @@ function updatePlantListUI() {
             ]);
         }
 
-        const button = plantDiv.querySelector('button') || document.createElement('button');
+        const button = getOrCreateElement(plantDiv, 'button', 'button');
         button.onclick = function() {
             purchaseSeed(plant.id);
         };
-        button.innerText = 'Purchase Seed';
-        plantDiv.appendChild(button);
-        plantDiv.appendChild(table);
+        const newButtonText = 'Purchase Seed';
+        if (button.innerText !== newButtonText) {
+            button.innerText = newButtonText;
+        }
     });
 }
 
@@ -456,6 +451,16 @@ function updateRow(parent, rowId, cells) {
         }
     });
 }
+
+function getOrCreateElement(parent, selector, type) {
+    let elem = parent.querySelector(selector);
+    if (!elem) {
+        elem = document.createElement(type);
+        parent.appendChild(elem);
+    }
+    return elem;
+}
+
 
 
 
