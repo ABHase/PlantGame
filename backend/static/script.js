@@ -157,23 +157,31 @@ function updateUpgradesUI(upgradesList) {
         const row = table.insertRow();
         const biomeCell = row.insertCell();
 
-        biomeCell.innerHTML = biome.unlocked ? `${biome.name}` :
+        // Formatting the display name for unlocked items
+        let biomeDisplayName = biome.name.replace('Unlock ', '');
+
+        biomeCell.innerHTML = biome.unlocked ? `${biomeDisplayName}` :
                               `<button onclick="unlockUpgrade(${biome.id})">${biome.name} (${biome.cost} GM)</button>`;
 
         // Get upgrades associated with this biome based on the secondary_resource using the biomeToSecondaryResource dictionary
         const associatedResource = biomeToSecondaryResource[biome.name];
-        const associatedUpgrades = otherUpgrades.filter(upgrade => upgrade.secondary_resource === associatedResource);
+        const associatedUpgrades = otherUpgrades.filter(upgrade => {
+            return upgrade.secondary_resource === associatedResource || 
+                   (!upgrade.secondary_resource && biome.name === "Unlock Beginner's Garden");
+        });
 
         associatedUpgrades.forEach(upgrade => {
             const upgradeCell = row.insertCell();
             const secondaryCostStr = upgrade.secondary_cost ? ` - ${upgrade.secondary_cost} ${upgrade.secondary_resource}` : '';
-            upgradeCell.innerHTML = upgrade.unlocked ? `${upgrade.effect}` :
-                                    `<button onclick="unlockUpgrade(${upgrade.id})">${upgrade.name} (${upgrade.cost} GM${secondaryCostStr})</button>`;
+            let upgradeDisplayName = upgrade.unlocked ? upgrade.name.replace('Unlock ', '').replace(biomeDisplayName, '') : upgrade.name;
+            upgradeCell.innerHTML = upgrade.unlocked ? `${upgradeDisplayName}` :
+                                    `<button onclick="unlockUpgrade(${upgrade.id})">${upgradeDisplayName} (${upgrade.cost} GM${secondaryCostStr})</button>`;
         });
     });
 
     upgradesContainer.appendChild(table);
 }
+
 
 
 // Function to update the time-related UI elements
