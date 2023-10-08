@@ -123,7 +123,6 @@ window.onload = function() {
             biomePlantCounts[plant.biome_id]++;
         });
         plantsData = data;  // Update the global plantsData variable
-        updatePlantListUI();
     });
 
     window.addEventListener('beforeunload', function() {
@@ -305,6 +304,8 @@ function updateBiomeListUI(biomeList) {
                 targetBiome.style.display = 'block';
             }
     }
+    updatePlantListUI();
+
 }
 
 // Function to update the plant list UI
@@ -456,18 +457,6 @@ function updateRow(parent, rowId, cells) {
         }
     });
 }
-
-function getOrCreateElement(parent, selector, type) {
-    let elem = parent.querySelector(selector);
-    if (!elem) {
-        elem = document.createElement(type);
-        parent.appendChild(elem);
-    }
-    return elem;
-}
-
-
-
 
 function unlockUpgrade(upgradeId) {  // Add cost as a parameter
     fetch('/game_state/unlock_upgrade', {
