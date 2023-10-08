@@ -77,6 +77,7 @@ window.onload = function() {
     .then(response => response.json())
     .then(data => {
         upgradeDescriptions = Object.values(data); 
+        displayUpgradeDetails('Beginner\'s Garden');  // display initial description
     })
 
     // Listen for game_state updates from the server
@@ -91,8 +92,6 @@ window.onload = function() {
         // Update your client-side upgrades list here
         updateUpgradesUI(data, gameState);
         unlockedUpgrades = data.filter(upgrade => upgrade.unlocked && upgrade.type === 'plant_part').map(upgrade => upgrade.effect);
-        displayUpgradeDetails('Beginner\'s Garden');  // display initial description
-
     });
 
     // Listen for global_state updates from the server
