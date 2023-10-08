@@ -285,7 +285,7 @@ def initialize_new_global_state(user_id):
         genetic_marker_threshold=10,
         genetic_markers=50,
         seeds=5,
-        silica=0,
+        silica=5,
         tannins=0,
         calcium=0,
         fulvic=0,

@@ -207,7 +207,8 @@ UPGRADES = [
     'secondary_resource': 'silica',
     'type': 'plant_part',
     'unlocked': False,
-    'effect': 'placeholderdesert10'   
+    'effect': 'placeholderdesert10',
+    'cost_modifier': 0.50
     },
     {'name': 'Unlock Tropical Forest Placeholder 1',
     'cost': 0,
