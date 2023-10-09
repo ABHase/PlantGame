@@ -9,7 +9,7 @@ let upgradeDescriptions = {};
 let allUpgradesList = [];  // Defined globally to store upgrades data
 let unlockedUpgrades = [];
 let biomePlantCounts = {};  // Global variable to hold plant counts for each biome
-let biomeIdToNameMap = {};  // Global variable to hold the mappinglet biomeIdToNameMap = {};  // Global variable to hold the mapping
+let biomeIdToNameMap = {};  // Global variable to hold the mapping
 let plantsData = [];  // This will hold the current list of plants
 let currentUserId = null;
 let plantTime = null;  // Store plant_time data here
@@ -90,8 +90,15 @@ window.onload = function() {
 
     // Listen for upgrades_list updates from the server
     socket.on('upgrades_list', function(data) {
-        // Update your client-side upgrades list here
-        updateUpgradesUI(data, gameState);
+        // Sort and store data right away
+        data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+        // Update the client-side upgrades list
+        allUpgradesList = data;
+
+        // Update UI
+        updateUpgradesUI(allUpgradesList);
+
         unlockedUpgrades = data.filter(upgrade => upgrade.unlocked && upgrade.type === 'plant_part').map(upgrade => upgrade.effect);
     });
 
@@ -149,16 +156,14 @@ window.onload = function() {
 };
 
 function updateUpgradesUI(upgradesList) {
-    allUpgradesList = upgradesList;  // Store the list for later use
-
     const upgradesContainer = document.getElementById('upgrades-container');
     upgradesContainer.innerHTML = '';  // Clear existing upgrades
 
     const table = document.createElement('table');
 
     // Separate the biomes and other upgrades
-    const biomes = upgradesList.filter(upgrade => upgrade.type === 'biome').sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-    const otherUpgrades = upgradesList.filter(upgrade => upgrade.type !== 'biome').sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    const biomes = upgradesList.filter(upgrade => upgrade.type === 'biome');
+    const otherUpgrades = upgradesList.filter(upgrade => upgrade.type !== 'biome');
 
     // Explicit association between biome names and secondary resources
     const biomeToSecondaryResource = {
