@@ -219,8 +219,7 @@ function displayUpgradeDetails(upgradeName) {
     const descriptionContainer = document.getElementById('upgrade-description-container');
     const description = upgradeDescriptions.find(upgrade => upgrade.name === adjustedUpgradeName);
     const descriptionText = (description && description.description) ? description.description : "Description not available.";
-    const adjustedCost = upgradeDetail.cost * globalCostModifier;  // Adjust the cost based on the global modifier
-    adjustedCost = parseFloat(adjustedCost.toFixed(2));
+    let adjustedCost = parseFloat((upgradeDetail.cost * globalCostModifier).toFixed(2));
 
     
     let upgradeContent = `<h2>${upgradeName}</h2>`;
