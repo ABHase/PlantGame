@@ -91,7 +91,7 @@ window.onload = function() {
     // Listen for upgrades_list updates from the server
     socket.on('upgrades_list', function(data) {
         // Sort and store data right away
-        data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        data.sort((a, b) => a.order - b.order);
 
         // Update the client-side upgrades list
         allUpgradesList = data;
