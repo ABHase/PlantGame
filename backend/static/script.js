@@ -150,10 +150,6 @@ window.onload = function() {
 
 function updateUpgradesUI(upgradesList) {
     allUpgradesList = upgradesList;  // Store the list for later use
-    console.log("All Upgrades List:", allUpgradesList);
-
-    // Sort the list by the created_at timestamp
-    allUpgradesList.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
     const upgradesContainer = document.getElementById('upgrades-container');
     upgradesContainer.innerHTML = '';  // Clear existing upgrades
@@ -161,8 +157,8 @@ function updateUpgradesUI(upgradesList) {
     const table = document.createElement('table');
 
     // Separate the biomes and other upgrades
-    const biomes = upgradesList.filter(upgrade => upgrade.type === 'biome');
-    const otherUpgrades = upgradesList.filter(upgrade => upgrade.type !== 'biome');
+    const biomes = upgradesList.filter(upgrade => upgrade.type === 'biome').sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    const otherUpgrades = upgradesList.filter(upgrade => upgrade.type !== 'biome').sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
     // Explicit association between biome names and secondary resources
     const biomeToSecondaryResource = {
@@ -207,6 +203,7 @@ function updateUpgradesUI(upgradesList) {
 
     upgradesContainer.appendChild(table);
 }
+
 
 function displayUpgradeDetails(upgradeName) {
     const adjustedUpgradeName = `Unlock ${upgradeName}`;
