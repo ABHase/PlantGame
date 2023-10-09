@@ -19,7 +19,6 @@ class UpgradeModel(db.Model):
     secondary_cost = db.Column(db.Integer, nullable=True)  # Use nullable=True since it's optional
     secondary_resource = db.Column(db.String(50), nullable=True)  # Use nullable=True since it's optional
     cost_modifier = db.Column(db.Float, default=0.0)  # Default to 0 means no change
-    order = db.Column(db.Integer, autoincrement=True)
     # ... other fields ...
     def to_dict(self):
         return {
@@ -33,7 +32,6 @@ class UpgradeModel(db.Model):
             'secondary_cost': self.secondary_cost,
             'secondary_resource': self.secondary_resource,
             'cost_modifier': self.cost_modifier,
-            'order': self.order,
             # ... other fields ...
         }
     @classmethod
@@ -47,7 +45,6 @@ class UpgradeModel(db.Model):
             secondary_cost=data['secondary_cost'],
             secondary_resource=data['secondary_resource'],
             cost_modifier=data['cost_modifier'],
-            order=data['order'],
             # ... any other fields ...
         )
 

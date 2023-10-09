@@ -81,17 +81,10 @@ window.onload = function() {
         displayUpgradeDetails('Beginner\'s Garden');  // display initial description
     })
 
-    // Listen for game_state updates from the server
-    socket.on('game_state', function(data) {
-        // Update your client-side game state here
-        gameState = data;  // Update the global gameState variable
-        //updateUI(data);
-    });
-
     // Listen for upgrades_list updates from the server
     socket.on('upgrades_list', function(data) {
         // Sort and store data right away
-        data.sort((a, b) => a.order - b.order);
+        data.sort((a, b) => a.id - b.id);
 
         // Update the client-side upgrades list
         allUpgradesList = data;
