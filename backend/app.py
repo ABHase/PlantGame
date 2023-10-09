@@ -1,4 +1,6 @@
 from flask import Flask, render_template
+from flask_limiter.util import get_remote_address
+from flask_limiter import Limiter
 from flask_login import LoginManager
 from .socket_config import socketio  # Import socketio
 from .extensions import db  # Import db from extensions.py
@@ -13,6 +15,8 @@ def load_user(user_id):
     from .user_auth.models import User  # Import the User model here to avoid circular imports
     return db.session.get(User, int(user_id))
 
+limiter = Limiter(key_func=get_remote_address)  # This sets up rate limiting based on the remote address
+
 def create_app():
     print("Creating app...")
     app = Flask(__name__)
@@ -25,6 +29,10 @@ def create_app():
     print("Initializing login manager...")
     login_manager.init_app(app)
     login_manager.login_view = 'login'
+
+    # Initialize the limiter for rate-limiting
+    print("Initializing limiter...")
+    limiter.init_app(app)  # Initialize the limiter with the Flask app
     
     with app.app_context():
         from .user_auth.models import User  # Import the User model here

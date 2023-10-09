@@ -6,10 +6,12 @@ from flask import json, jsonify
 from .user_auth import initialize_user_game
 import logging
 logging.basicConfig(level=logging.DEBUG)
+from ..app import limiter  # Import the limiter from the main app file
 
 
 user_auth_bp = Blueprint('user_auth', __name__)
 
+@limiter.limit("5 per minute")
 @user_auth_bp.route("/register", methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
