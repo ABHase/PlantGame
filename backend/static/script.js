@@ -231,7 +231,7 @@ function displayUpgradeDetails(upgradeName) {
     upgradeContent += `<tr><td>Cost Modifier: ${(upgradeDetail.cost_modifier * 100).toFixed(2)}%</td></tr>`;  // Combined label and value
     upgradeContent += `</table>`;
     if (!upgradeDetail.unlocked) {
-        upgradeContent += `<button onclick="unlockUpgrade(${upgradeDetail.id})">Unlock ${upgradeName}</button>`;
+        upgradeContent += `<button onclick="unlockUpgrade(${upgradeDetail.id}, '${upgradeName}')">Unlock ${upgradeName}</button>`;
     } else {
         upgradeContent += `<button disabled>Already Unlocked</button>`;
     }
@@ -546,7 +546,7 @@ function updateRow(parent, rowId, cells) {
     });
 }
 
-function unlockUpgrade(upgradeId) {
+function unlockUpgrade(upgradeId, upgradeName) {
     fetch('/game_state/unlock_upgrade', {
         method: 'POST',
         headers: {
@@ -558,15 +558,16 @@ function unlockUpgrade(upgradeId) {
     .then(data => {
         console.log(data);
         // After unlocking, get the updated list of upgrades
-        return fetch('/game_state/upgrades_list');  // Assuming this endpoint gives the updated upgrades list
+        return fetch('/game_state/upgrades_list');
     })
     .then(response => response.json())
-    .then(upgradesList => {
-        // Now, re-render the Upgrades UI with the updated list
-        updateUpgradesUI(upgradesList);
+    .then(() => {
+        // Re-display the upgrade details for the upgrade that was just unlocked
+        displayUpgradeDetails(upgradeName);
     })
     .catch(error => console.error('Error updating upgrades:', error));
 }
+
 
 
 function capitalizeFirstLetter(string) {
