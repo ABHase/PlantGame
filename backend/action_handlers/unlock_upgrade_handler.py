@@ -1,5 +1,6 @@
 from ..user_auth.models import UpgradeModel
 from ..user_auth.user_auth import fetch_global_state_from_db, save_global_state_to_db, initialize_new_biome
+from math import round
 
 def handle_unlock_upgrade(action):
     upgrade_id = action["upgrade_id"]
