@@ -557,16 +557,12 @@ function unlockUpgrade(upgradeId, upgradeName) {
     .then(response => response.json())
     .then(data => {
         console.log(data);
-        // After unlocking, get the updated list of upgrades
-        return fetch('/game_state/upgrades_list');
-    })
-    .then(response => response.json())
-    .then(() => {
-        // Re-display the upgrade details for the upgrade that was just unlocked
+        // No need to fetch the upgrades list again, directly re-display the upgrade details
         displayUpgradeDetails(upgradeName);
     })
     .catch(error => console.error('Error updating upgrades:', error));
 }
+
 
 
 
