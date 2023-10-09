@@ -3,7 +3,7 @@ from ..user_auth.user_auth import fetch_global_state_from_db, save_global_state_
 
 def handle_purchase_seed(action):
     plant_id = action["plant_id"]
-    cost = 10  # This could also come from a config file
+    cost = 100  # This could also come from a config file
 
     # Fetch the plant from the database
     existing_plant_model = PlantModel.query.filter_by(id=plant_id).first()

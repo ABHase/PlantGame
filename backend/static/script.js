@@ -511,7 +511,16 @@ function updatePlantListUI() {
         button.onclick = function() {
             purchaseSeed(plant.id);
         };
-        button.innerText = 'Purchase Seed';
+
+        // Set the button's inner text based on sugar amount
+        if (plant.sugar < 100) {
+            button.innerText = 'Purchase Seed (100)';
+            button.disabled = true; // Disable the button
+        } else {
+            button.innerText = 'Purchase Seed (100)';
+            button.disabled = false; // Enable the button
+        }
+
         plantDiv.appendChild(button);
         plantDiv.appendChild(table);
     });

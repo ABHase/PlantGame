@@ -7,7 +7,7 @@ from sqlalchemy import func  # Import this if you haven't already
 
 def handle_plant_seed_in_biome(action):
     biome_id = action["biome_id"]
-    genetic_marker_cost = 1  # For now, this could be a hardcoded number
+    genetic_marker_cost = 0  # For now, this could be a hardcoded number
 
     # Fetch the biome to get the user_id and capacity
     existing_biome_model = BiomeModel.query.filter_by(id=biome_id).first()
