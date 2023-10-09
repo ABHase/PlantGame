@@ -18,10 +18,11 @@ let globalCostModifier = 1.0;  // Initialize it to the default (1.0 meaning no m
 const BIOME_ORDER = ["Beginner's Garden", "Desert", "Tropical Forest", "Mountain", "Swamp"];
 let socketURL;
 if (APP_ENV === 'production') {
-    socketURL = 'wss://idleplantgame-67d196ad0035.herokuapp.com/';
+    socketURL = 'wss://idleplantgame.com/';
 } else {
     socketURL = 'http://localhost:5000/';  // or whatever your local port is
 }
+
 
 // Initialize the game when the page loads
 window.onload = function() {

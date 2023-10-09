@@ -11,7 +11,7 @@ from ..app import limiter  # Import the limiter from the main app file
 
 user_auth_bp = Blueprint('user_auth', __name__)
 
-@limiter.limit("5 per minute")
+@limiter.limit("5 per hour")
 @user_auth_bp.route("/register", methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
