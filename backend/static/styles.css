@@ -54,3 +54,22 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+
+.warning {
+    width: 60%;  /* You can adjust this value as needed */
+    margin: 0 auto;  /* Centers the box */
+    padding: 10px;
+    border: 1px solid #e3a81d;  /* A border color that matches the theme */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);  /* A slight shadow for depth */
+    background-color: #fdf6e3;  /* A light background color */
+}
+
+.warning h3 {
+    margin-top: 0;  /* Ensure there's no extra spacing at the top */
+}
+
+.content {
+    margin-bottom: 20px;  /* Add some spacing between the content and warning */
+}
