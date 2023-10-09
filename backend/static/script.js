@@ -124,27 +124,23 @@ window.onload = function() {
         });
     });
 
-    // Listen for plant_list updates from the server
+    // When updating plants list
     socket.on('plants_list', function(data) {
         // Reset the plant counts
         biomePlantCounts = {};
 
-        // Count the number of plants for each biome and assign an order property
-        data.forEach((plant, index) => {
+        // Sort data based on UUID
+        data.sort((a, b) => a.id.localeCompare(b.id));
+
+        // Count the number of plants for each biome
+        data.forEach(plant => {
             if (!biomePlantCounts[plant.biome_id]) {
                 biomePlantCounts[plant.biome_id] = 0;
             }
             biomePlantCounts[plant.biome_id]++;
-            
-            // Assign the order only if it doesn't exist
-            if (plant.order === undefined) {
-                plant.order = index;
-            }
         });
         plantsData = data;  // Update the global plantsData variable
     });
-
-
 
     window.addEventListener('beforeunload', function() {
         socket.close();
@@ -402,8 +398,6 @@ function updateBiomeListUI(biomeList) {
 
 // Function to update the plant list UI
 function updatePlantListUI() {
-    // Sort plantsData based on the order property
-    plantsData.sort((a, b) => a.order - b.order);
     plantsData.forEach((plant) => {
         const plantContainer = document.getElementById(`plant-container-${plant.biome_id}`);
         if (!plantContainer) return;  // Skip if the container doesn't exist
@@ -449,14 +443,14 @@ function updatePlantListUI() {
         updateRow(table, `sunlight-row-${plant.id}`, [
             { content: isDayForBiome ? `<button onclick="absorbResource('${plant.id}', 'sunlight', 10)">Absorb</button>` : `<button disabled>It's night...</button>`, type: 'td' },
             { content: 'Sunlight:', type: 'td' },
-            { content: `<span id="sunlight-${plant.id}">${plant.sunlight}</span>`, type: 'td' }
+            { content: `<span id="sunlight-${plant.id}">${formatNumber(plant.sunlight)}</span>`, type: 'td' }  // use formatNumber here
         ]);
 
         // For water row
         updateRow(table, `water-row-${plant.id}`, [
             { content: groundWaterLevel >= 10 ? `<button onclick="absorbResource('${plant.id}', 'water', 10)">Absorb</button>` : `<button disabled>No water...</button>`, type: 'td' },
             { content: 'Water:', type: 'td' },
-            { content: `<span id="water-${plant.id}">${plant.water}</span>`, type: 'td' }
+            { content: `<span id="water-${plant.id}">${formatNumber(plant.water)}</span>`, type: 'td' }  // use formatNumber here
         ]);
 
                 // For water progress bar row
