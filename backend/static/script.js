@@ -129,15 +129,18 @@ window.onload = function() {
         // Reset the plant counts
         biomePlantCounts = {};
 
-        // Count the number of plants for each biome
-        data.forEach(plant => {
+        // Count the number of plants for each biome and assign an order property
+        data.forEach((plant, index) => {
             if (!biomePlantCounts[plant.biome_id]) {
                 biomePlantCounts[plant.biome_id] = 0;
             }
             biomePlantCounts[plant.biome_id]++;
+            
+            plant.order = index;  // Assign the order based on its position in the array
         });
         plantsData = data;  // Update the global plantsData variable
     });
+
 
     window.addEventListener('beforeunload', function() {
         socket.close();
@@ -395,6 +398,8 @@ function updateBiomeListUI(biomeList) {
 
 // Function to update the plant list UI
 function updatePlantListUI() {
+    // Sort plantsData based on the order property
+    plantsData.sort((a, b) => a.order - b.order);
     plantsData.forEach((plant) => {
         const plantContainer = document.getElementById(`plant-container-${plant.biome_id}`);
         if (!plantContainer) return;  // Skip if the container doesn't exist
