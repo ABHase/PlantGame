@@ -14,6 +14,7 @@ let plantsData = [];  // This will hold the current list of plants
 let currentUserId = null;
 let plantTime = null;  // Store plant_time data here
 let sunriseSunsetTimes = {};  // Store sunrise and sunset times here
+let globalCostModifier = 1.0;  // Initialize it to the default (1.0 meaning no modification).
 const BIOME_ORDER = ["Beginner's Garden", "Desert", "Tropical Forest", "Mountain", "Swamp"];
 let socketURL;
 if (APP_ENV === 'production') {
@@ -98,6 +99,8 @@ window.onload = function() {
     socket.on('global_state', function(data) {
         // Update your client-side global_state here
         updateGlobalStateUI(data);
+        // Update the global cost modifier
+        globalCostModifier = 1 + data.cost_modifier;
     });
 
     // Listen for plant_time updates from the server
@@ -220,11 +223,12 @@ function displayUpgradeDetails(upgradeName) {
     const descriptionContainer = document.getElementById('upgrade-description-container');
     const description = upgradeDescriptions.find(upgrade => upgrade.name === adjustedUpgradeName);
     const descriptionText = (description && description.description) ? description.description : "Description not available.";
+    const adjustedCost = upgradeDetail.cost * globalCostModifier;  // Adjust the cost based on the global modifier
     
     let upgradeContent = `<h2>${upgradeName}</h2>`;
     upgradeContent += `<p>${descriptionText}</p>`;
     upgradeContent += `<table style="width: auto;">`; // Added inline style to control table width
-    upgradeContent += `<tr><td>Cost: ${upgradeDetail.cost}</td></tr>`;  // Combined label and value
+    upgradeContent += `<tr><td>Cost: ${adjustedCost.toFixed(2)}</td></tr>`;  // Display the adjusted cost
     if (upgradeDetail.secondary_cost) {
         upgradeContent += `<tr><td>Secondary Cost: ${upgradeDetail.secondary_cost} ${upgradeDetail.secondary_resource}</td></tr>`;  // Combined label and value
     }
@@ -546,7 +550,7 @@ function updateRow(parent, rowId, cells) {
     });
 }
 
-function unlockUpgrade(upgradeId) {  // Add cost as a parameter
+function unlockUpgrade(upgradeId) {
     fetch('/game_state/unlock_upgrade', {
         method: 'POST',
         headers: {
@@ -557,8 +561,17 @@ function unlockUpgrade(upgradeId) {  // Add cost as a parameter
     .then(response => response.json())
     .then(data => {
         console.log(data);
-    });
+        // After unlocking, get the updated list of upgrades
+        return fetch('/game_state/upgrades_list');  // Assuming this endpoint gives the updated upgrades list
+    })
+    .then(response => response.json())
+    .then(upgradesList => {
+        // Now, re-render the Upgrades UI with the updated list
+        updateUpgradesUI(upgradesList);
+    })
+    .catch(error => console.error('Error updating upgrades:', error));
 }
+
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
