@@ -136,10 +136,14 @@ window.onload = function() {
             }
             biomePlantCounts[plant.biome_id]++;
             
-            plant.order = index;  // Assign the order based on its position in the array
+            // Assign the order only if it doesn't exist
+            if (plant.order === undefined) {
+                plant.order = index;
+            }
         });
         plantsData = data;  // Update the global plantsData variable
     });
+
 
 
     window.addEventListener('beforeunload', function() {

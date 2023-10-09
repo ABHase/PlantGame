@@ -147,22 +147,21 @@ class Plant:
         self.maturity_level = int(math.sqrt(self.roots + self.leaves))
 
     def absorb_water(self, ground_water_level):
-        water_absorbed = 0
-        for _ in range(int(self.roots)):
-            if ground_water_level > 0 and self.water < self.vacuoles * 100:
-                self.water += 1
-                water_absorbed += 1
-                ground_water_level -= 1
-        return water_absorbed, ground_water_level
+        potential_absorption = min(self.roots, ground_water_level, (self.vacuoles * 100 - self.water))
+        self.water += potential_absorption
+        ground_water_level -= potential_absorption
+        return potential_absorption, ground_water_level
+
 
     def absorb_sunlight(self, is_day, current_weather):
-        water_consumption = 1
-        for _ in range(int(self.leaves)):
-            if self.resin > 0:
-                water_consumption = 0
-            if is_day and current_weather == 'Sunny':
-                self.water = max(0, self.water - water_consumption)
-                self.sunlight += 1
+        # Calculate the number of leaves that will consume water
+        water_consuming_leaves = max(0, self.leaves - self.resin)        
+        # Deduct water for those leaves
+        self.water = max(0, self.water - water_consuming_leaves)
+        # If it's day and sunny, absorb sunlight
+        if is_day and current_weather == 'Sunny':
+            self.sunlight += self.leaves
+
 
     def attract_ladybugs(self):
         if self.pheromones > 0:
