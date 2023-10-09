@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Login</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> <!-- If you placed the CSS in a separate file -->
     <script src="{{ url_for('static', filename='login.js') }}"></script>
     <script>
         var APP_ENV = "{{ env }}";
@@ -9,14 +11,16 @@
     
 </head>
 <body>
-    <form id="login-form">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <input type="submit" value="Login">
-    </form>
+    <div class="content">
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <input type="submit" value="Login">
+        </form>
+    </div>
 </body>
 </html>

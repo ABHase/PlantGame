@@ -2,14 +2,20 @@
 <html>
 <head>
     <title>Plant Game</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> <!-- If you placed the CSS in a separate file -->
     <script>
         var APP_ENV = "{{ env }}";
     </script>
     
 </head>
 <body>
-    <h1>Welcome to Plant Game!</h1>
-    <a href="/user_auth/login">Login</a>
-    <a href="/user_auth/register">Register</a>
+    <div class="content">
+        <h1>Welcome to Plant Game!</h1>
+        <div>
+            <a href="/user_auth/login">Login</a>
+            <a href="/user_auth/register">Register</a>
+        </div>
+    </div>
 </body>
 </html>

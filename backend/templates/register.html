@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Register</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> <!-- If you placed the CSS in a separate file -->
     <script src="{{ url_for('static', filename='register.js') }}"></script>
     <script>
         var APP_ENV = "{{ env }}";
