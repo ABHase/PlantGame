@@ -20,6 +20,7 @@ def handle_unlock_upgrade(action):
         cost = existing_upgrade_model.cost  # Get the cost from the upgrade model
         # Modify the cost based on the global cost modifier
         adjusted_cost = cost * (1 + cost_modifier)  # Adding 1 because base is 100% (or 1.0)
+        adjusted_cost = round(adjusted_cost)
 
         secondary_cost = existing_upgrade_model.secondary_cost
         secondary_resource = existing_upgrade_model.secondary_resource
