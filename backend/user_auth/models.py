@@ -34,7 +34,7 @@ class UpgradeModel(db.Model):
             'secondary_cost': self.secondary_cost,
             'secondary_resource': self.secondary_resource,
             'cost_modifier': self.cost_modifier,
-            'created_at': self.created_at
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
             # ... other fields ...
         }
     @classmethod
