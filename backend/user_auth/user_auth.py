@@ -9,6 +9,7 @@ from datetime import datetime
 from ..models.biome_model import BiomeModel
 from ..models.plant_model import PlantModel
 
+
 def log_with_timestamp(message):
     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {message}")
 
@@ -223,6 +224,7 @@ def initialize_new_upgrades(user_id):
             secondary_cost=upgrade.get('secondary_cost', 0),  # Using .get() with default in case it's not present in some upgrades
             secondary_resource=upgrade.get('secondary_resource'),  # Using .get() with default None
             cost_modifier=upgrade.get('cost_modifier', 0.0)  # Using .get() with default 0.0
+
         )
         print(f"New upgrade: {new_upgrade}")
         new_upgrades.append(new_upgrade)

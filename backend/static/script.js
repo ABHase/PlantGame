@@ -95,6 +95,7 @@ window.onload = function() {
 
         // Update the client-side upgrades list
         allUpgradesList = data;
+        console.log("All Upgrades List:", allUpgradesList);
 
         // Update UI
         updateUpgradesUI(allUpgradesList);
