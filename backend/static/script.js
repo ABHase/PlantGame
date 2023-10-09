@@ -547,6 +547,9 @@ function updateRow(parent, rowId, cells) {
 }
 
 function unlockUpgrade(upgradeId, upgradeName) {
+    // Make a copy of the current list before the upgrade unlock request
+    const previousUpgradesList = [...allUpgradesList];
+
     fetch('/game_state/unlock_upgrade', {
         method: 'POST',
         headers: {
@@ -557,12 +560,21 @@ function unlockUpgrade(upgradeId, upgradeName) {
     .then(response => response.json())
     .then(data => {
         console.log(data);
-        // No need to fetch the upgrades list again, directly re-display the upgrade details
-        displayUpgradeDetails(upgradeName);
+
+        // Check every 100ms if the list has updated
+        const checkInterval = setInterval(() => {
+            const hasUpdated = JSON.stringify(previousUpgradesList) !== JSON.stringify(allUpgradesList);
+
+            if (hasUpdated) {
+                // Clear the interval once update is detected
+                clearInterval(checkInterval);
+                // Re-display the upgrade details
+                displayUpgradeDetails(upgradeName);
+            }
+        }, 100);
     })
     .catch(error => console.error('Error updating upgrades:', error));
 }
-
 
 
 
